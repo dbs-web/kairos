@@ -20,10 +20,3 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ message: 'Suggestion created successfully!' });
 }
-
-export async function GET(request: Request) {
-    await dbConnect();
-    const sugestoes: ISuggestion[] = await Suggestion.find();
-
-    return NextResponse.json({ data: sugestoes });
-}

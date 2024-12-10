@@ -7,6 +7,7 @@ import clientPromise from './clientPromise';
 import { User } from '@/models';
 
 export const authOptions: NextAuthOptions = {
+    //@ts-expect-error
     adapter: MongoDBAdapter(clientPromise),
     session: {
         strategy: 'jwt',
@@ -72,6 +73,7 @@ export const authOptions: NextAuthOptions = {
         },
         async session({ session, token }) {
             if (token) {
+                //@ts-expect-error
                 session.user = token.user;
             }
             return session;
