@@ -20,7 +20,7 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="pt-br">
-            <body className={`${font.className} antialiased`}>{children}</body>
+            <body className={`${font.className}`}>{children}</body>
         </html>
     );
 }

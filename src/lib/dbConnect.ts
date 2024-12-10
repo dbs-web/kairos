@@ -4,7 +4,6 @@ let isConnected = false;
 
 export async function dbConnect() {
     if (isConnected) {
-        console.log('Reusing existing MongoDB connection');
         return;
     }
 

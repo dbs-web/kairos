@@ -19,7 +19,7 @@ export default function LoginForm() {
         signIn('credentials', {
             email,
             password,
-            callbackUrl: `${window.location.origin}/panel`,
+            callbackUrl: `/panel`,
         }).then((res) => {
             if (res?.error) {
                 setError('Email e/ou senha incorretos');
@@ -34,7 +34,13 @@ export default function LoginForm() {
             className={`flex w-full max-w-[400px] flex-col items-center justify-center gap-y-8 rounded-md px-6 py-12 shadow-[0_0px_40px_-5px_rgba(0,0,0,0.3)]`}
         >
             <a href="/" className="flex w-full flex-col items-center justify-center">
-                <Image src="/kairos-logo-title.webp" alt="Logo Kairós" width={160} height={300} />
+                <Image
+                    src="/kairos-logo-title.webp"
+                    alt="Logo Kairós"
+                    width={240}
+                    height={44}
+                    priority
+                />
             </a>
             {error && (
                 <small className="block w-full px-2 text-center text-[1rem] font-medium text-red-600">

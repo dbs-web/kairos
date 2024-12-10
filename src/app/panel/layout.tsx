@@ -1,38 +1,25 @@
-import type { Metadata } from 'next';
 import { getServerSession } from 'next-auth';
-import { Roboto } from 'next/font/google';
-const font = Roboto({
-    weight: '400',
-    subsets: ['latin'],
-});
 
-import '../globals.css';
 import Nav from '@/components/ui/Nav/nav';
 import SessionProvider from '../AuthProvider';
-
-export const metadata: Metadata = {
-    title: 'Kairos',
-    description: '',
-};
+import { authOptions } from '@/lib/auth';
 export default async function RootLayout({
     children,
 }: Readonly<{
     children: React.ReactNode;
 }>) {
-    const session = await getServerSession();
+    const session = await getServerSession(authOptions);
 
     if (!session) {
         return;
     }
 
     return (
-        <html lang="pt-br">
-            <body className={`${font.className} antialiased`}>
-                <SessionProvider session={session}>
-                    <Nav />
-                    {children}
-                </SessionProvider>
-            </body>
-        </html>
+        <SessionProvider session={session}>
+            <main className={`grid h-screen w-screen grid-cols-1 grid-rows-[64px_1fr]`}>
+                <Nav />
+                {children}
+            </main>
+        </SessionProvider>
     );
 }

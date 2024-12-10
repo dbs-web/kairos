@@ -43,7 +43,6 @@ export const authOptions: NextAuthOptions = {
                         throw new Error('Usuário não encontrado');
                     }
                 } catch (err) {
-                    console.log(err);
                     throw new Error('Erro na autenticação');
                 }
             },
@@ -63,8 +62,10 @@ export const authOptions: NextAuthOptions = {
 
             if (user) {
                 token.user = {
+                    id: user._id,
                     name: user.name,
                     email: user.email,
+                    role: user.role,
                 };
             }
             return token;

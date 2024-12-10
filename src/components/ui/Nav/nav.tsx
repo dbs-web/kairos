@@ -33,7 +33,13 @@ export default function Nav() {
 
     return (
         <nav className="flex h-16 w-screen items-center justify-between border-b px-12">
-            <Image src={'/kairos-logo-title.webp'} width={160} height={40} alt="Kairós logo" />
+            <Image
+                src={'/kairos-logo-title.webp'}
+                width={160}
+                height={40}
+                alt="Kairós logo"
+                priority
+            />
 
             <ul className="flex items-center justify-center gap-x-4">
                 {navLinks?.length &&
