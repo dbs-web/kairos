@@ -1,44 +1,43 @@
-import mongoose from "mongoose"
+import mongoose from 'mongoose';
 
 const SugestoesSchema = new mongoose.Schema(
     {
-        "title" : {
+        title: {
             type: String,
-            required: true
+            required: true,
         },
-        'summary' : {
+        summary: {
             type: String,
-            required: true
+            required: true,
         },
-        "user" : {
+        user: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'user',
-            required: true
-        },
-        "url": {
-            type: String,
-            required: true
-        },
-        "thumbnail": {
-            type: String,
-            required: true
-        },
-        "status" : {
-            type: String,
-            enum: ["em-analise", "em-producao", "aprovado", "rejeitado"],
             required: true,
-            default: "em-analise"
         },
-        "text" : {
+        url: {
+            type: String,
+            required: true,
+        },
+        thumbnail: {
+            type: String,
+            required: true,
+        },
+        status: {
+            type: String,
+            enum: ['em-analise', 'em-producao', 'aprovado', 'rejeitado'],
+            required: true,
+            default: 'em-analise',
+        },
+        text: {
             type: String,
         },
-        "date" : {
+        date: {
             type: String,
-            required: true
+            required: true,
         },
-
     },
-    {timestamps: true}
-)
+    { timestamps: true },
+);
 
-export default mongoose.models.Sugestoes || mongoose.model("Sugestoes", SugestoesSchema);   
+export default mongoose.models.Sugestoes || mongoose.model('Sugestoes', SugestoesSchema);

@@ -1,28 +1,28 @@
-import mongoose from "mongoose"
+import mongoose from 'mongoose';
 
 const SuggestionSchema = new mongoose.Schema(
     {
-        "title" : {
+        title: {
             type: String,
-            required: true
+            required: true,
         },
-        'briefing' : {
+        briefing: {
             type: String,
-            required: true
+            required: true,
         },
-        "user" : {
+        user: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'user',
-            required: true
-        },
-        "status" : {
-            type: String,
-            enum: ["em-analise", "em-producao", "aprovado", "rejeitado"],
             required: true,
-            default: "em-analise"
-        }
+        },
+        status: {
+            type: String,
+            enum: ['em-analise', 'em-producao', 'aprovado', 'rejeitado'],
+            required: true,
+            default: 'em-analise',
+        },
     },
-    {timestamps: true}
-)
+    { timestamps: true },
+);
 
-export default mongoose.models.Suggestion || mongoose.model("Suggestion", SuggestionSchema);   
+export default mongoose.models.Suggestion || mongoose.model('Suggestion', SuggestionSchema);

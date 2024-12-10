@@ -1,3 +1,3 @@
-export default function Home() {
+export default function Noticias() {
     return <div className=""></div>;
 }
