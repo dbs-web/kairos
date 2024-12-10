@@ -1,11 +1,28 @@
-import mongoose from 'mongoose'
+import mongoose from 'mongoose';
+
+let isConnected = false;
 
 export async function dbConnect() {
-    if(process.env?.MONGODB_URI)
-        await mongoose.connect(process.env.MONGODB_URI)
-    else throw new Error("Connection to Database failed!")
+    if (isConnected) {
+        console.log('Reusing existing MongoDB connection');
+        return;
+    }
+
+    if (!process.env.MONGODB_URI) {
+        throw new Error('MONGODB_URI is not defined');
+    }
+
+    try {
+        await mongoose.connect(process.env.MONGODB_URI);
+        isConnected = true;
+    } catch (error) {
+        throw new Error('Failed to connect to MongoDB');
+    }
 }
 
 export async function dbClose() {
-    await mongoose.disconnect()
+    if (isConnected) {
+        await mongoose.disconnect();
+        isConnected = false;
+    }
 }

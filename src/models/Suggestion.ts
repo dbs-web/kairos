@@ -1,6 +1,6 @@
 import mongoose from "mongoose"
 
-const SugestaoSchema = new mongoose.Schema(
+const SuggestionSchema = new mongoose.Schema(
     {
         "title" : {
             type: String,
@@ -25,4 +25,4 @@ const SugestaoSchema = new mongoose.Schema(
     {timestamps: true}
 )
 
-export default mongoose.models.Sugestao || mongoose.model("Sugestao", SugestaoSchema);   
+export default mongoose.models.Suggestion || mongoose.model("Suggestion", SuggestionSchema);   

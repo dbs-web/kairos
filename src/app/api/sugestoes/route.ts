@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server'
-import { Sugestao } from '@/models';
+import { Suggestion } from '@/models';
 import { dbConnect } from '@/lib/dbConnect';
 
-interface ISugestao{
+interface ISuggestion{
     title: string,
     briefing: string,
     user: string,
@@ -10,18 +10,20 @@ interface ISugestao{
 }
 
 export async function POST(request: Request){    
+    await dbConnect()
     try{
         const {data} = await request.json()
-        await Sugestao.insertMany(data)
+        await Suggestion.insertMany(data)
     }catch(e){
         return NextResponse.json({status: 500, message: e})
     }
 
-    return NextResponse.json({message: "Sugestao created successfully!"})
+    return NextResponse.json({message: "Suggestion created successfully!"})
 }
 
 export async function GET(request: Request){
-    const sugestoes:ISugestao[] = await Sugestao.find()
+    await dbConnect()
+    const sugestoes:ISuggestion[] = await Suggestion.find()
 
     return NextResponse.json({data: sugestoes})
 }
