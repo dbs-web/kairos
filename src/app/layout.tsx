@@ -7,6 +7,7 @@ const font = Roboto({
 })
 
 import "./globals.css";
+import Nav from "@/components/ui/Nav/nav";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -23,6 +24,7 @@ export default function RootLayout({
       <body
         className={`${font.className} antialiased`}
       >
+        <Nav />
         {children}
       </body>
     </html>
