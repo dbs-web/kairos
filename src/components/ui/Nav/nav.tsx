@@ -13,7 +13,7 @@ export default function Nav(){
     const path = usePathname()
     console.log(path)
     return (
-        <nav className="flex items-center justify-between w-screen h-20 border-b px-12">
+        <nav className="flex items-center justify-between w-screen h-16 border-b px-12">
             <Image src={"/kairos-logo-title.webp"} width={160} height={40} alt="Kairós logo"/>
 
             <ul className="flex items-center justify-center gap-x-4">
