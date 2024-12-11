@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const SugestoesSchema = new mongoose.Schema(
+const NewsSchema = new mongoose.Schema(
     {
         title: {
             type: String,
@@ -25,7 +25,7 @@ const SugestoesSchema = new mongoose.Schema(
         },
         status: {
             type: String,
-            enum: ['em-analise', 'em-producao', 'aprovado', 'rejeitado'],
+            enum: ['em-analise', 'em-producao', 'aprovado', 'arquivado'],
             required: true,
             default: 'em-analise',
         },
@@ -40,4 +40,4 @@ const SugestoesSchema = new mongoose.Schema(
     { timestamps: true },
 );
 
-export default mongoose.models.Sugestoes || mongoose.model('Sugestoes', SugestoesSchema);
+export default mongoose.models.News || mongoose.model('Sugestoes', NewsSchema);

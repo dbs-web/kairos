@@ -3,15 +3,43 @@
 import { useSuggestions } from '@/hooks/use-suggestions';
 import SuggestionCard from './SuggestionCard';
 import { ISuggestion } from '@/types/suggestion';
+import { useDataFilter } from '@/hooks/use-data-filter';
+import { useEffect } from 'react';
+
+const statuses = [
+    {
+        label: 'Em Análise',
+        value: 'em-analise',
+    },
+    {
+        label: 'Em produção',
+        value: 'em-producao',
+    },
+    {
+        label: 'Aprovado',
+        value: 'aprovado',
+    },
+    {
+        label: 'Arquivado',
+        value: 'arquivado',
+    },
+];
 
 export default function SuggestionsGrid() {
-    const { filteredSuggestions, selectedSuggestions, toggleSelectSuggestion, sendToProduction } =
+    const { suggestions, selectedSuggestions, toggleSelectSuggestion, sendToProduction } =
         useSuggestions();
+
+    const { filteredData, setInitialData, setStatuses } = useDataFilter();
+
+    useEffect(() => {
+        setStatuses(statuses);
+        setInitialData(suggestions);
+    }, [suggestions]);
 
     return (
         <div className="relative h-full w-full">
             <div className="grid grid-cols-4 gap-4">
-                {filteredSuggestions.map((suggestion: ISuggestion) => (
+                {filteredData.map((suggestion: ISuggestion) => (
                     <SuggestionCard
                         key={suggestion._id}
                         suggestion={suggestion}

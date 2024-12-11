@@ -1,16 +1,20 @@
 'use client';
 
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, {
+    createContext,
+    useContext,
+    useState,
+    useCallback,
+    SetStateAction,
+    Dispatch,
+} from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { ISuggestion } from '@/types/suggestion';
 
 interface SuggestionsContextProps {
     suggestions: ISuggestion[];
-    filteredSuggestions: ISuggestion[];
     selectedSuggestions: string[];
-    filter: { title: string; status: string };
     isLoading: boolean;
-    setFilter: (filter: { title: string; status: string }) => void;
     toggleSelectSuggestion: (id: string) => void;
     sendToProduction: () => Promise<void>;
 }
@@ -20,7 +24,6 @@ const SuggestionsContext = createContext<SuggestionsContextProps | undefined>(un
 export const SuggestionsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const queryClient = useQueryClient();
 
-    const [filter, setFilter] = useState({ title: '', status: '' });
     const [selectedSuggestions, setSelectedSuggestions] = useState<string[]>([]);
 
     const { data: suggestions = [], isLoading } = useQuery<ISuggestion[]>({
@@ -33,13 +36,6 @@ export const SuggestionsProvider: React.FC<{ children: React.ReactNode }> = ({ c
             const { data } = await response.json();
             return data;
         },
-    });
-
-    const filteredSuggestions = suggestions.filter((s: ISuggestion) => {
-        return (
-            (filter.title ? s.title.toLowerCase().includes(filter.title.toLowerCase()) : true) &&
-            (filter.status ? s.status === filter.status : true)
-        );
     });
 
     const toggleSelectSuggestion = useCallback((id: string) => {
@@ -69,11 +65,8 @@ export const SuggestionsProvider: React.FC<{ children: React.ReactNode }> = ({ c
         <SuggestionsContext.Provider
             value={{
                 suggestions,
-                filteredSuggestions,
                 selectedSuggestions,
-                filter,
                 isLoading,
-                setFilter,
                 toggleSelectSuggestion,
                 sendToProduction,
             }}

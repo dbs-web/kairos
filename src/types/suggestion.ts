@@ -4,5 +4,5 @@ export interface ISuggestion {
     date: Date;
     briefing: string;
     user: string;
-    status: 'em-analise' | 'em-producao' | 'aprovado' | 'rejeitado';
+    status: 'em-analise' | 'em-producao' | 'aprovado' | 'arquivado';
 }

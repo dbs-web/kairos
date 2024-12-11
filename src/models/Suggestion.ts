@@ -21,7 +21,7 @@ const SuggestionSchema = new mongoose.Schema(
         },
         status: {
             type: String,
-            enum: ['em-analise', 'em-producao', 'aprovado', 'rejeitado'],
+            enum: ['em-analise', 'em-producao', 'aprovado', 'arquivado'],
             required: true,
             default: 'em-analise',
         },

@@ -12,10 +12,17 @@ const statusEnum = {
     'em-analise': 'Em análise',
     'em-producao': 'Em produção',
     aprovado: 'Aprovado',
-    rejeitado: 'Rejeitado',
+    arquivado: 'Arquivado',
 };
 
 export default function SuggestionCard({ suggestion, isSelected, onSelect }: SuggestionCardProps) {
+    const badgeColor = {
+        aprovado: '#00aa00f0',
+        arquivado: '#aa0000f0',
+        'em-analise': '#e5e5e5',
+        'em-producao': '#0085a3f0',
+    };
+
     return (
         <div
             className={`relative cursor-pointer rounded-lg border bg-white p-5 transition-all duration-300 ${
@@ -38,7 +45,13 @@ export default function SuggestionCard({ suggestion, isSelected, onSelect }: Sug
                     </div>
                 </div>
                 <div className="flex items-center gap-x-2">
-                    <span className="rounded bg-neutral-200 p-2 text-xs font-medium text-neutral-400">
+                    <span
+                        className="rounded p-2 text-xs font-medium"
+                        style={{
+                            backgroundColor: badgeColor[suggestion.status],
+                            color: suggestion.status === 'em-analise' ? '#939393' : '#fff',
+                        }}
+                    >
                         {statusEnum[suggestion.status]}
                     </span>
                 </div>
