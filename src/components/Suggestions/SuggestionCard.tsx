@@ -18,7 +18,7 @@ const statusEnum = {
 export default function SuggestionCard({ suggestion, isSelected, onSelect }: SuggestionCardProps) {
     return (
         <div
-            className={`relative cursor-pointer rounded-lg border bg-white p-4 transition-all duration-300 ${
+            className={`relative cursor-pointer rounded-lg border bg-white p-5 transition-all duration-300 ${
                 isSelected
                     ? 'border border-primary/50 shadow-md shadow-primary/70'
                     : 'hover:-translate-y-1 hover:shadow-sm'
@@ -43,7 +43,7 @@ export default function SuggestionCard({ suggestion, isSelected, onSelect }: Sug
                     </span>
                 </div>
             </div>
-            <p className="mt-4 line-clamp-3 text-neutral-500">{suggestion.briefing}</p>
+            <p className="mt-4 line-clamp-4 text-neutral-500">{suggestion.briefing}</p>
         </div>
     );
 }
