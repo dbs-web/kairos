@@ -17,7 +17,7 @@ const navLinks = [
     {
         Icon: <IoIosPlayCircle className="mb-1 text-xl" />,
         text: 'Estúdio',
-        href: '/panel/estudio/sugestoes',
+        href: '/panel/estudio/planejamento',
     },
     {
         Icon: <BiBook className="mb-1 text-xl" />,

@@ -40,4 +40,4 @@ const NewsSchema = new mongoose.Schema(
     { timestamps: true },
 );
 
-export default mongoose.models.News || mongoose.model('Sugestoes', NewsSchema);
+export default mongoose.models.News || mongoose.model('News', NewsSchema);

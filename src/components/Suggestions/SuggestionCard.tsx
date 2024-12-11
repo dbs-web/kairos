@@ -23,14 +23,22 @@ export default function SuggestionCard({ suggestion, isSelected, onSelect }: Sug
         'em-producao': '#0085a3f0',
     };
 
+    const handleSelect = () => {
+        if (suggestion.status === 'em-analise') {
+            onSelect(suggestion._id);
+        }
+    };
+
     return (
         <div
             className={`relative cursor-pointer rounded-lg border bg-white p-5 transition-all duration-300 ${
-                isSelected
-                    ? 'border border-primary/50 shadow-md shadow-primary/70'
-                    : 'hover:-translate-y-1 hover:shadow-sm'
+                suggestion.status === 'em-analise'
+                    ? isSelected
+                        ? 'border border-primary/50 shadow-md shadow-primary/70'
+                        : 'hover:-translate-y-1 hover:shadow-sm'
+                    : 'cursor-not-allowed'
             }`}
-            onClick={() => onSelect(suggestion._id)}
+            onClick={handleSelect}
         >
             <div className="flex w-full items-center justify-between">
                 <div className="flex items-center justify-center gap-x-2">

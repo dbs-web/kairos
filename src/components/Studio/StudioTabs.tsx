@@ -13,8 +13,8 @@ import NavLink from '../ui/Nav/nav-link';
 const tabs = [
     {
         Icon: <GoLightBulb className="mb-1 text-xl" />,
-        text: 'Sugestões',
-        href: '/panel/estudio/sugestoes',
+        text: 'Planejamento Mensal',
+        href: '/panel/estudio/planejamento',
     },
     {
         Icon: <PiNewspaperLight className="mb-1 text-xl" />,
