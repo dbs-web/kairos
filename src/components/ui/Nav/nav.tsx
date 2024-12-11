@@ -1,38 +1,19 @@
 'use client';
-// Hooks
-import { usePathname } from 'next/navigation';
-import { useSession } from 'next-auth/react';
+import { ILink } from '@/types/link';
 
-// Icons
-import { IoIosPlayCircle } from 'react-icons/io';
-import { BiBook } from 'react-icons/bi';
-import { IoHelpCircleOutline } from 'react-icons/io5';
+// Hooks
+import { useSession } from 'next-auth/react';
 
 // Components
 import Image from 'next/image';
-import NavLink from './nav-link';
 import NavUserMenu from './nav-user-menu';
+import NavLinks from './nav-links';
 
-const navLinks = [
-    {
-        Icon: <IoIosPlayCircle className="mb-1 text-xl" />,
-        text: 'Estúdio',
-        href: '/panel/estudio/planejamento',
-    },
-    {
-        Icon: <BiBook className="mb-1 text-xl" />,
-        text: 'Conhecimento',
-        href: '/panel/conhecimento',
-    },
-    {
-        Icon: <IoHelpCircleOutline className="mb-1 text-xl" />,
-        text: 'Ajuda',
-        href: '/panel/ajuda',
-    },
-];
+interface NavProps {
+    links: ILink[];
+}
 
-export default function Nav() {
-    const path = usePathname();
+export default function Nav({ links }: NavProps) {
     const { data: session } = useSession();
 
     return (
@@ -45,18 +26,7 @@ export default function Nav() {
                 priority
             />
 
-            <ul className="flex items-center justify-center gap-x-4">
-                {navLinks?.length &&
-                    navLinks.map((navLink, index) => (
-                        <NavLink
-                            Icon={navLink.Icon}
-                            text={navLink.text}
-                            href={navLink.href}
-                            active={path === navLink.href}
-                            key={`nav-link-${index}`}
-                        />
-                    ))}
-            </ul>
+            <NavLinks links={links} type="main" />
 
             {session?.user?.name && session?.user?.email && (
                 <NavUserMenu name={session.user.name} email={session.user.email} />

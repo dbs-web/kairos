@@ -3,6 +3,29 @@ import { getServerSession } from 'next-auth';
 import Nav from '@/components/ui/Nav/nav';
 import SessionProvider from '../AuthProvider';
 import { authOptions } from '@/lib/auth';
+
+import { IoIosPlayCircle } from 'react-icons/io';
+import { BiBook } from 'react-icons/bi';
+import { IoHelpCircleOutline } from 'react-icons/io5';
+
+const navLinks = [
+    {
+        Icon: <IoIosPlayCircle className="mb-1 text-xl" />,
+        text: 'Estúdio',
+        href: '/panel/estudio/planejamento',
+    },
+    {
+        Icon: <BiBook className="mb-1 text-xl" />,
+        text: 'Conhecimento',
+        href: '/panel/conhecimento',
+    },
+    {
+        Icon: <IoHelpCircleOutline className="mb-1 text-xl" />,
+        text: 'Ajuda',
+        href: '/panel/ajuda',
+    },
+];
+
 export default async function RootLayout({
     children,
 }: Readonly<{
@@ -17,7 +40,7 @@ export default async function RootLayout({
     return (
         <SessionProvider session={session}>
             <main className={`grid h-screen w-screen grid-cols-1 grid-rows-[64px_1fr]`}>
-                <Nav />
+                <Nav links={navLinks} />
                 {children}
             </main>
         </SessionProvider>
