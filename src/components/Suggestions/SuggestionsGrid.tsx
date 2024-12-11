@@ -9,8 +9,8 @@ export default function SuggestionsGrid() {
         useSuggestions();
 
     return (
-        <div className="relative w-full">
-            <div className="grid grid-cols-3 gap-4 p-4">
+        <div className="relative h-full w-full">
+            <div className="grid grid-cols-3 gap-4">
                 {filteredSuggestions.map((suggestion: ISuggestion) => (
                     <SuggestionCard
                         key={suggestion._id}

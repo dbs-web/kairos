@@ -1,3 +1,3 @@
-export default function Briefings() {
+export default function Aprovacoes() {
     return <div className=""></div>;
 }

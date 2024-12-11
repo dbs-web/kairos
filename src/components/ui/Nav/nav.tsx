@@ -1,29 +1,33 @@
 'use client';
+// Hooks
 import { usePathname } from 'next/navigation';
+import { useSession } from 'next-auth/react';
+
+// Icons
+import { IoIosPlayCircle } from 'react-icons/io';
+import { BiBook } from 'react-icons/bi';
+import { IoHelpCircleOutline } from 'react-icons/io5';
+
+// Components
 import Image from 'next/image';
 import NavLink from './nav-link';
-import { AiOutlineBulb } from 'react-icons/ai';
-import { PiNewspaper } from 'react-icons/pi';
-import { CiVideoOn, CiCircleList } from 'react-icons/ci';
-import { useSession } from 'next-auth/react';
 import NavUserMenu from './nav-user-menu';
 
 const navLinks = [
     {
-        Icon: <AiOutlineBulb className="mb-1 text-xl" />,
-        text: 'Sugestões',
-        href: '/panel/sugestoes',
-    },
-    { Icon: <PiNewspaper className="mb-1 text-xl" />, text: 'Notícias', href: '/panel/noticias' },
-    {
-        Icon: <CiVideoOn className="mb-1 text-xl" />,
-        text: 'Video Maker',
-        href: '/panel/video-maker',
+        Icon: <IoIosPlayCircle className="mb-1 text-xl" />,
+        text: 'Estúdio',
+        href: '/panel/estudio/sugestoes',
     },
     {
-        Icon: <CiCircleList className="mb-1 text-xl" />,
-        text: 'Briefings',
-        href: '/panel/briefings',
+        Icon: <BiBook className="mb-1 text-xl" />,
+        text: 'Conhecimento',
+        href: '/panel/conhecimento',
+    },
+    {
+        Icon: <IoHelpCircleOutline className="mb-1 text-xl" />,
+        text: 'Ajuda',
+        href: '/panel/ajuda',
     },
 ];
 

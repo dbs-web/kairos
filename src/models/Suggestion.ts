@@ -6,6 +6,10 @@ const SuggestionSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
+        date: {
+            type: Date,
+            required: true,
+        },
         briefing: {
             type: String,
             required: true,

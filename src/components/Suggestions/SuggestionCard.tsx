@@ -18,18 +18,32 @@ const statusEnum = {
 export default function SuggestionCard({ suggestion, isSelected, onSelect }: SuggestionCardProps) {
     return (
         <div
-            className={`relative cursor-pointer rounded-lg border p-4 transition-all duration-300 ${
+            className={`relative cursor-pointer rounded-lg border bg-white p-4 transition-all duration-300 ${
                 isSelected
-                    ? 'border-2 border-primary shadow-md'
+                    ? 'border border-primary/50 shadow-md shadow-primary/70'
                     : 'hover:-translate-y-1 hover:shadow-sm'
             }`}
             onClick={() => onSelect(suggestion._id)}
         >
-            <h3 className="text-center text-lg font-bold">{suggestion.title}</h3>
+            <div className="flex w-full items-center justify-between">
+                <div className="flex items-center justify-center gap-x-2">
+                    <div className="h-12 w-12 rounded-lg bg-primary"></div>
+                    <div className="flex flex-col items-start">
+                        <h3 className="text-center font-medium text-neutral-700">
+                            {suggestion.title}
+                        </h3>
+                        <span className="text-sm text-neutral-500">
+                            Data: {suggestion?.date?.toLocaleDateString()}
+                        </span>
+                    </div>
+                </div>
+                <div className="flex items-center gap-x-2">
+                    <span className="rounded bg-neutral-200 p-2 text-xs font-medium text-neutral-400">
+                        {statusEnum[suggestion.status]}
+                    </span>
+                </div>
+            </div>
             <p className="mt-4 line-clamp-3 text-neutral-500">{suggestion.briefing}</p>
-            <span className="absolute top-4 rounded bg-neutral-400 p-2 text-xs text-white">
-                {statusEnum[suggestion.status]}
-            </span>
         </div>
     );
 }

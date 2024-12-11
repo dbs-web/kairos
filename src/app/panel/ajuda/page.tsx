@@ -1,3 +1,3 @@
-export default function VideoMaker() {
+export default function Home() {
     return <div className=""></div>;
 }
