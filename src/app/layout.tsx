@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
-import { Roboto } from 'next/font/google';
+import { Inter } from 'next/font/google';
 
-const font = Roboto({
-    weight: '400',
+const font = Inter({
+    weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
     subsets: ['latin'],
 });
 
