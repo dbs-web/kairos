@@ -1,12 +1,18 @@
-import { fetchSuggestions } from '@/actions/fetchSuggestions';
+'use client';
 import SuggestionsGrid from '@/components/Suggestions/SuggestionsGrid';
+import { SuggestionsProvider } from '@/hooks/use-suggestions';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-export default async function Sugestoes() {
-    const suggestions = await fetchSuggestions();
+const queryClient = new QueryClient();
 
+export default function Sugestoes() {
     return (
         <div className="flex w-full flex-col items-center">
-            <SuggestionsGrid suggestions={suggestions} />
+            <QueryClientProvider client={queryClient}>
+                <SuggestionsProvider>
+                    <SuggestionsGrid />
+                </SuggestionsProvider>
+            </QueryClientProvider>
         </div>
     );
 }

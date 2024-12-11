@@ -3,5 +3,5 @@ export interface ISuggestion {
     title: string;
     briefing: string;
     user: string;
-    status: string;
+    status: 'em-analise' | 'em-producao' | 'aprovado' | 'rejeitado';
 }
