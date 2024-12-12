@@ -52,5 +52,5 @@ export async function GET(request: Request) {
 
     const data = await heygenRes.json();
 
-    return NextResponse.json({ data });
+    return NextResponse.json(data);
 }

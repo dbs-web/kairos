@@ -6,8 +6,16 @@ const BriefingSchema = new mongoose.Schema({
         ref: 'suggestion',
         required: true,
     },
+    title: {
+        type: String,
+        required: true,
+    },
     text: {
         type: String,
+        required: true,
+    },
+    date: {
+        type: Date,
         required: true,
     },
     status: {
