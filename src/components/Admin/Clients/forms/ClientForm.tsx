@@ -1,15 +1,12 @@
 'use client';
 
-// Utils
 import { toast } from 'sonner';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 
-// Hooks
 import { useForm } from 'react-hook-form';
 import { useClients } from '@/hooks/use-client';
 
-// Components
 import { Button } from '@/components/ui/button';
 import {
     Form,
@@ -33,6 +30,7 @@ const formSchema = z
         passwordConfirmation: z
             .string()
             .min(6, { message: 'A confirmação de senha deve ter pelo menos 6 caracteres.' }),
+        avatarGroupId: z.string().min(1, { message: 'O avatarGroupId é obrigatório.' }),
     })
     .superRefine(({ passwordConfirmation, password }, ctx) => {
         if (passwordConfirmation !== password) {
@@ -54,22 +52,35 @@ export default function ClientForm({ setModalOpen }: ClientFormProps) {
             email: '',
             password: '',
             passwordConfirmation: '',
+            avatarGroupId: '',
         },
     });
 
-    const onSubmit = (data: z.infer<typeof formSchema>) => {
+    const onSubmit = async (data: z.infer<typeof formSchema>) => {
+        const res = await fetch(`/api/heygen/check-group?groupId=${data.avatarGroupId}`, {
+            method: 'GET',
+        });
+
+        const result = await res.json();
+
+        if (!res.ok || result.data.error) {
+            toast.error('avatarGroupId inválido. Não foi possível criar o usuário.');
+            return;
+        }
+
+        // Se válido, criar o usuário
         addUser({
             name: data.name,
             email: data.email,
             password: data.password,
             role: 'user',
+            avatarGroupId: data.avatarGroupId,
         });
 
         setModalOpen(false);
 
         toast('Cliente criado com sucesso!', {
-            description:
-                'Lembre-se de adicionar os avatares dele, clicando no símbolo de avatar no card dele',
+            description: 'O avatarGroupId foi verificado com sucesso!',
         });
     };
 
@@ -128,6 +139,24 @@ export default function ClientForm({ setModalOpen }: ClientFormProps) {
                                 <Input
                                     type="password"
                                     placeholder="Confirme sua senha"
+                                    {...field}
+                                />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+
+                <FormField
+                    control={form.control}
+                    name="avatarGroupId"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Avatar Group ID</FormLabel>
+                            <FormControl>
+                                <Input
+                                    type="text"
+                                    placeholder="ID do grupo de avatares no Heygen"
                                     {...field}
                                 />
                             </FormControl>

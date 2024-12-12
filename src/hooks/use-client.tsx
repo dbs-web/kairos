@@ -3,12 +3,10 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 const fetchUsers = async (filterBy?: string, filterValue?: string): Promise<IUser[]> => {
     let query = '';
-    if (filterBy && filterValue)
-        query = filterBy && filterValue ? `?filterBy=${filterBy}&filterValue=${filterValue}` : '';
+    if (filterBy && filterValue) query = `?filterBy=${filterBy}&filterValue=${filterValue}`;
 
     const res = await fetch(`/api/user${query}`);
     const data = await res.json();
-
     return data.data;
 };
 
@@ -24,9 +22,9 @@ const addUser = async (user: IUser) => {
     return data.data;
 };
 
-const updateUser = async (user: IUser) => {
+const updateUser = async (user: Partial<IUser>): Promise<IUser> => {
     const res = await fetch('/api/user', {
-        method: 'POST',
+        method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
         },

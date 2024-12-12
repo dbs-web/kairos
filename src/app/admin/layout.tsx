@@ -1,3 +1,5 @@
+import { redirect } from 'next/navigation';
+
 import { getServerSession } from 'next-auth';
 
 import Nav from '@/components/ui/Nav/nav';
@@ -21,7 +23,7 @@ export default async function RootLayout({
     const session = await getServerSession(authOptions);
 
     if (!session || session?.user?.role !== 'admin') {
-        return;
+        return redirect('/panel');
     }
 
     return (

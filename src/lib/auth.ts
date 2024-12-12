@@ -38,13 +38,13 @@ export const authOptions: NextAuthOptions = {
                         if (isMatch) {
                             return user;
                         } else {
-                            throw new Error('E-mail ou password estão incorretos!');
+                            throw new Error('E-mail e/ou password incorretos!');
                         }
                     } else {
-                        throw new Error('Usuário não encontrado');
+                        throw new Error('E-mail e/ou password incorretos!');
                     }
                 } catch (err) {
-                    throw new Error('Erro na autenticação');
+                    if (err instanceof Error) throw new Error(err.message);
                 }
             },
         }),

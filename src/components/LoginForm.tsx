@@ -21,9 +21,6 @@ export default function LoginForm() {
             password,
             callbackUrl: `/panel`,
         }).then((res) => {
-            if (res?.error) {
-                setError('Email e/ou senha incorretos');
-            }
             setLoading(false);
         });
     };
@@ -44,7 +41,7 @@ export default function LoginForm() {
             </a>
             {error && (
                 <small className="block w-full px-2 text-center text-[1rem] font-medium text-red-600">
-                    Ocorreu um erro. Verifique suas credenciais!
+                    {error}
                 </small>
             )}
             {loading ? (
