@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 const BriefingSchema = new mongoose.Schema({
     suggestion: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'suggestion',
+        ref: 'Suggestion',
         required: true,
     },
     title: {

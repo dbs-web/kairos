@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 import { User } from '@/models';
 import { dbConnect } from '@/lib/dbConnect';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth'; // Ajuste o caminho conforme seu projeto
+import { authOptions } from '@/lib/auth';
 
 interface Query {
     [key: string]: string;

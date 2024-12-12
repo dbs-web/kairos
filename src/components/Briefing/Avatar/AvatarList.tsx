@@ -30,14 +30,21 @@ export default function AvatarList() {
     }, []);
 
     return (
-        <Carousel className="w-48">
+        <Carousel className="">
             <CarouselContent className="">
-                {avatars?.length > 0 &&
+                {avatars?.length > 0 ? (
                     avatars.map((avatar) => (
                         <CarouselItem key={avatar.avatar_id}>
                             <Avatar avatar={avatar} />
                         </CarouselItem>
-                    ))}
+                    ))
+                ) : (
+                    <CarouselItem>
+                        <div className="h-[120px] w-32 animate-pulse place-self-center rounded-xl bg-neutral-400" />
+                        <div className="mt-4 h-4 w-32 animate-pulse place-self-center rounded-xl bg-neutral-300"></div>
+                        <div className="mt-4 h-3 w-40 animate-pulse place-self-center rounded-xl bg-neutral-300"></div>
+                    </CarouselItem>
+                )}
             </CarouselContent>
             <CarouselPrevious />
             <CarouselNext />

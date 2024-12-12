@@ -12,4 +12,5 @@ export interface IAvatar {
     avatar_id: string;
     avatar_name: string;
     preview_image_url: string;
+    preview_video_url: string;
 }
