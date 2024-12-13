@@ -65,6 +65,7 @@ export default function EditClientForm({ client, setModalOpen }: EditClientFormP
 
     return (
         <Form {...form}>
+            {/* @ts-expect-error this is correct, wtf */}
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                 <FormField
                     control={form.control}
