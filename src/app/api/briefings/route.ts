@@ -9,16 +9,18 @@ export async function GET(request: Request) {
     if (!session?.user) return NextResponse.json({ error: 'Not allowed', status: 401 });
 
     await dbConnect();
-    const briefings = await Briefing.find({ user: session.user.id }).populate('suggestion');
+    const briefings = await Briefing.find({
+        user: session.user.id,
+        status: {
+            $ne: 'arquivado',
+        },
+    }).populate('suggestion');
     return NextResponse.json({ data: briefings });
 }
 
 export async function POST(request: Request) {
-    const session = await getServerSession(authOptions);
-    if (!session?.user) return NextResponse.json({ error: 'Not allowed', status: 401 });
-
-    const { suggestion, title, text, date } = await request.json();
-    if (!suggestion || !title || !text || !date)
+    const { suggestion, title, text, date, user } = await request.json();
+    if (!suggestion || !title || !text || !date || !user)
         return NextResponse.json({ error: 'Dados incompletos.', status: 405 });
 
     await dbConnect();
@@ -27,7 +29,7 @@ export async function POST(request: Request) {
         title,
         text,
         date,
-        user: session.user.id,
+        user: user,
         status: 'em-analise',
     });
 
@@ -39,7 +41,7 @@ export async function PUT(request: Request) {
     const session = await getServerSession(authOptions);
     if (!session?.user) return NextResponse.json({ error: 'Not allowed', status: 401 });
 
-    const { id, text } = await request.json();
+    const { id, text, status } = await request.json();
     if (!id || !text) return NextResponse.json({ error: 'Dados incompletos.', status: 405 });
 
     await dbConnect();
@@ -48,6 +50,9 @@ export async function PUT(request: Request) {
         return NextResponse.json({ error: 'Acesso negado.', status: 405 });
 
     briefing.text = text;
+    if (status) {
+        briefing.status = status;
+    }
     await briefing.save();
     return NextResponse.json({ data: briefing });
 }

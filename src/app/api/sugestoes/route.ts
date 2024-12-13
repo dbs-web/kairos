@@ -1,13 +1,21 @@
+import { ISuggestion } from './../../../types/suggestion';
 import { NextResponse } from 'next/server';
 import { Suggestion } from '@/models';
 import { dbConnect } from '@/lib/dbConnect';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
+import { parseDateStringDate } from '@/lib/date';
+
 export async function POST(request: Request) {
     await dbConnect();
     try {
         const { data } = await request.json();
-        await Suggestion.insertMany(data);
+        data.map(async (suggestion: ISuggestion) => {
+            //@ts-expect-error
+            suggestion.date = parseDateStringDate(suggestion.date);
+
+            await Suggestion.create(suggestion);
+        });
     } catch (e) {
         return NextResponse.json({ status: 500, message: e });
     }
@@ -23,7 +31,7 @@ export async function GET(request: Request) {
         return NextResponse.json({ status: 401, message: 'Unauthorized' });
     }
 
-    const suggestions = await Suggestion.find({ user: session.user.id }).exec();
+    const suggestions = await Suggestion.find({ user: session.user.id });
 
     return NextResponse.json({ data: suggestions });
 }

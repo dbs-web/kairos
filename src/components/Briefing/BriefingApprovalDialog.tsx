@@ -10,49 +10,49 @@ import {
 } from '@/components/ui/dialog';
 import { IBriefing } from '@/types/briefing';
 import { useBriefing } from '@/hooks/use-briefing';
+import AvatarList from './Avatar/AvatarList';
 
 interface EditBriefingDialogProps {
     briefing: IBriefing;
     children: React.ReactNode;
 }
 
-export default function EditBriefingDialog({ children, briefing }: EditBriefingDialogProps) {
-    const [text, setText] = useState(briefing.text);
-    const [isSaving, setIsSaving] = useState(false);
-    const { updateBriefing } = useBriefing();
+export default function BriefingApprovalDialog({ children, briefing }: EditBriefingDialogProps) {
+    const { sendVideoToProduction } = useBriefing();
     const [open, setOpen] = useState<boolean>();
+    const { clearSelectedAvatar, selectedAvatar } = useBriefing();
 
     const handleSubmit = async () => {
         try {
-            await updateBriefing(briefing._id, text, briefing.status);
+            sendVideoToProduction(briefing._id);
             setOpen(false);
         } catch (e) {
             if (e instanceof Error) console.error(e.message);
         }
     };
 
+    const handleDialogClose = () => {
+        clearSelectedAvatar();
+        setOpen(!open);
+    };
+
     return (
-        <Dialog open={open} onOpenChange={() => setOpen(!open)}>
+        <Dialog open={open} onOpenChange={handleDialogClose}>
             <DialogTrigger>{children}</DialogTrigger>
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle>{briefing.title}</DialogTitle>
                     <DialogDescription>
-                        Aqui você pode editar o briefing para seu vídeo.
+                        Selecione seu avatar antes de criar o vídeo.
                     </DialogDescription>
                 </DialogHeader>
-                <textarea
-                    rows={15}
-                    value={text}
-                    onChange={(e) => setText(e.target.value)}
-                    className="rounded-lg border bg-transparent p-2"
-                />
+                <AvatarList />
                 <button
                     onClick={handleSubmit}
-                    className="mt-4 w-full rounded-lg bg-primary p-2 text-white"
-                    disabled={isSaving}
+                    className="mt-4 w-full rounded-lg bg-primary p-2 text-white disabled:bg-neutral-400"
+                    disabled={!selectedAvatar}
                 >
-                    {isSaving ? 'Salvando...' : 'Salvar'}
+                    {!selectedAvatar ? 'Selecione o avatar antes de criar o vídeo' : 'Criar vídeo'}
                 </button>
             </DialogContent>
         </Dialog>

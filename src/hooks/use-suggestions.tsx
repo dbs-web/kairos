@@ -1,13 +1,6 @@
 'use client';
 
-import React, {
-    createContext,
-    useContext,
-    useState,
-    useCallback,
-    SetStateAction,
-    Dispatch,
-} from 'react';
+import React, { createContext, useContext, useState, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { ISuggestion } from '@/types/suggestion';
 
@@ -46,11 +39,18 @@ export const SuggestionsProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
     const mutation = useMutation({
         mutationFn: async (selectedIds: string[]) => {
-            // sent
-            console.log(selectedIds);
+            const res = await fetch('/api/sugestoes/aprovar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ suggestions: selectedIds }),
+            });
         },
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['suggestions'] });
+        onSuccess: async () => {
+            setTimeout(async () => {
+                await queryClient.invalidateQueries({ queryKey: ['suggestions'] });
+            }, 1000);
         },
     });
 

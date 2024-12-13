@@ -1,6 +1,3 @@
-'use client';
-import { useState, useEffect } from 'react';
-
 import { IAvatar } from '@/types/briefing';
 import { Avatar } from './Avatar';
 
@@ -11,30 +8,21 @@ import {
     CarouselNext,
     CarouselPrevious,
 } from '@/components/ui/carousel';
+import { useBriefing } from '@/hooks/use-briefing';
 
 export default function AvatarList() {
-    const [avatars, setAvatars] = useState<IAvatar[]>([]);
-    const [error, setError] = useState<string>('');
-
-    const fetchAvatars = async () => {
-        const res = await fetch('/api/heygen/check-group');
-        const data = await res.json();
-        if (data?.data?.avatar_list) {
-            setAvatars(data.data.avatar_list);
-        } else {
-            setError('Ocorreu um erro ao encontrar seus avatares');
-        }
-    };
-    useEffect(() => {
-        fetchAvatars();
-    }, []);
-
+    const { avatars } = useBriefing();
     return (
-        <Carousel className="">
-            <CarouselContent className="">
+        <Carousel
+            className="mx-auto max-w-sm"
+            opts={{
+                align: 'start',
+            }}
+        >
+            <CarouselContent>
                 {avatars?.length > 0 ? (
                     avatars.map((avatar) => (
-                        <CarouselItem key={avatar.avatar_id}>
+                        <CarouselItem key={avatar.avatar_id} className="basis-1/2">
                             <Avatar avatar={avatar} />
                         </CarouselItem>
                     ))

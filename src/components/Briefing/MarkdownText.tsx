@@ -5,7 +5,7 @@ import remarkGfm from 'remark-gfm';
 
 export default function MarkdownText({ text }: { text: string }) {
     return (
-        <ScrollArea className="max-h-60 rounded-lg border-b border-t bg-muted/20 p-2 pr-4 shadow-sm">
+        <ScrollArea className="rounded-lg border-b border-t bg-muted/20 p-2 pr-4 shadow-sm">
             <ReactMarkdown remarkPlugins={[remarkGfm]} className={'prose text-xs'}>
                 {text}
             </ReactMarkdown>
