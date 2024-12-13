@@ -1,5 +1,7 @@
+import { authOptions } from '@/lib/auth';
 import { dbConnect } from '@/lib/dbConnect';
 import Video from '@/models/Video';
+import { getServerSession } from 'next-auth';
 import { NextResponse } from 'next/server';
 
 const HEYGEN_API_KEY = process.env.HEYGEN_API_KEY ?? '';
@@ -43,5 +45,24 @@ export async function POST(request: Request) {
     return NextResponse.json({
         message: 'Não foi possível encontrar o url do vídeo',
         status: 400,
+    });
+}
+
+export async function GET(request: Request) {
+    const session = await getServerSession(authOptions);
+
+    if (!session || !session.user) {
+        return NextResponse.json({ status: 401, message: 'Unauthorized' });
+    }
+
+    await dbConnect();
+
+    const userId = session.user.id;
+
+    const videos = await Video.find({ user: userId });
+
+    return NextResponse.json({
+        data: videos,
+        status: 200,
     });
 }

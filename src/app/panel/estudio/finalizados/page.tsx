@@ -1,3 +1,16 @@
+'use client';
+import { VideoGrid } from '@/components/Video/VideoGrid';
+import { VideoProvider } from '@/hooks/use-video';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+const queryClient = new QueryClient();
+
 export default function Finalizados() {
-    return <div className=""></div>;
+    return (
+        <QueryClientProvider client={queryClient}>
+            <VideoProvider>
+                <VideoGrid />
+            </VideoProvider>
+        </QueryClientProvider>
+    );
 }
