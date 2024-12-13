@@ -1,4 +1,3 @@
-import { IAvatar } from '@/types/briefing';
 import { Avatar } from './Avatar';
 
 import {

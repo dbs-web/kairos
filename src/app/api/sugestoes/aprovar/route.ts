@@ -24,10 +24,10 @@ export async function POST(request: Request) {
         suggestions.map(async (sid: string) => {
             const suggestion: ISuggestion | null = await Suggestion.findById(sid);
             if (suggestion) {
-                //@ts-expect-error
+                //@ts-expect-error This is a mongoose instance
                 const date = parseDateToISOString(new Date(suggestion.date));
 
-                let res = await fetch(CONTENT_CREATION_URL, {
+                const res = await fetch(CONTENT_CREATION_URL, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -49,7 +49,7 @@ export async function POST(request: Request) {
                 }
 
                 suggestion.status = 'em-producao';
-                //@ts-expect-error
+                //@ts-expect-error This is a mongoose instance
                 await suggestion.save();
             }
         });

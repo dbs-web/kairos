@@ -1,5 +1,5 @@
 // Types
-import { IAvatar, IBriefing } from '@/types/briefing';
+import { IBriefing } from '@/types/briefing';
 
 // Components
 import {

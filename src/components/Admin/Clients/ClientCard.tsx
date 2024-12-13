@@ -1,5 +1,5 @@
 import { IUser } from '@/types/user';
-import { FiEdit, FiUserPlus, FiTrash2 } from 'react-icons/fi';
+import { FiEdit, FiTrash2 } from 'react-icons/fi';
 import { useState } from 'react';
 import EditClientDialog from './EditClientDialog';
 import RemoveClientDialog from './RemoveClientDialog';
@@ -10,7 +10,6 @@ interface ClientCardProps {
 
 export default function ClientCard({ client }: ClientCardProps) {
     const [editOpen, setEditOpen] = useState(false);
-    const [avatarOpen, setAvatarOpen] = useState(false);
     const [removeOpen, setRemoveOpen] = useState(false);
 
     return (

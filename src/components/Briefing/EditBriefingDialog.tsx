@@ -23,8 +23,10 @@ export default function EditBriefingDialog({ children, briefing }: EditBriefingD
     const [open, setOpen] = useState<boolean>();
 
     const handleSubmit = async () => {
+        setIsSaving(true);
         try {
             await updateBriefing(briefing._id, text, briefing.status);
+            setIsSaving(false);
             setOpen(false);
         } catch (e) {
             if (e instanceof Error) console.error(e.message);

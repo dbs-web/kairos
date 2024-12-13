@@ -1,4 +1,4 @@
-import { ISuggestion } from './../../../types/suggestion';
+import { ISuggestion } from '@/types/suggestion';
 import { NextResponse } from 'next/server';
 import { Suggestion } from '@/models';
 import { dbConnect } from '@/lib/dbConnect';
@@ -11,7 +11,7 @@ export async function POST(request: Request) {
     try {
         const { data } = await request.json();
         data.map(async (suggestion: ISuggestion) => {
-            //@ts-expect-error
+            //@ts-expect-error This is a mongoose instance
             suggestion.date = parseDateStringDate(suggestion.date);
 
             await Suggestion.create(suggestion);
@@ -23,7 +23,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ message: 'Suggestion created successfully!' });
 }
 
-export async function GET(request: Request) {
+export async function GET() {
     await dbConnect();
     const session = await getServerSession(authOptions);
 
