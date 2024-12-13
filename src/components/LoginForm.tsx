@@ -4,7 +4,6 @@ import { signIn } from 'next-auth/react';
 import { ImSpinner8 } from 'react-icons/im';
 import { useSearchParams } from 'next/navigation';
 import Image from 'next/image';
-import { Link } from 'lucide-react';
 
 export default function LoginForm() {
     const [loading, setLoading] = useState(false);
@@ -21,7 +20,7 @@ export default function LoginForm() {
             email,
             password,
             callbackUrl: `/panel`,
-        }).then(() => {
+        }).then((res) => {
             setLoading(false);
         });
     };
@@ -31,15 +30,13 @@ export default function LoginForm() {
             onSubmit={formSubmit}
             className={`flex w-full max-w-[400px] flex-col items-center justify-center gap-y-8 rounded-md px-6 py-12 shadow-[0_0px_40px_-5px_rgba(0,0,0,0.3)]`}
         >
-            <Link href="/" className="flex w-full flex-col items-center justify-center">
-                <Image
-                    src="/kairos-logo-title.webp"
-                    alt="Logo Kairós"
-                    width={240}
-                    height={44}
-                    priority
-                />
-            </Link>
+            <Image
+                src="/kairos-logo-title.webp"
+                alt="Logo Kairós"
+                width={240}
+                height={44}
+                priority
+            />
             {error && (
                 <small className="block w-full px-2 text-center text-[1rem] font-medium text-red-600">
                     {error}

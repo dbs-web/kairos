@@ -1,3 +1,4 @@
+'use client';
 import { Suspense } from 'react';
 import SessionProvider from '@/app/AuthProvider';
 import LoginForm from '@/components/LoginForm';
