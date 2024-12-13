@@ -5,18 +5,14 @@ import { ISuggestion } from '@/types/suggestion';
 import { getServerSession } from 'next-auth';
 import { NextResponse } from 'next/server';
 
-const CONTENT_CREATION_URL = process.env.MAKE_CONTENT_CREATION_URL ?? '';
-
-if (!CONTENT_CREATION_URL) {
-    throw new Error('CONTENT_CREATION_URL was not provided on .env');
-}
-
 export async function POST(request: Request) {
     const session = await getServerSession(authOptions);
 
     if (!session || !session?.user) {
         return NextResponse.json({ status: 401, message: 'Unauthorized' });
     }
+
+    const CONTENT_CREATION_URL = process.env.MAKE_CONTENT_CREATION_URL ?? '';
 
     const { suggestions } = await request.json();
 

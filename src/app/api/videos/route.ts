@@ -4,14 +4,9 @@ import Video from '@/models/Video';
 import { getServerSession } from 'next-auth';
 import { NextResponse } from 'next/server';
 
-const HEYGEN_API_KEY = process.env.HEYGEN_API_KEY ?? '';
-
-if (!HEYGEN_API_KEY) {
-    throw new Error('You should provide HEYGEN_API_KEY on .env file');
-}
-
 export async function POST(request: Request) {
     await dbConnect();
+    const HEYGEN_API_KEY = process.env.HEYGEN_API_KEY ?? '';
     const { user, title, legenda, video_id } = await request.json();
 
     const apiUrl = `https://api.heygen.com/v1/video_status.get?video_id=${video_id}`;

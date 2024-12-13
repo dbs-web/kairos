@@ -4,11 +4,7 @@ declare global {
     var _mongoClientPromise: Promise<MongoClient> | undefined;
 }
 
-if (!process.env.MONGODB_URI) {
-    throw new Error('Please add your Mongo URI to .env.NEXT_PUBLIC_local');
-}
-
-const uri: string = process.env.MONGODB_URI;
+const uri: string = process.env.MONGODB_URI ?? '';
 let client: MongoClient;
 let clientPromise: Promise<MongoClient>;
 

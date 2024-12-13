@@ -3,11 +3,6 @@ import { dbConnect } from '@/lib/dbConnect';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { User } from '@/models';
-const HEYGEN_API_KEY = process.env.HEYGEN_API_KEY ?? '';
-
-if (!HEYGEN_API_KEY) {
-    throw new Error('Chave API do HeyGen não foi encontrada');
-}
 
 export async function GET(request: Request) {
     await dbConnect();
@@ -16,6 +11,8 @@ export async function GET(request: Request) {
     if (!session || !session.user) {
         return NextResponse.json({ status: 401, message: 'Unauthorized' });
     }
+
+    const HEYGEN_API_KEY = process.env.HEYGEN_API_KEY ?? '';
 
     const { searchParams } = new URL(request.url);
     const queryGroupId = searchParams.get('groupId');
