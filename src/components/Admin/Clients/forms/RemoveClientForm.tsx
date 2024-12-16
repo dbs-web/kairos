@@ -11,11 +11,12 @@ interface RemoveClientFormProps {
 
 export default function RemoveClientForm({ userId, setModalOpen }: RemoveClientFormProps) {
     const { deleteUser } = useClients();
+    const {toast} = useToast()
 
     const handleRemove = async () => {
         deleteUser(userId);
         setModalOpen(false);
-        toast('Cliente removido com sucesso!');
+        toast({title: 'Cliente removido com sucesso!'});
     };
 
     return (
