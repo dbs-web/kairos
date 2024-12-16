@@ -2,7 +2,6 @@
 import { IAvatar } from '@/types/briefing';
 import { default as NextImage } from 'next/image';
 import { useEffect, useState } from 'react';
-import AvatarPreviewDialog from './AvatarPreviewDialog';
 import { useBriefing } from '@/hooks/use-briefing';
 
 interface AvatarProps {
@@ -51,17 +50,12 @@ export function Avatar({ avatar }: AvatarProps) {
                 {loading ? (
                     <div className="h-30 w-30 animate-pulse bg-gray-200">CARREGANDO</div>
                 ) : (
-                    <AvatarPreviewDialog
-                        avatar_name={avatar.avatar_name}
-                        avatar_video_url={avatar.preview_video_url}
-                    >
-                        <NextImage
-                            src={avatar.preview_image_url}
-                            alt={avatar.avatar_name}
-                            layout="fill"
-                            objectFit="cover"
-                        />
-                    </AvatarPreviewDialog>
+                    <NextImage
+                        src={avatar.preview_image_url}
+                        alt={avatar.avatar_name}
+                        layout="fill"
+                        objectFit="cover"
+                    />
                 )}
             </div>
             <span>{avatar.avatar_name}</span>

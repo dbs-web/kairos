@@ -11,6 +11,7 @@ import {
 import { IBriefing } from '@/types/briefing';
 import { useBriefing } from '@/hooks/use-briefing';
 import AvatarList from './Avatar/AvatarList';
+import { useToast } from '@/hooks/use-toast';
 
 interface EditBriefingDialogProps {
     briefing: IBriefing;
@@ -21,10 +22,14 @@ export default function BriefingApprovalDialog({ children, briefing }: EditBrief
     const { sendVideoToProduction } = useBriefing();
     const [open, setOpen] = useState<boolean>();
     const { clearSelectedAvatar, selectedAvatar } = useBriefing();
-
+    const { toast } = useToast();
     const handleSubmit = async () => {
         try {
             sendVideoToProduction(briefing._id);
+            toast({
+                title: 'Seu vídeo foi enviado para a produção!',
+                description: "Em alguns instantes você receberá ele na aba 'Finalizados'",
+            });
             setOpen(false);
         } catch (e) {
             if (e instanceof Error) console.error(e.message);

@@ -1,6 +1,5 @@
 'use client';
 
-import { toast } from 'sonner';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 
@@ -17,7 +16,7 @@ import {
     FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-
+import { useToast } from '@/hooks/use-toast';
 interface ClientFormProps {
     setModalOpen: (isOpen: boolean) => void;
 }
@@ -44,7 +43,7 @@ const formSchema = z
 
 export default function ClientForm({ setModalOpen }: ClientFormProps) {
     const { addUser } = useClients();
-
+    const { toast } = useToast();
     const form = useForm({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -63,12 +62,14 @@ export default function ClientForm({ setModalOpen }: ClientFormProps) {
 
         const result = await res.json();
 
-        if (!res.ok || result.data.error) {
-            toast.error('avatarGroupId inválido. Não foi possível criar o usuário.');
+        if (!res.ok || result?.data?.error) {
+            toast({
+                title: 'Grupo de Avatar inválido.',
+                description: 'Não foi possível criar o usuário.',
+            });
             return;
         }
 
-        // Se válido, criar o usuário
         addUser({
             name: data.name,
             email: data.email,
@@ -79,7 +80,8 @@ export default function ClientForm({ setModalOpen }: ClientFormProps) {
 
         setModalOpen(false);
 
-        toast('Cliente criado com sucesso!', {
+        toast({
+            title: 'Cliente criado com sucesso!',
             description: 'O avatarGroupId foi verificado com sucesso!',
         });
     };

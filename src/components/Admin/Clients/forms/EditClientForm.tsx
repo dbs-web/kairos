@@ -1,6 +1,6 @@
 'use client';
 
-import { toast } from 'sonner';
+import { useToast } from '@/hooks/use-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
@@ -30,7 +30,7 @@ const formSchema = z.object({
 
 export default function EditClientForm({ client, setModalOpen }: EditClientFormProps) {
     const { updateUser } = useClients();
-
+    const { toast } = useToast();
     const form = useForm({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -48,7 +48,11 @@ export default function EditClientForm({ client, setModalOpen }: EditClientFormP
         const result = await res.json();
 
         if (!res.ok || result?.message) {
-            toast.error('O Avatar Group ID é inválido. Não foi possível atualizar o usuário.');
+            toast({
+                title: 'O Grupo de Avatar é inválido.',
+                description: 'Não foi possível atualizar o usuário.',
+            });
+
             return;
         }
 
@@ -60,7 +64,10 @@ export default function EditClientForm({ client, setModalOpen }: EditClientFormP
         });
 
         setModalOpen(false);
-        toast.success('Cliente atualizado com sucesso!');
+        toast({
+            title: 'Cliente atualizado!',
+            description: 'Os dados do seu cliente foram atualizados com sucesso.',
+        });
     };
 
     return (

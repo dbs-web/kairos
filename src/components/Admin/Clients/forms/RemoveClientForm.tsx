@@ -1,6 +1,6 @@
 'use client';
 
-import { toast } from 'sonner';
+import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { useClients } from '@/hooks/use-client';
 
