@@ -33,7 +33,7 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json({
-        message: 'Sugestões enviadas com sucesso.',
+        message: 'Briefings aprovado com sucesso!',
         status: 200,
     });
 }

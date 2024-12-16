@@ -27,7 +27,7 @@ export async function POST(request: Request) {
     const newBriefing = new Briefing({
         suggestion,
         title,
-        text,
+        text: text.replace(/\\n/g, '\n'),
         date,
         user: user,
         status: 'em-analise',
