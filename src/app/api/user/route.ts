@@ -1,77 +1,90 @@
 import bcrypt from 'bcryptjs';
 import { NextResponse } from 'next/server';
-import { User } from '@/models';
-import { dbConnect } from '@/lib/dbConnect';
+import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
-
-interface Query {
-    [key: string]: string;
-}
 
 export async function GET(request: Request) {
     const session = await getServerSession(authOptions);
 
-    if (!session || !session.user || session.user.role !== 'admin') {
+    if (!session || !session.user || session.user.role !== 'ADMIN') {
         return NextResponse.json({ status: 401, message: 'Unauthorized' });
     }
-    await dbConnect();
 
     const url = new URL(request.url);
     const filterBy = url.searchParams.get('filterBy');
     const filterValue = url.searchParams.get('filterValue');
 
-    const query: Query = {};
+    const where = filterBy && filterValue ? { [filterBy]: filterValue } : {};
 
-    if (filterBy && filterValue) {
-        query[filterBy] = filterValue;
-    }
-
-    const users = await User.find(query);
+    const users = await prisma.user.findMany({
+        where,
+    });
 
     return NextResponse.json({ data: users });
 }
 
 export async function POST(request: Request) {
-    await dbConnect();
     const session = await getServerSession(authOptions);
 
-    if (!session || !session.user || session.user.role !== 'admin') {
+    if (!session || !session.user || session.user.role !== 'ADMIN') {
         return NextResponse.json({ status: 401, message: 'Unauthorized' });
     }
 
-    const body = await request.json();
-    const passHash = await bcrypt.hash(body.password, 10);
-    body.password = passHash;
+    const { name, email, password, avatarGroupId } = await request.json();
+    const passHash = await bcrypt.hash(password, 10);
 
-    const newUser = await User.create(body);
+    const newUser = await prisma.user.create({
+        data: {
+            name: name,
+            email: email,
+            password: passHash,
+            role: 'USER',
+            avatarGroupId: avatarGroupId,
+        },
+    });
+
     return NextResponse.json({ data: newUser });
 }
 
 export async function PUT(request: Request) {
-    await dbConnect();
     const session = await getServerSession(authOptions);
 
-    if (!session || !session.user || session.user.role !== 'admin') {
+    if (!session || !session.user || session.user.role !== 'ADMIN') {
         return NextResponse.json({ status: 401, message: 'Unauthorized' });
     }
 
     const body = await request.json();
-    const updatedUser = await User.findByIdAndUpdate(body._id, body, { new: true });
+
+    const updatedUser = await prisma.user.update({
+        where: { id: Number(body.id) },
+        data: {
+            name: body.name,
+            email: body.email,
+            role: body.role,
+            avatarGroupId: body.avatarGroupId,
+            ...(body.password && {
+                password: await bcrypt.hash(body.password, 10),
+            }),
+        },
+    });
+
     return NextResponse.json({ data: updatedUser });
 }
 
 export async function DELETE(request: Request) {
-    await dbConnect();
     const session = await getServerSession(authOptions);
 
-    if (!session || !session.user || session.user.role !== 'admin') {
+    if (!session || !session.user || session.user.role !== 'ADMIN') {
         return NextResponse.json({ status: 401, message: 'Unauthorized' });
     }
 
     const body = await request.json();
-    const { _id } = body;
+    const { id } = body;
 
-    await User.findByIdAndDelete(_id);
+    await prisma.user.delete({
+        where: { id: Number(id) },
+    });
+
     return NextResponse.json({ message: 'User deleted successfully' });
 }

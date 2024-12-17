@@ -22,7 +22,7 @@ export default async function RootLayout({
 }>) {
     const session = await getServerSession(authOptions);
 
-    if (!session || session?.user?.role !== 'admin') {
+    if (!session || session?.user?.role !== 'ADMIN') {
         return redirect('/panel');
     }
 

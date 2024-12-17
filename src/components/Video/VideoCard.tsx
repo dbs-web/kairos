@@ -21,7 +21,7 @@ export default function VideoCard({ video }: VideoCardProps) {
     };
 
     return (
-        <div key={video._id} className="mx-8 flex gap-x-12 rounded-xl bg-white p-6 shadow-md">
+        <div key={video.id} className="mx-8 flex gap-x-12 rounded-xl bg-white p-6 shadow-md">
             <div className="flex min-w-56 flex-col gap-y-4">
                 <video controls className="rounded-xl">
                     <source src={video.url} type="video/mp4" />

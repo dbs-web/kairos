@@ -25,7 +25,7 @@ export default function BriefingApprovalDialog({ children, briefing }: EditBrief
     const { toast } = useToast();
     const handleSubmit = async () => {
         try {
-            sendVideoToProduction(briefing._id);
+            sendVideoToProduction(briefing.id);
             toast({
                 title: 'Seu vídeo foi enviado para a produção!',
                 description: "Em alguns instantes você receberá ele na aba 'Finalizados'",

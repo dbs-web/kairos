@@ -1,11 +1,9 @@
 import { NextResponse } from 'next/server';
-import { dbConnect } from '@/lib/dbConnect';
+import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
-import { User } from '@/models';
 
 export async function GET(request: Request) {
-    await dbConnect();
     const session = await getServerSession(authOptions);
 
     if (!session || !session.user) {
@@ -19,10 +17,12 @@ export async function GET(request: Request) {
 
     let groupIdToFetch: string | null = null;
 
-    if (session.user.role === 'admin' && queryGroupId) {
+    if (session.user.role === 'ADMIN' && queryGroupId) {
         groupIdToFetch = queryGroupId;
     } else {
-        const user = await User.findById(session.user.id);
+        const user = await prisma.user.findUnique({
+            where: { id: session.user.id },
+        });
         if (!user) {
             return NextResponse.json({ status: 404, message: 'User not found' });
         }
@@ -43,6 +43,7 @@ export async function GET(request: Request) {
             },
         },
     );
+
     if (!heygenRes.ok) {
         return NextResponse.json({ status: 404, message: 'Avatars not found' });
     }

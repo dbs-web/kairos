@@ -10,7 +10,7 @@ export default function BriefingGrid() {
             <div className="flex gap-x-4">
                 {briefings?.length > 0 &&
                     briefings.map((briefing) => (
-                        <BriefingCard briefing={briefing} key={briefing._id} />
+                        <BriefingCard briefing={briefing} key={briefing.id} />
                     ))}
             </div>
             <ScrollBar orientation="horizontal" />

@@ -5,34 +5,34 @@ import { ISuggestion } from '@/types/suggestion';
 interface SuggestionCardProps {
     suggestion: ISuggestion;
     isSelected: boolean;
-    onSelect: (id: string) => void;
+    onSelect: (id: number) => void;
 }
 
 const statusEnum = {
-    'em-analise': 'Em análise',
-    'em-producao': 'Em produção',
-    aprovado: 'Aprovado',
-    arquivado: 'Arquivado',
+    EM_ANALISE: 'Em análise',
+    EM_PRODUCAO: 'Em produção',
+    APROVADO: 'Aprovado',
+    ARQUIVADO: 'Arquivado',
 };
 
 export default function SuggestionCard({ suggestion, isSelected, onSelect }: SuggestionCardProps) {
     const badgeColor = {
-        aprovado: '#00aa00f0',
-        arquivado: '#aa0000f0',
-        'em-analise': '#e5e5e5',
-        'em-producao': '#0085a3f0',
+        APROVADO: '#00aa00f0',
+        ARQUIVADO: '#aa0000f0',
+        EM_ANALISE: '#e5e5e5',
+        EM_PRODUCAO: '#0085a3f0',
     };
 
     const handleSelect = () => {
-        if (suggestion.status === 'em-analise') {
-            onSelect(suggestion._id);
+        if (suggestion.status === 'EM_ANALISE') {
+            onSelect(suggestion.id);
         }
     };
 
     return (
         <div
             className={`relative cursor-pointer rounded-lg border bg-white p-5 transition-all duration-300 ${
-                suggestion.status === 'em-analise'
+                suggestion.status === 'EM_ANALISE'
                     ? isSelected
                         ? 'border border-primary/50 shadow-md shadow-primary/70'
                         : 'hover:-translate-y-1 hover:shadow-sm'
@@ -57,7 +57,7 @@ export default function SuggestionCard({ suggestion, isSelected, onSelect }: Sug
                         className="rounded p-2 text-xs font-medium"
                         style={{
                             backgroundColor: badgeColor[suggestion.status],
-                            color: suggestion.status === 'em-analise' ? '#939393' : '#fff',
+                            color: suggestion.status === 'EM_ANALISE' ? '#939393' : '#fff',
                         }}
                     >
                         {statusEnum[suggestion.status]}

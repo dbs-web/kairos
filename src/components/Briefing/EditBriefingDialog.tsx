@@ -25,7 +25,7 @@ export default function EditBriefingDialog({ children, briefing }: EditBriefingD
     const handleSubmit = async () => {
         setIsSaving(true);
         try {
-            await updateBriefing(briefing._id, text, briefing.status);
+            await updateBriefing(briefing.id, text, briefing.status);
             setIsSaving(false);
             setOpen(false);
         } catch (e) {

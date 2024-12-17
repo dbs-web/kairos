@@ -1,11 +1,15 @@
 import { authOptions } from '@/lib/auth';
-import { dbConnect } from '@/lib/dbConnect';
-import Video from '@/models/Video';
+import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 import { NextResponse } from 'next/server';
 
 export async function POST(request: Request) {
-    await dbConnect();
+    const session = await getServerSession(authOptions);
+
+    if (!session || !session.user) {
+        return NextResponse.json({ status: 401, message: 'Unauthorized' });
+    }
+
     const HEYGEN_API_KEY = process.env.HEYGEN_API_KEY ?? '';
     const { user, title, legenda, video_id } = await request.json();
 
@@ -30,7 +34,14 @@ export async function POST(request: Request) {
     const url = data?.video_url;
 
     if (url) {
-        await Video.create({ user, title, legenda, url });
+        await prisma.video.create({
+            data: {
+                userId: user,
+                title,
+                legenda,
+                url,
+            },
+        });
         return NextResponse.json({
             message: 'Vídeo recebido e adicionado com sucesso',
             status: 200,
@@ -50,11 +61,13 @@ export async function GET() {
         return NextResponse.json({ status: 401, message: 'Unauthorized' });
     }
 
-    await dbConnect();
-
     const userId = session.user.id;
 
-    const videos = await Video.find({ user: userId });
+    const videos = await prisma.video.findMany({
+        where: {
+            userId,
+        },
+    });
 
     return NextResponse.json({
         data: videos,

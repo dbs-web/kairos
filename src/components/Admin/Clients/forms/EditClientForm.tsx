@@ -1,5 +1,5 @@
 'use client';
-
+import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -30,6 +30,8 @@ const formSchema = z.object({
 
 export default function EditClientForm({ client, setModalOpen }: EditClientFormProps) {
     const { updateUser } = useClients();
+    const [isVerifying, setIsVerifying] = useState<boolean>(false);
+
     const { toast } = useToast();
     const form = useForm({
         resolver: zodResolver(formSchema),
@@ -41,12 +43,13 @@ export default function EditClientForm({ client, setModalOpen }: EditClientFormP
     });
 
     const onSubmit = async (data: z.infer<typeof formSchema>) => {
+        setIsVerifying(true);
         const res = await fetch(`/api/heygen/check-group?groupId=${data.avatarGroupId}`, {
             method: 'GET',
         });
 
         const result = await res.json();
-
+        setIsVerifying(false);
         if (!res.ok || result?.message) {
             toast({
                 title: 'O Grupo de Avatar é inválido.',
@@ -57,7 +60,7 @@ export default function EditClientForm({ client, setModalOpen }: EditClientFormP
         }
 
         await updateUser({
-            _id: client._id,
+            id: client.id,
             name: data.name,
             email: data.email,
             avatarGroupId: data.avatarGroupId,
@@ -120,8 +123,8 @@ export default function EditClientForm({ client, setModalOpen }: EditClientFormP
                     )}
                 />
 
-                <Button type="submit" className="w-full">
-                    Atualizar Cliente
+                <Button type="submit" className="w-full" disabled={isVerifying}>
+                    {isVerifying ? 'Verificando Id de Grupo de Avatar' : 'Atualizar Cliente'}
                 </Button>
             </form>
         </Form>

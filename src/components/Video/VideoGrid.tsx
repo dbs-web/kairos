@@ -9,7 +9,7 @@ export function VideoGrid({}) {
             <div className="flex flex-wrap gap-y-8 p-8 !pt-0">
                 {videos?.length > 0 &&
                     videos.map((video) => (
-                        <div key={video._id} className="basis-1/2">
+                        <div key={video.id} className="basis-1/2">
                             <VideoCard video={video} />
                         </div>
                     ))}

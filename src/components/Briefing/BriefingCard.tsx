@@ -27,7 +27,7 @@ interface BriefingCardProps {
 export default function BriefingCard({ briefing }: BriefingCardProps) {
     const { deleteBriefing } = useBriefing();
     const handleArchive = () => {
-        deleteBriefing(briefing._id);
+        deleteBriefing(briefing.id);
     };
     return (
         <div className="max-w-[500px] items-center space-y-4 rounded-xl bg-white p-4 pt-6">

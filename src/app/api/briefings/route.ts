@@ -1,75 +1,108 @@
 import { getServerSession } from 'next-auth';
-import Briefing from '@/models/Briefing';
-import { dbConnect } from '@/lib/dbConnect';
+import { prisma } from '@/lib/prisma';
 import { authOptions } from '@/lib/auth';
 import { NextResponse } from 'next/server';
+import { parseDateStringDate } from '@/lib/date';
 
 export async function GET() {
     const session = await getServerSession(authOptions);
-    if (!session?.user) return NextResponse.json({ error: 'Not allowed', status: 401 });
+    if (!session?.user) {
+        return NextResponse.json({ error: 'Not allowed', status: 401 });
+    }
 
-    await dbConnect();
-    const briefings = await Briefing.find({
-        user: session.user.id,
-        status: {
-            $ne: 'arquivado',
+    const briefings = await prisma.briefing.findMany({
+        where: {
+            userId: Number(session.user.id),
+            status: {
+                not: 'ARQUIVADO',
+            },
         },
-    }).populate('suggestion');
+        include: {
+            suggestion: true,
+        },
+    });
+
     return NextResponse.json({ data: briefings });
 }
 
 export async function POST(request: Request) {
-    const { suggestion, title, text, date, user } = await request.json();
-    if (!suggestion || !title || !text || !date || !user)
-        return NextResponse.json({ error: 'Dados incompletos.', status: 405 });
+    const { suggestionId, title, text, date, userId } = await request.json();
 
-    await dbConnect();
-    const newBriefing = new Briefing({
-        suggestion,
-        title,
-        text: text.replace(/\\n/g, '\n'),
-        date,
-        user: user,
-        status: 'em-analise',
+    if (!suggestionId || !title || !text || !date || !userId) {
+        return NextResponse.json({ error: 'Dados incompletos.', status: 405 });
+    }
+
+    const newBriefing = await prisma.briefing.create({
+        data: {
+            suggestion: {
+                connect: { id: suggestionId },
+            },
+            user: {
+                connect: { id: userId },
+            },
+            title,
+            text: text.replace(/\\n/g, '\n'),
+            date: parseDateStringDate(date),
+            status: 'EM_ANALISE',
+        },
     });
 
-    await newBriefing.save();
     return NextResponse.json({ data: newBriefing });
 }
 
 export async function PUT(request: Request) {
     const session = await getServerSession(authOptions);
-    if (!session?.user) return NextResponse.json({ error: 'Not allowed', status: 401 });
+    if (!session?.user) {
+        return NextResponse.json({ error: 'Not allowed', status: 401 });
+    }
 
     const { id, text, status } = await request.json();
-    if (!id || !text) return NextResponse.json({ error: 'Dados incompletos.', status: 405 });
-
-    await dbConnect();
-    const briefing = await Briefing.findById(id);
-    if (!briefing || briefing.user.toString() !== session.user.id)
-        return NextResponse.json({ error: 'Acesso negado.', status: 405 });
-
-    briefing.text = text;
-    if (status) {
-        briefing.status = status;
+    if (!id || !text) {
+        return NextResponse.json({ error: 'Dados incompletos.', status: 405 });
     }
-    await briefing.save();
-    return NextResponse.json({ data: briefing });
+
+    const briefing = await prisma.briefing.findUnique({
+        where: { id },
+    });
+
+    if (!briefing || briefing.userId !== session.user.id) {
+        return NextResponse.json({ error: 'Acesso negado.', status: 405 });
+    }
+
+    const updatedBriefing = await prisma.briefing.update({
+        where: { id },
+        data: {
+            text,
+            ...(status ? { status } : {}),
+        },
+    });
+
+    return NextResponse.json({ data: updatedBriefing });
 }
 
 export async function DELETE(request: Request) {
     const session = await getServerSession(authOptions);
-    if (!session?.user) return NextResponse.json({ error: 'Not allowed', status: 401 });
+    if (!session?.user) {
+        return NextResponse.json({ error: 'Not allowed', status: 401 });
+    }
 
     const { id } = await request.json();
-    if (!id) return NextResponse.json({ error: 'Dados incompletos.', status: 405 });
+    if (!id) {
+        return NextResponse.json({ error: 'Dados incompletos.', status: 405 });
+    }
 
-    await dbConnect();
-    const briefing = await Briefing.findById(id);
-    if (!briefing || briefing.user.toString() !== session.user.id)
+    const briefing = await prisma.briefing.findUnique({
+        where: { id },
+    });
+
+    if (!briefing || briefing.userId !== session.user.id) {
         return NextResponse.json({ error: 'Acesso negado.', status: 405 });
+    }
 
-    briefing.status = 'arquivado';
-    await briefing.save();
+    await prisma.briefing.update({
+        where: { id },
+        data: { status: 'ARQUIVADO' },
+    });
+
     return NextResponse.json({ message: 'Briefing arquivado com sucesso.' });
 }

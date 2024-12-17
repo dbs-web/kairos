@@ -1,0 +1,89 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "./generated/client"
+}
+
+datasource db {
+  provider          = "mysql"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+}
+
+model User {
+  id            Int          @id @default(autoincrement())
+  name          String
+  email         String       @unique
+  password      String
+  role          Role         @default(USER)
+  avatarGroupId String
+  briefings     Briefing[]
+  news          News[]
+  suggestions   Suggestion[]
+  videos        Video[]
+}
+
+model Suggestion {
+  id        Int        @id @default(autoincrement())
+  title     String
+  date      DateTime   @default(now())
+  briefing  String
+  userId    Int
+  status    Status     @default(EM_ANALISE)
+  briefings Briefing[]
+  user      User       @relation(fields: [userId], references: [id])
+
+  @@index([userId], map: "Suggestion_userId_fkey")
+}
+
+model Briefing {
+  id           Int        @id @default(autoincrement())
+  suggestionId Int
+  title        String
+  text         String
+  date         DateTime
+  status       Status
+  userId       Int
+  suggestion   Suggestion @relation(fields: [suggestionId], references: [id])
+  user         User       @relation(fields: [userId], references: [id])
+
+  @@index([suggestionId], map: "Briefing_suggestionId_fkey")
+  @@index([userId], map: "Briefing_userId_fkey")
+}
+
+model News {
+  id        Int    @id @default(autoincrement())
+  title     String
+  summary   String
+  userId    Int
+  url       String
+  thumbnail String
+  status    Status
+  text      String
+  date      String
+  user      User   @relation(fields: [userId], references: [id])
+
+  @@index([userId], map: "News_userId_fkey")
+}
+
+model Video {
+  id      Int     @id @default(autoincrement())
+  userId  Int
+  title   String
+  legenda String
+  url     String?
+  user    User    @relation(fields: [userId], references: [id])
+
+  @@index([userId], map: "Video_userId_fkey")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum Status {
+  EM_ANALISE
+  EM_PRODUCAO
+  APROVADO
+  ARQUIVADO
+}

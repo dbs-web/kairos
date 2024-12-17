@@ -56,22 +56,22 @@ export const useClients = (filterBy?: string, filterValue?: string) => {
 
     const addMutation = useMutation({
         mutationFn: addUser,
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['users'] });
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({ queryKey: ['users'] });
         },
     });
 
     const updateMutation = useMutation({
         mutationFn: updateUser,
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['users'] });
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({ queryKey: ['users'] });
         },
     });
 
     const deleteMutation = useMutation({
         mutationFn: deleteUser,
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['users'] });
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({ queryKey: ['users'] });
         },
     });
 

@@ -1,8 +1,8 @@
 export interface ISuggestion {
-    _id: string;
+    id: number;
     title: string;
     date: string;
     briefing: string;
-    user: string;
-    status: 'em-analise' | 'em-producao' | 'aprovado' | 'arquivado';
+    userId: number;
+    status: 'EM_ANALISE' | 'EM_PRODUCAO' | 'APROVADO' | 'ARQUIVADO';
 }

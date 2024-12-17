@@ -10,19 +10,19 @@ import { useToast } from '@/hooks/use-toast';
 const statuses = [
     {
         label: 'Em Análise',
-        value: 'em-analise',
+        value: 'EM_ANALISE',
     },
     {
         label: 'Em produção',
-        value: 'em-producao',
+        value: 'EM_PRODUCAO',
     },
     {
         label: 'Aprovado',
-        value: 'aprovado',
+        value: 'APROVADO',
     },
     {
         label: 'Arquivado',
-        value: 'arquivado',
+        value: 'ARQUIVADO',
     },
 ];
 
@@ -51,9 +51,9 @@ export default function SuggestionsGrid() {
             <div className="grid grid-cols-4 gap-4">
                 {filteredData.map((suggestion: ISuggestion) => (
                     <SuggestionCard
-                        key={suggestion._id}
+                        key={suggestion.id}
                         suggestion={suggestion}
-                        isSelected={selectedSuggestions.includes(suggestion._id)}
+                        isSelected={selectedSuggestions.includes(suggestion.id)}
                         onSelect={toggleSelectSuggestion}
                     />
                 ))}

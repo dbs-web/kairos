@@ -9,14 +9,14 @@ interface RemoveClientDialogProps {
 }
 
 export default function RemoveClientDialog({ client, open, setOpen }: RemoveClientDialogProps) {
-    if (!client._id) return;
+    if (!client.id) return;
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle>Remover Cliente</DialogTitle>
                 </DialogHeader>
-                <RemoveClientForm userId={client._id} setModalOpen={setOpen} />
+                <RemoveClientForm userId={client.id} setModalOpen={setOpen} />
             </DialogContent>
         </Dialog>
     );

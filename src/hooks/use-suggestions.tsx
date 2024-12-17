@@ -6,9 +6,9 @@ import { ISuggestion } from '@/types/suggestion';
 
 interface SuggestionsContextProps {
     suggestions: ISuggestion[];
-    selectedSuggestions: string[];
+    selectedSuggestions: number[];
     isLoading: boolean;
-    toggleSelectSuggestion: (id: string) => void;
+    toggleSelectSuggestion: (id: number) => void;
     sendToProduction: () => Promise<void>;
 }
 
@@ -17,7 +17,7 @@ const SuggestionsContext = createContext<SuggestionsContextProps | undefined>(un
 export const SuggestionsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const queryClient = useQueryClient();
 
-    const [selectedSuggestions, setSelectedSuggestions] = useState<string[]>([]);
+    const [selectedSuggestions, setSelectedSuggestions] = useState<number[]>([]);
 
     const { data: suggestions = [], isLoading } = useQuery<ISuggestion[]>({
         queryKey: ['suggestions'],
@@ -31,14 +31,14 @@ export const SuggestionsProvider: React.FC<{ children: React.ReactNode }> = ({ c
         },
     });
 
-    const toggleSelectSuggestion = useCallback((id: string) => {
+    const toggleSelectSuggestion = useCallback((id: number) => {
         setSelectedSuggestions((prev) =>
             prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id],
         );
     }, []);
 
     const mutation = useMutation({
-        mutationFn: async (selectedIds: string[]) => {
+        mutationFn: async (selectedIds: number[]) => {
             const res = await fetch('/api/sugestoes/aprovar', {
                 method: 'POST',
                 headers: {
@@ -48,9 +48,7 @@ export const SuggestionsProvider: React.FC<{ children: React.ReactNode }> = ({ c
             });
         },
         onSuccess: async () => {
-            setTimeout(async () => {
-                await queryClient.invalidateQueries({ queryKey: ['suggestions'] });
-            }, 1000);
+            await queryClient.invalidateQueries({ queryKey: ['suggestions'] });
         },
     });
 
