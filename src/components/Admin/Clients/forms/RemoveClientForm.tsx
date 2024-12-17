@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { useClients } from '@/hooks/use-client';
 
 interface RemoveClientFormProps {
-    userId: string;
+    userId: number;
     setModalOpen: (isOpen: boolean) => void;
 }
 

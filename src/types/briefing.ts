@@ -1,5 +1,5 @@
 export interface IBriefing {
-    _id: string;
+    id: number;
     suggestion: string;
     title: string;
     date: Date;

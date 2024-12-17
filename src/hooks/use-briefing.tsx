@@ -13,11 +13,11 @@ interface BriefingContextProps {
     isLoading: boolean;
     error: string;
     refetch: () => void;
-    updateBriefing: (id: string, updatedText: string, status: string) => Promise<void>;
-    deleteBriefing: (id: string) => Promise<void>;
+    updateBriefing: (id: number, updatedText: string, status: string) => Promise<void>;
+    deleteBriefing: (id: number) => Promise<void>;
     selectAvatar: (avatar_id: string, widht: number, height: number) => void;
     clearSelectedAvatar: () => void;
-    sendVideoToProduction: (briefing: string) => void;
+    sendVideoToProduction: (briefing: number) => void;
 }
 
 const BriefingContext = createContext<BriefingContextProps | undefined>(undefined);
@@ -87,7 +87,7 @@ export const BriefingProvider = ({ children }: { children: React.ReactNode }) =>
             updatedText,
             status,
         }: {
-            id: string;
+            id: number;
             updatedText: string;
             status: string;
         }) => {
@@ -107,11 +107,11 @@ export const BriefingProvider = ({ children }: { children: React.ReactNode }) =>
         },
     });
 
-    const updateBriefing = async (id: string, updatedText: string, status: string) => {
+    const updateBriefing = async (id: number, updatedText: string, status: string) => {
         await updateMutation.mutateAsync({ id, updatedText, status });
     };
 
-    const sendVideoToProduction = async (briefing: string) => {
+    const sendVideoToProduction = async (briefing: number) => {
         if (!selectedAvatar) {
             setError('Nenhum avatar selecionado');
             return;
@@ -142,7 +142,7 @@ export const BriefingProvider = ({ children }: { children: React.ReactNode }) =>
     };
 
     const deleteMutation = useMutation({
-        mutationFn: async (id: string) => {
+        mutationFn: async (id: number) => {
             const response = await fetch('/api/briefings', {
                 method: 'DELETE',
                 headers: {
@@ -159,7 +159,7 @@ export const BriefingProvider = ({ children }: { children: React.ReactNode }) =>
         },
     });
 
-    const deleteBriefing = async (id: string) => {
+    const deleteBriefing = async (id: number) => {
         await deleteMutation.mutateAsync(id);
     };
 

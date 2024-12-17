@@ -34,7 +34,7 @@ const updateUser = async (user: Partial<IUser>): Promise<IUser> => {
     return data.data;
 };
 
-const deleteUser = async (id: string) => {
+const deleteUser = async (id: number) => {
     const res = await fetch(`/api/user`, {
         method: 'DELETE',
         headers: {
