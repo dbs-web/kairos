@@ -31,7 +31,7 @@ export async function POST(request: Request) {
         return NextResponse.json({ status: 401, message: 'Unauthorized' });
     }
 
-    const { name, email, password, avatarGroupId } = await request.json();
+    const { name, email, password, avatarGroupId, voiceId, difyAgent } = await request.json();
     const passHash = await bcrypt.hash(password, 10);
 
     const newUser = await prisma.user.create({
@@ -41,6 +41,8 @@ export async function POST(request: Request) {
             password: passHash,
             role: 'USER',
             avatarGroupId: avatarGroupId,
+            voiceId: voiceId,
+            difyAgent: difyAgent,
         },
     });
 
@@ -63,6 +65,8 @@ export async function PUT(request: Request) {
             email: body.email,
             role: body.role,
             avatarGroupId: body.avatarGroupId,
+            voiceId: body.voiceId,
+            difyAgent: body.difyAgent,
             ...(body.password && {
                 password: await bcrypt.hash(body.password, 10),
             }),

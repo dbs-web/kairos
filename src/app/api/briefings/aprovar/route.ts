@@ -7,10 +7,12 @@ export async function POST(request: Request) {
     const session = await getServerSession(authOptions);
 
     if (!session || !session?.user?.id) {
-        return NextResponse.json({ status: 401, message: 'Unauthorized' });
+        return NextResponse.json({ status: 401, message: 'Unauthorized' }, { status: 401 });
     }
 
-    const MAKE_VIDEO_CREATION_URL = process.env.MAKE_VIDEO_CREATION_URL ?? '';
+    const HEYGEN_API_URL = process.env.HEYGEN_API_URL ?? '';
+    const CALLBACK_URL = process.env.HEYGEN_CALLBACK_URL ?? '';
+
     const { avatar, width, height, briefing } = await request.json();
 
     const brief = await prisma.briefing.findUnique({
@@ -21,37 +23,91 @@ export async function POST(request: Request) {
     });
 
     if (!brief) {
-        return NextResponse.json({ status: 404, message: 'Briefing não encontrado' });
+        return NextResponse.json(
+            { status: 404, message: 'Briefing não encontrado' },
+            { status: 404 },
+        );
     }
 
-    const res = await fetch(MAKE_VIDEO_CREATION_URL, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            user: session.user.id,
-            avatar_id: avatar,
-            width,
-            height,
-            text: brief.text.replace(/(\r\n|\n|\r)/gm, ''),
-            title: brief.title,
-        }),
-    });
+    const userVoiceId = brief.user.voiceId;
 
-    if (res.ok) {
-        await prisma.briefing.update({
-            where: { id: briefing },
-            data: {
-                status: 'EM_PRODUCAO',
+    if (!userVoiceId) {
+        return NextResponse.json(
+            { status: 400, message: 'Usuário não possui voice_id cadastrado' },
+            { status: 400 },
+        );
+    }
+
+    const payload = {
+        avatar_id: avatar,
+        text: brief.text,
+        voice_id: userVoiceId,
+        callback_url: CALLBACK_URL,
+        width,
+        height,
+    };
+    try {
+        const res = await fetch(HEYGEN_API_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
             },
+            body: JSON.stringify(payload),
         });
-    } else {
-        return NextResponse.json({ status: 500, message: 'Erro ao criar o vídeo' });
-    }
 
-    return NextResponse.json({
-        message: 'Briefing aprovado com sucesso!',
-        status: 200,
-    });
+        if (res.ok) {
+            const responseData = await res.json();
+            const heygenVideoId = responseData.data.video_id;
+
+            if (!heygenVideoId) {
+                return NextResponse.json(
+                    { status: 500, message: 'Resposta inválida da API do HeyGen' },
+                    { status: 500 },
+                );
+            }
+
+            await prisma.video.create({
+                data: {
+                    userId: session.user.id,
+                    title: brief.title,
+                    legenda: '',
+                    heygenVideoId: heygenVideoId,
+                    heygenStatus: 'PROCESSING',
+                },
+            });
+
+            await prisma.briefing.update({
+                where: { id: briefing },
+                data: {
+                    status: 'EM_PRODUCAO',
+                },
+            });
+        } else {
+            let errorMessage = 'Erro ao criar o vídeo';
+            try {
+                const errorData = await res.json();
+                if (errorData.message) {
+                    errorMessage = errorData.message;
+                }
+            } catch (e) {
+                // Ignore parse cases
+            }
+
+            return NextResponse.json({ status: 500, message: errorMessage }, { status: 500 });
+        }
+
+        return NextResponse.json(
+            {
+                message: 'Briefing aprovado e vídeo em produção com sucesso!',
+                status: 200,
+            },
+            { status: 200 },
+        );
+    } catch (error) {
+        console.error('Erro ao criar o vídeo:', error);
+        return NextResponse.json(
+            { status: 500, message: 'Erro interno ao criar o vídeo' },
+            { status: 500 },
+        );
+    }
 }

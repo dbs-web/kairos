@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
+
 interface ClientFormProps {
     setModalOpen: (isOpen: boolean) => void;
 }
@@ -30,6 +31,10 @@ const formSchema = z
             .string()
             .min(6, { message: 'A confirmação de senha deve ter pelo menos 6 caracteres.' }),
         avatarGroupId: z.string().min(1, { message: 'O avatarGroupId é obrigatório.' }),
+        voiceId: z
+            .string()
+            .min(1, { message: 'Sem o VoiceID não conseguiremos criar os vídeos para o cliente' }),
+        difyAgent: z.string().min(1, { message: 'O Token de Agente do DIFY é obrigatório' }),
     })
     .superRefine(({ passwordConfirmation, password }, ctx) => {
         if (passwordConfirmation !== password) {
@@ -52,6 +57,8 @@ export default function ClientForm({ setModalOpen }: ClientFormProps) {
             password: '',
             passwordConfirmation: '',
             avatarGroupId: '',
+            voiceId: '',
+            difyAgent: '',
         },
     });
 
@@ -74,8 +81,9 @@ export default function ClientForm({ setModalOpen }: ClientFormProps) {
             name: data.name,
             email: data.email,
             password: data.password,
-            role: 'user',
+            role: 'USER',
             avatarGroupId: data.avatarGroupId,
+            voiceId: data.voiceId,
         });
 
         setModalOpen(false);
@@ -159,6 +167,42 @@ export default function ClientForm({ setModalOpen }: ClientFormProps) {
                                 <Input
                                     type="text"
                                     placeholder="ID do grupo de avatares no Heygen"
+                                    {...field}
+                                />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+
+                <FormField
+                    control={form.control}
+                    name="voiceId"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>VoiceID</FormLabel>
+                            <FormControl>
+                                <Input
+                                    type="text"
+                                    placeholder="Voice ID para o HeyGen"
+                                    {...field}
+                                />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+
+                <FormField
+                    control={form.control}
+                    name="difyAgent"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Voice ID</FormLabel>
+                            <FormControl>
+                                <Input
+                                    type="text"
+                                    placeholder="Token API do Agente da DIFY"
                                     {...field}
                                 />
                             </FormControl>

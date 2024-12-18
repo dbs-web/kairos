@@ -15,6 +15,8 @@ model User {
   password      String
   role          Role         @default(USER)
   avatarGroupId String
+  voiceId      String?
+  difyAgent   String? 
   briefings     Briefing[]
   news          News[]
   suggestions   Suggestion[]
@@ -65,12 +67,15 @@ model News {
 }
 
 model Video {
-  id      Int     @id @default(autoincrement())
-  userId  Int
-  title   String
-  legenda String
-  url     String?
-  user    User    @relation(fields: [userId], references: [id])
+  id             Int          @id @default(autoincrement())
+  userId         Int
+  title          String
+  legenda        String
+  url            String?
+  heygenVideoId  String?      @unique
+  heygenStatus   HeyGenStatus @default(PROCESSING)
+  heygenErrorMsg String?
+  user           User         @relation(fields: [userId], references: [id])
 
   @@index([userId], map: "Video_userId_fkey")
 }
@@ -85,4 +90,10 @@ enum Status {
   EM_PRODUCAO
   APROVADO
   ARQUIVADO
+}
+
+enum HeyGenStatus {
+  PROCESSING
+  SUCCESS
+  FAILED
 }

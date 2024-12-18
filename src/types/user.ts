@@ -1,8 +1,17 @@
+import { IBriefing } from './briefing';
+import { ISuggestion } from './suggestion';
+import { IVideo } from './video';
+
 export interface IUser {
     id?: number;
     name: string;
     email: string;
     password?: string;
     avatarGroupId?: string;
-    role: string;
+    voiceId?: string;
+    difyAgent?: string;
+    role: 'ADMIN' | 'USER';
+    briefings?: IBriefing[];
+    videos?: IVideo[];
+    suggestions?: ISuggestion[];
 }
