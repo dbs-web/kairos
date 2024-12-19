@@ -24,13 +24,13 @@ export default function VideoCard({ video }: VideoCardProps) {
     return (
         <div
             key={video.id}
-            className="me-8 flex max-h-[70vh] gap-x-12 rounded-xl bg-white p-6 shadow-md"
+            className="me-8 flex max-h-[65vh] gap-x-12 rounded-xl bg-white p-6 shadow-md"
         >
-            <div className="flex min-w-56 flex-col gap-y-4">
+            <div className="grid min-w-56 grid-cols-1 grid-rows-[1fr_48px] gap-y-4">
                 {video.heygenStatus === 'SUCCESS' ? (
                     <video
                         controls
-                        className="rounded-xl"
+                        className="max-h-[50vh] rounded-xl"
                         style={{
                             aspectRatio: video.width == 1920 ? '16/9' : '9/16',
                         }}
