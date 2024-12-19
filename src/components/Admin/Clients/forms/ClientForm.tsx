@@ -198,7 +198,7 @@ export default function ClientForm({ setModalOpen }: ClientFormProps) {
                     name="difyAgent"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Voice ID</FormLabel>
+                            <FormLabel>Token API do Agente do DIFY</FormLabel>
                             <FormControl>
                                 <Input
                                     type="text"

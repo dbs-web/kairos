@@ -15,8 +15,8 @@ model User {
   password      String
   role          Role         @default(USER)
   avatarGroupId String
-  voiceId      String?
-  difyAgent   String? 
+  voiceId       String?
+  difyAgent     String?
   briefings     Briefing[]
   news          News[]
   suggestions   Suggestion[]
