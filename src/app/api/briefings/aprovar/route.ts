@@ -1,5 +1,6 @@
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { HeyGenStatus } from '@prisma/client';
 import { getServerSession } from 'next-auth';
 import { NextResponse } from 'next/server';
 
@@ -45,6 +46,7 @@ export async function POST(request: Request) {
         callback_url: CALLBACK_URL,
         width,
         height,
+        HeyGenStatus: 'PROCESSING',
     };
     try {
         const res = await fetch(HEYGEN_API_URL, {

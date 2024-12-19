@@ -1,5 +1,6 @@
 import { IVideo } from '@/types/video';
 import { FiDownload } from 'react-icons/fi';
+import { PiSpinnerThin } from 'react-icons/pi';
 
 interface VideoCardProps {
     video: IVideo;
@@ -21,11 +22,32 @@ export default function VideoCard({ video }: VideoCardProps) {
     };
 
     return (
-        <div key={video.id} className="mx-8 flex gap-x-12 rounded-xl bg-white p-6 shadow-md">
+        <div
+            key={video.id}
+            className="me-8 flex max-h-[70vh] gap-x-12 rounded-xl bg-white p-6 shadow-md"
+        >
             <div className="flex min-w-56 flex-col gap-y-4">
-                <video controls className="rounded-xl">
-                    <source src={video.url} type="video/mp4" />
-                </video>
+                {video.heygenStatus === 'SUCCESS' ? (
+                    <video
+                        controls
+                        className="rounded-xl"
+                        style={{
+                            aspectRatio: video.width == 1920 ? '16/9' : '9/16',
+                        }}
+                    >
+                        <source src={video.url} type="video/mp4" />
+                    </video>
+                ) : (
+                    <div
+                        className="grid animate-pulse items-center justify-center rounded-xl bg-neutral-300"
+                        style={{
+                            aspectRatio: video.width == 1920 ? '16/9' : '9/16',
+                        }}
+                    >
+                        <PiSpinnerThin className="animate-ping text-xl drop-shadow-sm" />
+                    </div>
+                )}
+
                 <button
                     onClick={handleDownload}
                     className="flex items-center justify-center gap-x-2 rounded-xl bg-secondary py-2 text-center text-white transition-all duration-300 hover:scale-105 hover:shadow-lg"
@@ -39,13 +61,18 @@ export default function VideoCard({ video }: VideoCardProps) {
                 <span className="text-sm font-medium text-neutral-500">
                     DATA: <time>{new Date().toLocaleDateString()}</time>
                 </span>
-
-                <p className="mt-12 text-neutral-400">
-                    <strong className="text-neutral-700">Legenda:</strong>
-                    <br />
-                    <br />
-                    {video.legenda}
-                </p>
+                {video.legenda ? (
+                    <p className="mt-12 text-neutral-400">
+                        <strong className="text-neutral-700">Legenda:</strong>
+                        <br />
+                        <br />
+                        {video.legenda}
+                    </p>
+                ) : (
+                    <p className="mt-4 text-neutral-700">
+                        Aguarde enquanto estamos produzindo seu vídeo
+                    </p>
+                )}
             </div>
         </div>
     );

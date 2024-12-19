@@ -7,6 +7,7 @@ import { authOptions } from '@/lib/auth';
 import { IoIosPlayCircle } from 'react-icons/io';
 import { BiBook } from 'react-icons/bi';
 import { IoHelpCircleOutline } from 'react-icons/io5';
+import { redirect } from 'next/navigation';
 
 const navLinks = [
     {
@@ -33,7 +34,11 @@ export default async function RootLayout({
 }>) {
     const session = await getServerSession(authOptions);
 
-    if (!session) {
+    if (session) {
+        if (session.user?.role === 'ADMIN') {
+            return redirect('/admin');
+        }
+    } else {
         return;
     }
 

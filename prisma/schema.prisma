@@ -72,6 +72,8 @@ model Video {
   title          String
   legenda        String
   url            String?
+  width          Int
+  height         Int
   heygenVideoId  String?      @unique
   heygenStatus   HeyGenStatus @default(PROCESSING)
   heygenErrorMsg String?
@@ -88,6 +90,7 @@ enum Role {
 enum Status {
   EM_ANALISE
   EM_PRODUCAO
+  PRODUZIDO
   APROVADO
   ARQUIVADO
 }
