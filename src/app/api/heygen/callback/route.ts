@@ -9,9 +9,6 @@ function verifySignature(req: NextRequest): boolean {
 
 export async function POST(request: NextRequest) {
     try {
-        if (!verifySignature(request))
-            return NextResponse.json({ message: 'Invalid Signature', status: 401 });
-
         const body = await request.json();
 
         const { event_type, event_data } = body;
