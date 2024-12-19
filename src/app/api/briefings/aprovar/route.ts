@@ -75,6 +75,8 @@ export async function POST(request: Request) {
                     legenda: '',
                     heygenVideoId: heygenVideoId,
                     heygenStatus: 'PROCESSING',
+                    width,
+                    height,
                 },
             });
 
