@@ -37,22 +37,25 @@ model Suggestion {
 }
 
 model Briefing {
-  id           Int        @id @default(autoincrement())
-  suggestionId Int
+  id           Int         @id @default(autoincrement())
+  suggestionId Int?
+  newsId       Int?
   title        String
   text         String?
   date         DateTime
   status       Status
   userId       Int
-  suggestion   Suggestion @relation(fields: [suggestionId], references: [id])
-  user         User       @relation(fields: [userId], references: [id])
+  suggestion   Suggestion? @relation(fields: [suggestionId], references: [id])
+  news         News?       @relation(fields: [newsId], references: [id])
+  user         User        @relation(fields: [userId], references: [id])
 
   @@index([suggestionId], map: "Briefing_suggestionId_fkey")
+  @@index([newsId], map: "Briefing_newsId_fkey")
   @@index([userId], map: "Briefing_userId_fkey")
 }
 
 model News {
-  id        Int    @id @default(autoincrement())
+  id        Int        @id @default(autoincrement())
   title     String
   summary   String
   userId    Int
@@ -61,7 +64,8 @@ model News {
   status    Status
   text      String
   date      String
-  user      User   @relation(fields: [userId], references: [id])
+  user      User       @relation(fields: [userId], references: [id])
+  Briefing  Briefing[]
 
   @@index([userId], map: "News_userId_fkey")
 }

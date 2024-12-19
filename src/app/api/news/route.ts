@@ -27,7 +27,7 @@ export async function POST(request: Request) {
             userId: item.userId,
             url: item.url,
             thumbnail: item.thumbnail,
-            status: item.status,
+            status: 'EM_ANALISE',
             text: item.text,
             date: item.date,
         })),

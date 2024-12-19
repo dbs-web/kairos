@@ -32,8 +32,8 @@ export default function BriefingCard({ briefing }: BriefingCardProps) {
     return (
         <div className="me-8 items-center space-y-4 rounded-xl bg-white p-4 pt-6">
             <div className="flex w-full items-start justify-between">
-                <div className="flex h-full flex-col items-start justify-between">
-                    <h1 className="text-medium text-xl font-bold">{briefing.title}</h1>
+                <div className="flex h-full max-w-[80%] flex-col items-start justify-between">
+                    <h1 className="text-medium line-clamp-2 text-lg font-bold">{briefing.title}</h1>
                     <time className="text-sm text-neutral-500">
                         Data:{' '}
                         <strong className="text-neutral-600">
@@ -41,26 +41,23 @@ export default function BriefingCard({ briefing }: BriefingCardProps) {
                         </strong>
                     </time>
                 </div>
-                <div className="flex flex-col items-end gap-y-4">
-                    <DropdownMenu>
-                        <DropdownMenuTrigger>
-                            <div className="cursor-pointer rounded-lg bg-neutral-200 p-1 transition-all duration-300 hover:scale-105">
-                                <BiDotsHorizontalRounded className="text-lg text-neutral-500" />
-                            </div>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent>
-                            <DropdownMenuLabel>Ações</DropdownMenuLabel>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem
-                                className="cursor-pointer text-neutral-700"
-                                onClick={handleArchive}
-                            >
-                                Arquivar
-                            </DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                    <StatusBadge status={briefing.status} />
-                </div>
+                <DropdownMenu>
+                    <DropdownMenuTrigger>
+                        <div className="cursor-pointer rounded-lg bg-neutral-200 p-1 transition-all duration-300 hover:scale-105">
+                            <BiDotsHorizontalRounded className="text-lg text-neutral-500" />
+                        </div>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                        <DropdownMenuLabel>Ações</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                            className="cursor-pointer text-neutral-700"
+                            onClick={handleArchive}
+                        >
+                            Arquivar
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
             </div>
 
             <div className="grid grid-cols-1 grid-rows-[400px_48px]">
