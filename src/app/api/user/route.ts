@@ -1,15 +1,13 @@
 import bcrypt from 'bcryptjs';
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
+import { UserRoles } from '@/types/user';
+import { isAuthorized, getSession } from '@/lib/api';
 
 export async function GET(request: Request) {
-    const session = await getServerSession(authOptions);
-
-    if (!session || !session.user || session.user.role !== 'ADMIN') {
-        return NextResponse.json({ status: 401, message: 'Unauthorized' });
-    }
+    const session = getSession();
+    if (!(await isAuthorized(session, [UserRoles.ADMIN])))
+        return NextResponse.json({ error: 'Not Authorized!', status: 401 });
 
     const url = new URL(request.url);
     const filterBy = url.searchParams.get('filterBy');
@@ -25,11 +23,9 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-    const session = await getServerSession(authOptions);
-
-    if (!session || !session.user || session.user.role !== 'ADMIN') {
-        return NextResponse.json({ status: 401, message: 'Unauthorized' });
-    }
+    const session = getSession();
+    if (!(await isAuthorized(session, [UserRoles.ADMIN])))
+        return NextResponse.json({ error: 'Not Authorized!', status: 401 });
 
     const { name, email, password, avatarGroupId, voiceId, difyAgent } = await request.json();
     const passHash = await bcrypt.hash(password, 10);
@@ -39,7 +35,7 @@ export async function POST(request: Request) {
             name: name,
             email: email,
             password: passHash,
-            role: 'USER',
+            role: UserRoles.USER,
             avatarGroupId: avatarGroupId,
             voiceId: voiceId,
             difyAgent: difyAgent,
@@ -50,11 +46,9 @@ export async function POST(request: Request) {
 }
 
 export async function PUT(request: Request) {
-    const session = await getServerSession(authOptions);
-
-    if (!session || !session.user || session.user.role !== 'ADMIN') {
-        return NextResponse.json({ status: 401, message: 'Unauthorized' });
-    }
+    const session = getSession();
+    if (!(await isAuthorized(session, [UserRoles.ADMIN])))
+        return NextResponse.json({ error: 'Not Authorized!', status: 401 });
 
     const body = await request.json();
 
@@ -77,11 +71,9 @@ export async function PUT(request: Request) {
 }
 
 export async function DELETE(request: Request) {
-    const session = await getServerSession(authOptions);
-
-    if (!session || !session.user || session.user.role !== 'ADMIN') {
-        return NextResponse.json({ status: 401, message: 'Unauthorized' });
-    }
+    const session = getSession();
+    if (!(await isAuthorized(session, [UserRoles.ADMIN])))
+        return NextResponse.json({ error: 'Not Authorized!', status: 401 });
 
     const body = await request.json();
     const { id } = body;

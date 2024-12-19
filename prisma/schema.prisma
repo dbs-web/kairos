@@ -40,7 +40,7 @@ model Briefing {
   id           Int        @id @default(autoincrement())
   suggestionId Int
   title        String
-  text         String
+  text         String?
   date         DateTime
   status       Status
   userId       Int

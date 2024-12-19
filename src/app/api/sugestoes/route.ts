@@ -4,8 +4,18 @@ import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { parseDateStringDate } from '@/lib/date';
+import { headers } from 'next/headers';
+import { getSession, isAuthorized, validateExternalRequest } from '@/lib/api';
+import { UserRoles } from '@/types/user';
 
 export async function POST(request: Request) {
+    const headersList = await headers();
+    const valid = await validateExternalRequest(headersList);
+
+    if (!valid) {
+        return NextResponse.json({ error: 'Not Authorized.', status: 401 });
+    }
+
     try {
         const { data } = await request.json();
 
@@ -29,11 +39,9 @@ export async function POST(request: Request) {
 }
 
 export async function GET() {
-    const session = await getServerSession(authOptions);
-
-    if (!session || !session?.user) {
-        return NextResponse.json({ status: 401, message: 'Unauthorized' });
-    }
+    const session = await getSession();
+    if (!session?.user || !isAuthorized(session, [UserRoles.USER]))
+        return NextResponse.json({ error: 'Not Authorized!', status: 401 });
 
     try {
         const suggestions = await prisma.suggestion.findMany({

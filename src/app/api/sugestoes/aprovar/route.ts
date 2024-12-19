@@ -1,15 +1,13 @@
-import { authOptions } from '@/lib/auth';
+import { getSession, isAuthorized } from '@/lib/api';
 import { parseDateToISOString } from '@/lib/date';
 import { prisma } from '@/lib/prisma';
-import { getServerSession } from 'next-auth';
+import { UserRoles } from '@/types/user';
 import { NextResponse } from 'next/server';
 
 export async function POST(request: Request) {
-    const session = await getServerSession(authOptions);
-
-    if (!session || !session?.user) {
-        return NextResponse.json({ status: 401, message: 'Unauthorized' });
-    }
+    const session = await getSession();
+    if (!session?.user || !isAuthorized(session, [UserRoles.USER]))
+        return NextResponse.json({ error: 'Not Authorized!', status: 401 });
 
     const CONTENT_CREATION_URL = process.env.MAKE_CONTENT_CREATION_URL ?? '';
     const { suggestions } = await request.json();

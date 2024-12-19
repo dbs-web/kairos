@@ -5,7 +5,7 @@ import { z } from 'zod';
 
 import { useForm } from 'react-hook-form';
 import { useClients } from '@/hooks/use-client';
-
+import { UserRoles } from '@/types/user';
 import { Button } from '@/components/ui/button';
 import {
     Form,
@@ -81,7 +81,7 @@ export default function ClientForm({ setModalOpen }: ClientFormProps) {
             name: data.name,
             email: data.email,
             password: data.password,
-            role: 'USER',
+            role: UserRoles.USER,
             avatarGroupId: data.avatarGroupId,
             voiceId: data.voiceId,
         });

@@ -46,7 +46,7 @@ export async function POST(request: Request) {
         callback_url: CALLBACK_URL,
         width,
         height,
-        HeyGenStatus: 'PROCESSING',
+        HeyGenStatus: HeyGenStatus.PROCESSING,
     };
     try {
         const res = await fetch(HEYGEN_API_URL, {
@@ -74,7 +74,7 @@ export async function POST(request: Request) {
                     title: brief.title,
                     legenda: '',
                     heygenVideoId: heygenVideoId,
-                    heygenStatus: 'PROCESSING',
+                    heygenStatus: HeyGenStatus.PROCESSING,
                     width,
                     height,
                 },

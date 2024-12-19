@@ -10,8 +10,13 @@ export interface IUser {
     avatarGroupId?: string;
     voiceId?: string;
     difyAgent?: string;
-    role: 'ADMIN' | 'USER';
+    role: UserRoles;
     briefings?: IBriefing[];
     videos?: IVideo[];
     suggestions?: ISuggestion[];
+}
+
+export enum UserRoles {
+    ADMIN = 'ADMIN',
+    USER = 'USER',
 }

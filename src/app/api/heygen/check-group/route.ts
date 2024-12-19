@@ -2,13 +2,14 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
+import { getSession } from 'next-auth/react';
+import { isAuthorized } from '@/lib/api';
+import { UserRoles } from '@/types/user';
 
 export async function GET(request: Request) {
-    const session = await getServerSession(authOptions);
-
-    if (!session || !session.user) {
-        return NextResponse.json({ status: 401, message: 'Unauthorized' });
-    }
+    const session = await getSession();
+    if (!session?.user || !isAuthorized(session, [UserRoles.USER]))
+        return NextResponse.json({ error: 'Not Authorized!', status: 401 });
 
     const HEYGEN_API_KEY = process.env.HEYGEN_API_KEY ?? '';
 

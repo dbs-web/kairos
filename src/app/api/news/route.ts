@@ -1,7 +1,16 @@
+import { headers } from 'next/headers';
+import { validateExternalRequest } from '@/lib/api';
 import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
 
 export async function POST(request: Request) {
+    const headersList = await headers();
+    const valid = await validateExternalRequest(headersList);
+
+    if (!valid) {
+        return NextResponse.json({ error: 'Not Authorized.', status: 401 });
+    }
+
     const { data } = await request.json();
 
     if (!Array.isArray(data) || data.length === 0) {
