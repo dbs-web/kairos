@@ -5,8 +5,8 @@ import { UserRoles } from '@/types/user';
 import { isAuthorized, getSession } from '@/lib/api';
 
 export async function GET(request: Request) {
-    const session = getSession();
-    if (!(await isAuthorized(session, [UserRoles.ADMIN])))
+    const session = await getSession();
+    if (!isAuthorized(session, [UserRoles.ADMIN]))
         return NextResponse.json({ error: 'Not Authorized!', status: 401 });
 
     const url = new URL(request.url);
@@ -23,8 +23,8 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-    const session = getSession();
-    if (!(await isAuthorized(session, [UserRoles.ADMIN])))
+    const session = await getSession();
+    if (!isAuthorized(session, [UserRoles.ADMIN]))
         return NextResponse.json({ error: 'Not Authorized!', status: 401 });
 
     const { name, email, password, avatarGroupId, voiceId, difyAgent } = await request.json();
@@ -46,8 +46,8 @@ export async function POST(request: Request) {
 }
 
 export async function PUT(request: Request) {
-    const session = getSession();
-    if (!(await isAuthorized(session, [UserRoles.ADMIN])))
+    const session = await getSession();
+    if (!isAuthorized(session, [UserRoles.ADMIN]))
         return NextResponse.json({ error: 'Not Authorized!', status: 401 });
 
     const body = await request.json();
@@ -71,8 +71,8 @@ export async function PUT(request: Request) {
 }
 
 export async function DELETE(request: Request) {
-    const session = getSession();
-    if (!(await isAuthorized(session, [UserRoles.ADMIN])))
+    const session = await getSession();
+    if (!isAuthorized(session, [UserRoles.ADMIN]))
         return NextResponse.json({ error: 'Not Authorized!', status: 401 });
 
     const body = await request.json();

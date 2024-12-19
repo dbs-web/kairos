@@ -15,7 +15,6 @@ interface NavProps {
 
 export default function Nav({ links }: NavProps) {
     const { data: session } = useSession();
-
     return (
         <nav className="flex h-16 w-screen items-center justify-between border-b px-12">
             <Image

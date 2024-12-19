@@ -1,10 +1,12 @@
+import { Status } from './status';
+
 export interface IBriefing {
     id: number;
     suggestion: string;
     title: string;
     date: Date;
     text: string;
-    status: 'em-analise' | 'em-producao' | 'aprovado' | 'arquivado';
+    status: Status;
     user: string;
 }
 

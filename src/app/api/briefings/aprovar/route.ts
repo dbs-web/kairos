@@ -90,8 +90,8 @@ export async function POST(request: Request) {
             let errorMessage = 'Erro ao criar o vídeo';
             try {
                 const errorData = await res.json();
-                if (errorData.message) {
-                    errorMessage = errorData.message;
+                if (errorData.error) {
+                    errorMessage = errorData.error;
                 }
             } catch (e) {
                 // Ignore parse cases
@@ -108,7 +108,6 @@ export async function POST(request: Request) {
             { status: 200 },
         );
     } catch (error) {
-        console.error('Erro ao criar o vídeo:', error);
         return NextResponse.json(
             { status: 500, message: 'Erro interno ao criar o vídeo' },
             { status: 500 },

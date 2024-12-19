@@ -1,6 +1,7 @@
 'use client';
 
 import { ISuggestion } from '@/types/suggestion';
+import StatusBadge from '../ui/status-badge';
 
 interface SuggestionCardProps {
     suggestion: ISuggestion;
@@ -8,27 +9,12 @@ interface SuggestionCardProps {
     onSelect: (id: number) => void;
 }
 
-const statusEnum = {
-    EM_ANALISE: 'Em análise',
-    EM_PRODUCAO: 'Em produção',
-    APROVADO: 'Aprovado',
-    ARQUIVADO: 'Arquivado',
-};
-
 export default function SuggestionCard({ suggestion, isSelected, onSelect }: SuggestionCardProps) {
-    const badgeColor = {
-        APROVADO: '#00aa00f0',
-        ARQUIVADO: '#aa0000f0',
-        EM_ANALISE: '#e5e5e5',
-        EM_PRODUCAO: '#0085a3f0',
-    };
-
     const handleSelect = () => {
         if (suggestion.status === 'EM_ANALISE') {
             onSelect(suggestion.id);
         }
     };
-
     return (
         <div
             className={`relative cursor-pointer rounded-lg border bg-white p-5 transition-all duration-300 ${
@@ -53,15 +39,7 @@ export default function SuggestionCard({ suggestion, isSelected, onSelect }: Sug
                     </div>
                 </div>
                 <div className="flex items-center gap-x-2">
-                    <span
-                        className="rounded p-2 text-xs font-medium"
-                        style={{
-                            backgroundColor: badgeColor[suggestion.status],
-                            color: suggestion.status === 'EM_ANALISE' ? '#939393' : '#fff',
-                        }}
-                    >
-                        {statusEnum[suggestion.status]}
-                    </span>
+                    <StatusBadge status={suggestion.status} />
                 </div>
             </div>
             <p className="mt-4 line-clamp-4 text-neutral-500">{suggestion.briefing}</p>

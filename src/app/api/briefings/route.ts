@@ -28,16 +28,14 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-    const headersList = await headers();
-    const valid = await validateExternalRequest(headersList);
-
-    if (!valid) {
-        return NextResponse.json({ error: 'Not Authorized.', status: 401 });
+    const session = await getServerSession(authOptions);
+    if (!session?.user) {
+        return NextResponse.json({ error: 'Not allowed', status: 401 });
     }
 
-    const { suggestionId, title, text, date, userId } = await request.json();
+    const { suggestionId, title, date } = await request.json();
 
-    if (!suggestionId || !title || !text || !date || !userId) {
+    if (!suggestionId || !title || !date) {
         return NextResponse.json({ error: 'Dados incompletos.', status: 405 });
     }
 
@@ -47,10 +45,9 @@ export async function POST(request: Request) {
                 connect: { id: suggestionId },
             },
             user: {
-                connect: { id: userId },
+                connect: { id: session.user.id },
             },
             title,
-            text: text.replace(/\\n/g, '\n'),
             date: parseDateStringDate(date),
             status: 'EM_ANALISE',
         },

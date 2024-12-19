@@ -1,0 +1,6 @@
+export enum Status {
+    EM_ANALISE = 'EM_ANALISE',
+    EM_PRODUCAO = 'EM_PRODUCAO',
+    APROVADO = 'APROVADO',
+    ARQUIVADO = 'ARQUIVADO',
+}

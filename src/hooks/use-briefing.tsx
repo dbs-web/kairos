@@ -137,7 +137,7 @@ export const BriefingProvider = ({ children }: { children: React.ReactNode }) =>
             return;
         }
 
-        queryClient.invalidateQueries({ queryKey: ['briefings'] });
+        await queryClient.invalidateQueries({ queryKey: ['briefings'] });
         setError('');
     };
 
