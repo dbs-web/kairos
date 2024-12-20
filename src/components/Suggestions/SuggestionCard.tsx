@@ -17,7 +17,7 @@ export default function SuggestionCard({ suggestion, isSelected, onSelect }: Sug
     };
     return (
         <div
-            className={`relative cursor-pointer rounded-lg border bg-white p-5 transition-all duration-300 ${
+            className={`relative me-4 w-full cursor-pointer rounded-lg border bg-white p-5 transition-all duration-300 ${
                 suggestion.status === 'EM_ANALISE'
                     ? isSelected
                         ? 'border border-primary/50 shadow-md shadow-primary/70'

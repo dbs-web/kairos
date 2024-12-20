@@ -49,7 +49,7 @@ export default function NewsGrid() {
         <div className="relative h-full w-full">
             <div className="flex flex-wrap gap-y-8 p-8 !pt-0">
                 {filteredData.map((news: INews) => (
-                    <div className="basis-1/4" key={news.id}>
+                    <div className="basis-1/1 sm:basis-1/2 md:basis-1/3 xl:basis-1/4" key={news.id}>
                         <NewsCard
                             news={news}
                             isSelected={selectedNews.includes(news.id)}
