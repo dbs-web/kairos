@@ -8,4 +8,5 @@ export interface IVideo {
     heygenVideoId?: string;
     heygenStatus?: 'PROCESSING' | 'SUCCESS' | 'FAILED';
     heygenErrorMsg?: string;
+    creationDate: string;
 }

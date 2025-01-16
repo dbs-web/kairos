@@ -32,7 +32,7 @@ export default function VideoCard({ video }: VideoCardProps) {
                         controls
                         className="max-h-[50vh] rounded-xl"
                         style={{
-                            aspectRatio: video.width == 1920 ? '16/9' : '9/16',
+                            aspectRatio: video.width === 1920 ? '16/9' : '9/16',
                         }}
                     >
                         <source src={video.url} type="video/mp4" />
@@ -41,7 +41,7 @@ export default function VideoCard({ video }: VideoCardProps) {
                     <div
                         className="grid animate-pulse items-center justify-center rounded-xl bg-neutral-300"
                         style={{
-                            aspectRatio: video.width == 1920 ? '16/9' : '9/16',
+                            aspectRatio: video.width === 1920 ? '16/9' : '9/16',
                         }}
                     >
                         <PiSpinnerThin className="animate-ping text-xl drop-shadow-sm" />
@@ -58,9 +58,12 @@ export default function VideoCard({ video }: VideoCardProps) {
             </div>
             <div className="flex flex-col items-start justify-start">
                 <h2 className="text-lg font-medium">{video.title}</h2>
-                <span className="text-sm font-medium text-neutral-500">
-                    DATA: <time>{new Date().toLocaleDateString()}</time>
-                </span>
+                {video?.creationDate && (
+                    <span className="text-sm font-medium text-neutral-500">
+                        DATA:{' '}
+                        <time>{new Date(video.creationDate).toLocaleDateString('pt-br')}</time>
+                    </span>
+                )}
                 {video.legenda ? (
                     <p className="mt-12 text-neutral-400">
                         <strong className="text-neutral-700">Legenda:</strong>
