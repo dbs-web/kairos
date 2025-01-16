@@ -14,6 +14,9 @@ export async function GET() {
         where: {
             userId,
         },
+        orderBy: {
+            id: "desc"
+        }
     });
 
     return NextResponse.json({

@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { UserRoles } from '@/types/user';
 import { NextResponse } from 'next/server';
 import { Status } from '@/types/status';
+
 async function getUserDifyAgent(userId: number) {
     const user = await prisma.user.findUnique({ where: { id: userId } });
     if (!user || !user.difyAgent) {

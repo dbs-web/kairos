@@ -41,7 +41,7 @@ model Briefing {
   suggestionId Int?
   newsId       Int?
   title        String
-  text         String?
+  text         String?     @db.VarChar(5000)
   date         DateTime
   status       Status
   userId       Int
