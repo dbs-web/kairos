@@ -21,11 +21,30 @@ const DataFilterContext = createContext<DataFilterContextProps | undefined>(unde
 
 export const DataFilterProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [statuses, setStatuses] = useState<Status[]>([]);
-
     const [initialData, setInitialData] = useState<any[]>([]);
     const [filteredData, setFilteredData] = useState<any[]>([]);
     const [searchText, setSearchText] = useState<string>('');
-    const [selectedStatus, setSelectedStatus] = useState<string>('');
+    const [selectedStatus, setSelectedStatus] = useState<string>(''); // Make selectedStatus optional (default empty)
+
+    // Normalize text fied
+    const normalizeText = (text: string) => {
+        return text
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .toLowerCase();
+    };
+
+    const filterByText = (data: any, query: string) => {
+        return Object.keys(data).some((key) => {
+            const value = data[key];
+
+            // Filter by all text fields on object
+            if (typeof value === 'string' && normalizeText(value).includes(normalizeText(query))) {
+                return true;
+            }
+            return false;
+        });
+    };
 
     useEffect(() => {
         setFilteredData(initialData);
@@ -33,16 +52,19 @@ export const DataFilterProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
     useEffect(() => {
         let data = initialData;
-        if (data?.length > 0 && (searchText || selectedStatus)) {
-            data = data.filter(
-                (fd) =>
-                    (fd['title']?.includes(searchText) || fd['briefing']?.includes(searchText)) &&
-                    fd['status']?.includes(selectedStatus),
-            );
+
+        // Text Filter
+        if (searchText) {
+            data = data.filter((item) => filterByText(item, searchText));
+        }
+
+        // Status Filter
+        if (selectedStatus) {
+            data = data.filter((fd) => fd['status']?.includes(selectedStatus));
         }
 
         setFilteredData(data);
-    }, [searchText, selectedStatus]);
+    }, [searchText, selectedStatus, initialData]);
 
     return (
         <DataFilterContext.Provider

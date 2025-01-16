@@ -28,7 +28,6 @@ const statuses = [
 
 export default function NewsGrid() {
     const { news, selectedNews, toggleSelectNews, sendToProduction } = useNews();
-    console.log(news);
     const { toast } = useToast();
     const { filteredData, setInitialData, setStatuses } = useDataFilter();
 

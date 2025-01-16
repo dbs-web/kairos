@@ -3,5 +3,5 @@ export enum Status {
     EM_PRODUCAO = 'EM_PRODUCAO',
     APROVADO = 'APROVADO',
     ARQUIVADO = 'ARQUIVADO',
-    PRODUZIDO = "PRODUZIDO"
+    PRODUZIDO = 'PRODUZIDO',
 }

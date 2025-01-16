@@ -1,15 +1,22 @@
+import { useDataFilter } from '@/hooks/use-data-filter';
 import { ScrollArea, ScrollBar } from '../ui/scroll-area';
 import BriefingCard from './BriefingCard';
 import { useBriefing } from '@/hooks/use-briefing';
+import { useEffect } from 'react';
 
 export default function BriefingGrid() {
     const { briefings } = useBriefing();
+    const { filteredData, setInitialData } = useDataFilter();
+
+    useEffect(() => {
+        setInitialData(briefings);
+    }, [briefings]);
 
     return (
         <ScrollArea className="max-h-full">
             <div className="flex flex-wrap gap-y-8 p-8 !pt-0">
-                {briefings?.length > 0 &&
-                    briefings.map((briefing) => (
+                {filteredData?.length > 0 &&
+                    filteredData.map((briefing) => (
                         <div className="basis-1/4" key={briefing.id}>
                             <BriefingCard briefing={briefing} />
                         </div>
