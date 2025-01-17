@@ -2,6 +2,9 @@
 
 import { ISuggestion } from '@/types/suggestion';
 import StatusBadge from '../ui/status-badge';
+import { Status } from '@/types/status';
+import { useSuggestions } from '@/hooks/use-suggestions';
+import { FaArchive } from 'react-icons/fa'; // Usando react-icons para o ícone de arquivar
 
 interface SuggestionCardProps {
     suggestion: ISuggestion;
@@ -11,14 +14,13 @@ interface SuggestionCardProps {
 
 export default function SuggestionCard({ suggestion, isSelected, onSelect }: SuggestionCardProps) {
     const handleSelect = () => {
-        if (suggestion.status === 'EM_ANALISE') {
-            onSelect(suggestion.id);
-        }
+        onSelect(suggestion.id);
     };
+
     return (
         <div
             className={`relative me-4 w-full cursor-pointer rounded-lg border bg-white p-5 transition-all duration-300 ${
-                suggestion.status === 'EM_ANALISE'
+                suggestion.status === Status.EM_ANALISE
                     ? isSelected
                         ? 'border border-primary/50 shadow-md shadow-primary/70'
                         : 'hover:-translate-y-1 hover:shadow-sm'
@@ -38,9 +40,7 @@ export default function SuggestionCard({ suggestion, isSelected, onSelect }: Sug
                         </span>
                     </div>
                 </div>
-                <div className="flex items-center gap-x-2">
-                    <StatusBadge status={suggestion.status} />
-                </div>
+                <StatusBadge status={suggestion.status} />
             </div>
             <p className="mt-4 line-clamp-4 text-neutral-500">{suggestion.briefing}</p>
         </div>

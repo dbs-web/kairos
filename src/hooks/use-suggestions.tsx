@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
-import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { ISuggestion } from '@/types/suggestion';
 
 interface SuggestionsContextProps {
@@ -10,6 +10,7 @@ interface SuggestionsContextProps {
     isLoading: boolean;
     toggleSelectSuggestion: (id: number) => void;
     sendToProduction: () => Promise<void>;
+    archiveSuggestions: () => Promise<void>;
     page: number;
     setPage: (page: number) => void;
     totalPages: number;
@@ -69,24 +70,56 @@ export const SuggestionsProvider: React.FC<{ children: React.ReactNode }> = ({ c
         );
     }, []);
 
-    const mutation = useMutation({
+    // Mutação para enviar sugestões para produção
+    const sendMutation = useMutation({
         mutationFn: async (selectedIds: number[]) => {
-            await fetch('/api/sugestoes/aprovar', {
+            const response = await fetch('/api/sugestoes/aprovar', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ suggestions: selectedIds }),
             });
+
+            if (!response.ok) {
+                throw new Error('Erro ao aprovar sugestões');
+            }
         },
-        onSuccess: async () => {
-            await queryClient.invalidateQueries({ queryKey: ['suggestions'] });
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['suggestions'] });
         },
     });
 
     const sendToProduction = async () => {
         if (selectedSuggestions.length > 0) {
-            await mutation.mutateAsync(selectedSuggestions);
+            await sendMutation.mutateAsync(selectedSuggestions);
+            setSelectedSuggestions([]);
+        }
+    };
+
+    // Mutação para arquivar sugestões
+    const archiveMutation = useMutation({
+        mutationFn: async (selectedIds: number[]) => {
+            const response = await fetch('/api/sugestoes', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ ids: selectedIds }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Erro ao arquivar sugestões');
+            }
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['suggestions'] });
+        },
+    });
+
+    const archiveSuggestions = async () => {
+        if (selectedSuggestions.length > 0) {
+            await archiveMutation.mutateAsync(selectedSuggestions);
             setSelectedSuggestions([]);
         }
     };
@@ -99,6 +132,7 @@ export const SuggestionsProvider: React.FC<{ children: React.ReactNode }> = ({ c
                 isLoading,
                 toggleSelectSuggestion,
                 sendToProduction,
+                archiveSuggestions,
                 page,
                 setPage,
                 totalPages,

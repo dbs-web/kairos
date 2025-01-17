@@ -5,6 +5,8 @@ import { parseDateStringDate } from '@/lib/date';
 import { headers } from 'next/headers';
 import { getSession, isAuthorized, validateExternalRequest } from '@/lib/api';
 import { UserRoles } from '@/types/user';
+import { Status } from '@prisma/client';
+import { notEqual } from 'assert';
 
 export async function POST(request: Request) {
     const headersList = await headers();
@@ -52,13 +54,23 @@ export async function GET(request: Request) {
     try {
         const [suggestions, totalCount] = await Promise.all([
             prisma.suggestion.findMany({
-                where: { userId: session.user.id },
+                where: {
+                    userId: session.user.id,
+                    status: {
+                        not: 'ARQUIVADO',
+                    },
+                },
                 skip,
                 take: limit,
                 orderBy: { id: 'desc' },
             }),
             prisma.suggestion.count({
-                where: { userId: session.user.id },
+                where: {
+                    userId: session.user.id,
+                    status: {
+                        not: 'ARQUIVADO',
+                    },
+                },
             }),
         ]);
 
@@ -73,5 +85,28 @@ export async function GET(request: Request) {
         });
     } catch (e) {
         return NextResponse.json({ status: 500, message: 'Erro ao buscar sugestões', error: e });
+    }
+}
+
+export async function DELETE(request: Request) {
+    try {
+        const { ids } = await request.json();
+
+        if (!Array.isArray(ids) || ids.length === 0) {
+            return NextResponse.json({ status: 400, message: 'Dados inválidos' });
+        }
+
+        await prisma.suggestion.updateMany({
+            where: {
+                id: { in: ids },
+            },
+            data: {
+                status: Status.ARQUIVADO,
+            },
+        });
+
+        return NextResponse.json({ message: 'Suggestions archived successfully!' });
+    } catch (e) {
+        return NextResponse.json({ status: 500, message: 'Erro ao arquivar sugestões', error: e });
     }
 }
