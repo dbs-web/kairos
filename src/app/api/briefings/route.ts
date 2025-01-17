@@ -20,6 +20,9 @@ export async function GET() {
         include: {
             suggestion: true,
         },
+        orderBy: {
+            date: 'desc',
+        },
     });
 
     return NextResponse.json({ data: briefings });

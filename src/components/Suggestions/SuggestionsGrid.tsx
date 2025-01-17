@@ -80,7 +80,7 @@ export default function SuggestionsGrid() {
 
     return (
         <div
-            className="relative grid h-full w-full grid-cols-1 grid-rows-[1fr_48px] justify-between transition-all duration-300 data-[selection=true]:pb-44"
+            className="relative grid h-full w-full grid-cols-1 grid-rows-[1fr_48px_72px] justify-between transition-all duration-300"
             data-selection={selectedSuggestions?.length > 0}
         >
             <div className="grid grid-cols-1 grid-rows-4 gap-4 !pt-0 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
@@ -118,22 +118,22 @@ export default function SuggestionsGrid() {
                 </button>
             </div>
 
-            {selectedSuggestions.length > 0 && (
-                <div className="fixed bottom-4 right-1/2 flex translate-x-1/2 space-x-4">
-                    <button
-                        className="rounded bg-green-500 px-4 py-2 text-white transition-all duration-300 hover:scale-105 hover:bg-green-600"
-                        onClick={handleSendToProduction}
-                    >
-                        Enviar para Produção
-                    </button>
-                    <button
-                        className="rounded bg-red-500 px-4 py-2 text-white transition-all duration-300 hover:scale-105 hover:bg-red-600"
-                        onClick={handleArchive}
-                    >
-                        Deletar
-                    </button>
-                </div>
-            )}
+            <div className="flex w-full items-center justify-center gap-x-4">
+                <button
+                    className="rounded bg-green-500 px-4 py-2 text-white transition-all duration-300 hover:scale-105 hover:bg-green-600 disabled:cursor-not-allowed disabled:bg-neutral-300"
+                    onClick={handleSendToProduction}
+                    disabled={selectedSuggestions?.length == 0}
+                >
+                    Enviar para Produção
+                </button>
+                <button
+                    className="rounded bg-red-500 px-4 py-2 text-white transition-all duration-300 hover:scale-105 hover:bg-red-600 disabled:cursor-not-allowed disabled:bg-neutral-300"
+                    onClick={handleArchive}
+                    disabled={selectedSuggestions?.length == 0}
+                >
+                    Deletar
+                </button>
+            </div>
         </div>
     );
 }

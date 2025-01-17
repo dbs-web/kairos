@@ -37,7 +37,7 @@ export default function BriefingCard({ briefing }: BriefingCardProps) {
                     <time className="text-sm text-neutral-500">
                         Data:{' '}
                         <strong className="text-neutral-600">
-                            {new Date(briefing.date).toLocaleDateString()}
+                            {new Date(briefing.date).toLocaleDateString('pt-br')}
                         </strong>
                     </time>
                 </div>

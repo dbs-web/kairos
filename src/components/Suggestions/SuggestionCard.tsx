@@ -36,7 +36,7 @@ export default function SuggestionCard({ suggestion, isSelected, onSelect }: Sug
                             {suggestion.title}
                         </h3>
                         <span className="text-sm text-neutral-500">
-                            Data: {new Date(suggestion.date).toLocaleDateString()}
+                            Data: {new Date(suggestion.date).toLocaleDateString('pt-br')}
                         </span>
                     </div>
                 </div>

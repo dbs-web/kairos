@@ -3,6 +3,7 @@ import { ScrollArea, ScrollBar } from '../ui/scroll-area';
 import BriefingCard from './BriefingCard';
 import { useBriefing } from '@/hooks/use-briefing';
 import { useEffect } from 'react';
+import { Status } from '@/types/status';
 
 export default function BriefingGrid() {
     const { briefings } = useBriefing();
@@ -16,11 +17,14 @@ export default function BriefingGrid() {
         <ScrollArea className="max-h-full">
             <div className="flex flex-wrap gap-y-8 p-8 !pt-0">
                 {filteredData?.length > 0 &&
-                    filteredData.map((briefing) => (
-                        <div className="basis-1/4" key={briefing.id}>
-                            <BriefingCard briefing={briefing} />
-                        </div>
-                    ))}
+                    filteredData.map((briefing) => {
+                        if (briefing.status === Status.EM_ANALISE)
+                            return (
+                                <div className="basis-1/4" key={briefing.id}>
+                                    <BriefingCard briefing={briefing} />
+                                </div>
+                            );
+                    })}
             </div>
             <ScrollBar orientation="horizontal" />
         </ScrollArea>
