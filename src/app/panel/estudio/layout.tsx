@@ -8,7 +8,7 @@ export default async function RootLayout({
 }>) {
     return (
         <DataFilterProvider>
-            <section className="grid max-h-full w-full grid-cols-1 grid-rows-[100px_1fr] gap-y-4 overflow-hidden px-12">
+            <section className="grid max-h-full w-full grid-cols-1 grid-rows-[100px_calc(100vh-100px)] gap-y-4 overflow-hidden px-12">
                 <StudioTools />
                 {children}
             </section>
