@@ -1,7 +1,7 @@
 export default function Skeleton() {
     return (
         <div
-            className={`relative me-4 w-full cursor-pointer rounded-lg border bg-white p-5 transition-all duration-300`}
+            className={`me-4 w-full cursor-wait rounded-lg border bg-white px-5 py-7 transition-all duration-300`}
         >
             <div className="flex w-full items-center justify-between">
                 <div className="flex items-center justify-center gap-x-2">
@@ -15,6 +15,8 @@ export default function Skeleton() {
             </div>
             <div className="mt-4 h-2 w-full rounded-full bg-neutral-200"></div>
             <div className="mt-1 h-2 w-[90%] rounded-full bg-neutral-200"></div>
+            <div className="mt-1 h-2 w-full rounded-full bg-neutral-200"></div>
+            <div className="mt-1 h-2 w-[99%] rounded-full bg-neutral-200"></div>
             <div className="mt-1 h-2 w-full rounded-full bg-neutral-200"></div>
         </div>
     );

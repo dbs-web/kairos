@@ -1,4 +1,3 @@
-// SuggestionsGrid.tsx
 'use client';
 
 import { useSuggestions } from '@/hooks/use-suggestions';
@@ -83,7 +82,7 @@ export default function SuggestionsGrid() {
             className="flex h-full w-full flex-col items-center justify-between pb-[90px] transition-all duration-300"
             data-selection={selectedSuggestions?.length > 0}
         >
-            <div className="grid grid-cols-1 grid-rows-3 gap-4 !pt-0 md:grid-cols-2 xl:max-h-[650px] xl:grid-cols-3 2xl:grid-cols-4">
+            <div className="grid w-full grid-cols-1 grid-rows-3 gap-4 !pt-0 md:grid-cols-2 xl:max-h-[650px] xl:grid-cols-3 2xl:grid-cols-4">
                 {isLoading
                     ? Array.from({ length: 4 }).map((_, index) => (
                           <Skeleton key={`skeleton-${index}`} />

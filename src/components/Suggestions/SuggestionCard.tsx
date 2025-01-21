@@ -3,8 +3,6 @@
 import { ISuggestion } from '@/types/suggestion';
 import StatusBadge from '../ui/status-badge';
 import { Status } from '@/types/status';
-import { useSuggestions } from '@/hooks/use-suggestions';
-import { FaArchive } from 'react-icons/fa'; // Usando react-icons para o ícone de arquivar
 
 interface SuggestionCardProps {
     suggestion: ISuggestion;
@@ -38,7 +36,7 @@ export default function SuggestionCard({ suggestion, isSelected, onSelect }: Sug
                 </div>
                 <StatusBadge status={suggestion.status} />
             </div>
-            <p className="mt-4 line-clamp-4 text-neutral-500">{suggestion.briefing}</p>
+            <p className="mt-4 line-clamp-4 text-sm text-neutral-500">{suggestion.briefing}</p>
         </div>
     );
 }
