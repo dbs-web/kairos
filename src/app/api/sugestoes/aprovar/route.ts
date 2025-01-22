@@ -38,7 +38,7 @@ async function sendContentCreationRequest(
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ token: difyAgentToken, briefingId, message: query }),
+        body: JSON.stringify({ token: difyAgentToken, briefingId, message: query, callback: true }),
     });
 }
 
