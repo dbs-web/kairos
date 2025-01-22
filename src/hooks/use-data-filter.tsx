@@ -25,8 +25,9 @@ export const DataFilterProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     const [filteredData, setFilteredData] = useState<any[]>([]);
     const [searchText, setSearchText] = useState<string>('');
     const [selectedStatus, setSelectedStatus] = useState<string>(''); // Make selectedStatus optional (default empty)
+    const [debouncedSearchText, setDebouncedSearchText] = useState<string>(searchText);
 
-    // Normalize text fied
+    // Normalize text field
     const normalizeText = (text: string) => {
         return text
             .normalize('NFD')
@@ -46,6 +47,17 @@ export const DataFilterProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         });
     };
 
+    // Apply debounce to searchText
+    useEffect(() => {
+        const timeoutId = setTimeout(() => {
+            setDebouncedSearchText(searchText);
+        }, 500); // Adjust debounce time (in ms) as needed
+
+        return () => {
+            clearTimeout(timeoutId);
+        };
+    }, [searchText]);
+
     useEffect(() => {
         setFilteredData(initialData);
     }, [initialData]);
@@ -53,9 +65,9 @@ export const DataFilterProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     useEffect(() => {
         let data = initialData;
 
-        // Text Filter
-        if (searchText) {
-            data = data.filter((item) => filterByText(item, searchText));
+        // Text Filter (debounced)
+        if (debouncedSearchText) {
+            data = data.filter((item) => filterByText(item, debouncedSearchText));
         }
 
         // Status Filter
@@ -64,7 +76,7 @@ export const DataFilterProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         }
 
         setFilteredData(data);
-    }, [searchText, selectedStatus, initialData]);
+    }, [debouncedSearchText, selectedStatus, initialData]);
 
     return (
         <DataFilterContext.Provider
