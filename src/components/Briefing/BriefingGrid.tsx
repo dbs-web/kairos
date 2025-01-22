@@ -18,7 +18,7 @@ export default function BriefingGrid() {
             <div className="flex flex-wrap gap-y-8 p-8 !pt-0">
                 {filteredData?.length > 0 &&
                     filteredData.map((briefing) => {
-                        if (briefing.status === Status.EM_ANALISE)
+                        if (["EM_ANALISE", "PRODUZIDO"].includes(briefing.status))
                             return (
                                 <div className="basis-1/4" key={briefing.id}>
                                     <BriefingCard briefing={briefing} />
