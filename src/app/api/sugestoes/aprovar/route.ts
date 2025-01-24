@@ -84,7 +84,7 @@ export async function POST(request: Request) {
                 where: { suggestionId: suggestion.id, userId: session.user.id },
             });
             if (briefing) {
-                const query = `Faça um conteúdo sobre: ${suggestion.briefing}`;
+                const query = `Faça um conteúdo sobre: ${suggestion.title} | ${suggestion.date}\n ${suggestion.briefing}`;
                 await sendContentCreationRequest(briefing.id, query, difyAgentToken);
             }
         });

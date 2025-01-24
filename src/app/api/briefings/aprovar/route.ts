@@ -48,6 +48,7 @@ export async function POST(request: Request) {
         height,
         HeyGenStatus: HeyGenStatus.PROCESSING,
     };
+
     try {
         const res = await fetch(HEYGEN_API_URL, {
             method: 'POST',
