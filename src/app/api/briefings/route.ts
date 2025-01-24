@@ -3,29 +3,62 @@ import { prisma } from '@/lib/prisma';
 import { authOptions } from '@/lib/auth';
 import { NextResponse } from 'next/server';
 import { parseDateStringDate } from '@/lib/date';
+import { Status } from '@prisma/client';
 
-export async function GET() {
+export async function GET(request: Request) {
     const session = await getServerSession(authOptions);
     if (!session?.user) {
         return NextResponse.json({ error: 'Not allowed', status: 401 });
     }
 
-    const briefings = await prisma.briefing.findMany({
-        where: {
-            userId: Number(session.user.id),
-            status: {
-                not: 'ARQUIVADO',
+    const { searchParams } = new URL(request.url);
+
+    const pageParam = searchParams.get('page') || '1';
+    const limitParam = searchParams.get('limit') || '10';
+
+    const search = searchParams.get('search') || '';
+
+    const page = parseInt(pageParam, 10) || 1;
+    const limit = parseInt(limitParam, 10) || 10;
+    const skip = (page - 1) * limit;
+
+    const [briefings, totalCount] = await Promise.all([
+        prisma.briefing.findMany({
+            where: {
+                userId: Number(session.user.id),
+                OR: [{ title: { contains: search } }, { text: { contains: search } }],
             },
-        },
-        include: {
-            suggestion: true,
-        },
-        orderBy: {
-            date: 'desc',
+            include: {
+                suggestion: true,
+            },
+            skip,
+            take: limit,
+            orderBy: {
+                date: 'desc',
+            },
+        }),
+        prisma.briefing.count({
+            where: {
+                userId: Number(session.user.id),
+                OR: [{ title: { contains: search } }],
+            },
+            skip,
+            take: limit,
+            orderBy: {
+                date: 'desc',
+            },
+        }),
+    ]);
+
+    return NextResponse.json({
+        data: briefings,
+        pagination: {
+            page,
+            limit,
+            totalCount,
+            totalPages: Math.ceil(totalCount / limit),
         },
     });
-
-    return NextResponse.json({ data: briefings });
 }
 
 export async function POST(request: Request) {

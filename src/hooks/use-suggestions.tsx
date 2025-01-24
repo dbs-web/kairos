@@ -1,8 +1,10 @@
 'use client';
 
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { ISuggestion } from '@/types/suggestion';
+import { useFetchData } from './use-fetch-data';
+import { usePagination } from './use-pagination';
 
 interface SuggestionsContextProps {
     suggestions: ISuggestion[];
@@ -23,43 +25,13 @@ export const SuggestionsProvider: React.FC<{ children: React.ReactNode }> = ({ c
     const queryClient = useQueryClient();
 
     const [selectedSuggestions, setSelectedSuggestions] = useState<number[]>([]);
-    const [page, setPage] = useState<number>(1);
-    const [limit, setLimit] = useState<number>(8);
+    const { page, setPage, limit } = usePagination();
 
-    useEffect(() => {
-        const handleResize = () => {
-            const width = window.innerWidth;
-            let newLimit = 8;
-            if (width <= 769) {
-                newLimit = 4;
-            } else if (width <= 1344) {
-                newLimit = 8;
-            } else {
-                newLimit = 12;
-            }
-            setLimit(newLimit);
-        };
-
-        window.addEventListener('resize', handleResize);
-        handleResize();
-
-        return () => {
-            window.removeEventListener('resize', handleResize);
-        };
-    }, []);
-
-    const { data, isLoading } = useQuery({
-        queryKey: ['suggestions', page, limit],
-        queryFn: async (): Promise<{ data: ISuggestion[]; pagination: { totalPages: number } }> => {
-            const response = await fetch(`/api/sugestoes?page=${page}&limit=${limit}`, {
-                method: 'GET',
-            });
-            if (!response.ok) {
-                throw new Error('Erro ao buscar sugestões');
-            }
-            return response.json();
-        },
-    });
+    const { data, isLoading } = useFetchData<ISuggestion>(
+        'sugestoes',
+        { page, limit },
+        'suggestions',
+    );
 
     const suggestions = data?.data || [];
     const totalPages = data?.pagination?.totalPages || 1;

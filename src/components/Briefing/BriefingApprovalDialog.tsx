@@ -44,21 +44,25 @@ export default function BriefingApprovalDialog({ children, briefing }: EditBrief
     return (
         <Dialog open={open} onOpenChange={handleDialogClose}>
             <DialogTrigger>{children}</DialogTrigger>
-            <DialogContent>
-                <DialogHeader>
-                    <DialogTitle>{briefing.title}</DialogTitle>
-                    <DialogDescription>
-                        Selecione seu avatar antes de criar o vídeo.
-                    </DialogDescription>
-                </DialogHeader>
-                <AvatarList />
-                <button
-                    onClick={handleSubmit}
-                    className="mt-4 w-full rounded-lg bg-primary p-2 text-white disabled:bg-neutral-400"
-                    disabled={!selectedAvatar}
-                >
-                    {!selectedAvatar ? 'Selecione o avatar antes de criar o vídeo' : 'Criar vídeo'}
-                </button>
+            <DialogContent className="max-w-[90vw] !rounded">
+                <div className="relative flex max-w-[90%] flex-col items-center">
+                    <DialogHeader>
+                        <DialogTitle>{briefing.title}</DialogTitle>
+                        <DialogDescription>
+                            Selecione seu avatar antes de criar o vídeo.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <AvatarList />
+                    <button
+                        onClick={handleSubmit}
+                        className="mt-4 rounded-lg bg-primary p-2 px-4 text-xs text-white disabled:bg-neutral-400"
+                        disabled={!selectedAvatar}
+                    >
+                        {!selectedAvatar
+                            ? 'Selecione o avatar antes de criar o vídeo'
+                            : 'Criar vídeo'}
+                    </button>
+                </div>
             </DialogContent>
         </Dialog>
     );

@@ -30,7 +30,7 @@ export default function BriefingCard({ briefing }: BriefingCardProps) {
         deleteBriefing(briefing.id);
     };
     return (
-        <div className="me-8 items-center space-y-4 rounded-xl bg-white p-4 pt-6">
+        <div className="items-center space-y-4 rounded-xl bg-white p-4 pt-6 lg:me-4">
             <div className="flex w-full items-start justify-between">
                 <div className="flex h-full max-w-[80%] flex-col items-start justify-between">
                     <h1 className="text-medium line-clamp-2 text-lg font-bold">{briefing.title}</h1>
@@ -63,16 +63,16 @@ export default function BriefingCard({ briefing }: BriefingCardProps) {
             <div className="grid grid-cols-1 grid-rows-[400px_48px]">
                 <MarkdownText text={briefing.text} />
 
-                <div className="mt-4 flex items-center justify-between">
+                <div className="mt-4 grid grid-cols-2 grid-rows-1 justify-between gap-x-4">
                     <BriefingApprovalDialog briefing={briefing}>
-                        <div className="flex w-40 items-center justify-center gap-x-1 rounded-lg bg-secondary py-1 text-white transition duration-300 hover:shadow-md">
+                        <div className="flex w-full max-w-40 items-center justify-center gap-x-1 rounded-lg bg-secondary py-1 text-white transition duration-300 hover:shadow-md">
                             <CiCircleCheck className="text-xl" />
                             Aprovar
                         </div>
                     </BriefingApprovalDialog>
 
                     <EditBriefingDialog briefing={briefing}>
-                        <div className="flex w-40 items-center justify-center gap-x-1 rounded-lg bg-secondary py-1 text-white transition duration-300 hover:shadow-md">
+                        <div className="ms-auto flex w-full max-w-40 items-center justify-center gap-x-1 rounded-lg bg-secondary py-1 text-white transition duration-300 hover:shadow-md">
                             <CiCircleCheck className="text-xl" />
                             Editar
                         </div>

@@ -3,12 +3,13 @@
 import { useSuggestions } from '@/hooks/use-suggestions';
 import SuggestionCard from './SuggestionCard';
 import { ISuggestion } from '@/types/suggestion';
-import { useDataFilter } from '@/hooks/use-data-filter';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import Skeleton from './SuggestionSkeleton';
+import { useSearchData } from '@/hooks/use-search-data';
+import Pagination from '../ui/pagination';
 
-const statuses = [
+const enumStatuses = [
     { label: 'Em Análise', value: 'EM_ANALISE' },
     { label: 'Em produção', value: 'EM_PRODUCAO' },
     { label: 'Aprovado', value: 'APROVADO' },
@@ -27,12 +28,12 @@ export default function SuggestionsGrid() {
         totalPages,
         isLoading,
     } = useSuggestions();
+    const { setStatuses } = useSearchData();
+
     const { toast } = useToast();
-    const { filteredData, setInitialData, setStatuses } = useDataFilter();
 
     useEffect(() => {
-        setStatuses(statuses);
-        setInitialData(suggestions);
+        setStatuses(enumStatuses);
     }, [suggestions]);
 
     const handleSendToProduction = async () => {
@@ -69,14 +70,6 @@ export default function SuggestionsGrid() {
         }
     };
 
-    const handlePreviousPage = () => {
-        if (page > 1) setPage(page - 1);
-    };
-
-    const handleNextPage = () => {
-        if (page < totalPages) setPage(page + 1);
-    };
-
     return (
         <div
             className="flex h-full w-full flex-col items-center justify-between pb-[90px] transition-all duration-300"
@@ -87,7 +80,7 @@ export default function SuggestionsGrid() {
                     ? Array.from({ length: 4 }).map((_, index) => (
                           <Skeleton key={`skeleton-${index}`} />
                       ))
-                    : filteredData.map((suggestion: ISuggestion) => (
+                    : suggestions.map((suggestion: ISuggestion) => (
                           <SuggestionCard
                               suggestion={suggestion}
                               key={suggestion.id}
@@ -98,25 +91,7 @@ export default function SuggestionsGrid() {
             </div>
 
             <div className="flex w-full flex-col items-center justify-center">
-                <div className="mb-8 flex items-center justify-center space-x-4">
-                    <button
-                        className="rounded bg-gray-200 px-3 py-2 hover:bg-gray-300 disabled:cursor-not-allowed disabled:hover:bg-gray-200"
-                        onClick={handlePreviousPage}
-                        disabled={page === 1}
-                    >
-                        Anterior
-                    </button>
-                    <span>
-                        Página {page} de {totalPages}
-                    </span>
-                    <button
-                        className="rounded bg-gray-200 px-3 py-2 hover:bg-gray-300 disabled:cursor-not-allowed disabled:hover:bg-gray-200"
-                        onClick={handleNextPage}
-                        disabled={page === totalPages}
-                    >
-                        Próxima
-                    </button>
-                </div>
+                <Pagination page={page} totalPages={totalPages} setPage={setPage} />
 
                 <div className="flex w-full items-center justify-center gap-x-4">
                     <button

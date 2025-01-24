@@ -32,7 +32,7 @@ export default function NewsCard({ news, isSelected, onSelect }: NewsCardProps) 
 
     return (
         <div
-            className={`me-8 cursor-pointer space-y-4 rounded-lg border bg-white p-5 transition-all duration-300 ${
+            className={`cursor-pointer space-y-4 rounded-lg border bg-white p-5 transition-all duration-300 sm:mx-4 ${
                 news.status === 'EM_ANALISE'
                     ? isSelected
                         ? 'border border-primary/50 shadow-md shadow-primary/70'
@@ -52,8 +52,10 @@ export default function NewsCard({ news, isSelected, onSelect }: NewsCardProps) 
             </div>
             <div className="flex w-full items-start justify-between gap-x-2">
                 <div className="flex !max-w-[70%] flex-col items-start">
-                    <h3 className="line-clamp-2 font-medium text-neutral-700">{news.title}</h3>
-                    <span className="text-sm text-neutral-500">
+                    <h3 className="md:text-md line-clamp-2 text-sm font-medium text-neutral-700">
+                        {news.title}
+                    </h3>
+                    <span className="text-xs text-neutral-500 md:text-sm">
                         Data: {new Date(news.date).toLocaleDateString()}
                     </span>
                 </div>
@@ -63,12 +65,12 @@ export default function NewsCard({ news, isSelected, onSelect }: NewsCardProps) 
             <div className="flex w-full items-center justify-between">
                 <button
                     onClick={handleOpenNews}
-                    className="flex items-center gap-x-2 border-0 text-neutral-600 transition-all duration-300 hover:text-neutral-800"
+                    className="flex items-center gap-x-2 border-0 text-xs text-neutral-600 transition-all duration-300 hover:text-neutral-800 md:text-sm"
                 >
                     Ver Notícia
                     <MdChevronRight className="mt-0.5 text-lg" />
                 </button>
-                <span className="ml-auto rounded-lg bg-primary px-2 py-1 text-sm text-white">
+                <span className="ml-auto rounded-lg bg-primary px-2 py-1 text-xs text-white md:text-sm">
                     {siteName}
                 </span>
             </div>

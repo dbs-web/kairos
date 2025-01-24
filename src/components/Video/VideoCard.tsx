@@ -24,13 +24,13 @@ export default function VideoCard({ video }: VideoCardProps) {
     return (
         <div
             key={video.id}
-            className="me-8 flex max-h-[65vh] gap-x-12 rounded-xl bg-white p-6 shadow-md"
+            className="flex flex-col gap-x-12 gap-y-6 rounded-xl bg-white p-3 shadow-md md:me-8 md:max-h-[65vh] md:flex-row md:p-6"
         >
-            <div className="grid min-w-56 grid-cols-1 grid-rows-[1fr_48px] gap-y-4">
+            <div className="grid min-w-56 grid-cols-1 grid-rows-[1fr_32px] gap-y-4 md:grid-rows-[1fr_48px]">
                 {video.heygenStatus === 'SUCCESS' ? (
                     <video
                         controls
-                        className="max-h-[50vh] rounded-xl"
+                        className="max-h-[50vh] w-full rounded-xl"
                         style={{
                             aspectRatio: video.width === 1920 ? '16/9' : '9/16',
                         }}
@@ -50,29 +50,29 @@ export default function VideoCard({ video }: VideoCardProps) {
 
                 <button
                     onClick={handleDownload}
-                    className="flex items-center justify-center gap-x-2 rounded-xl bg-secondary py-2 text-center text-white transition-all duration-300 hover:scale-105 hover:shadow-lg"
+                    className="flex items-center justify-center gap-x-2 rounded-xl bg-secondary !p-0 text-center text-sm text-white transition-all duration-300 hover:scale-105 hover:shadow-lg md:py-2"
                 >
                     <FiDownload />
                     Download
                 </button>
             </div>
             <div className="flex flex-col items-start justify-start">
-                <h2 className="text-lg font-medium">{video.title}</h2>
+                <h2 className="font-medium md:text-lg">{video.title}</h2>
                 {video?.creationDate && (
-                    <span className="text-sm font-medium text-neutral-500">
+                    <span className="text-xs font-medium text-neutral-500 md:text-sm">
                         DATA:{' '}
                         <time>{new Date(video.creationDate).toLocaleDateString('pt-br')}</time>
                     </span>
                 )}
                 {video.legenda ? (
-                    <p className="mt-12 text-neutral-400">
+                    <p className="mt-12 text-xs text-neutral-400 md:text-sm">
                         <strong className="text-neutral-700">Legenda:</strong>
                         <br />
                         <br />
                         {video.legenda}
                     </p>
                 ) : (
-                    <p className="mt-4 text-neutral-700">
+                    <p className="mt-4 text-xs text-neutral-700 md:text-sm">
                         Aguarde enquanto estamos produzindo seu vídeo
                     </p>
                 )}

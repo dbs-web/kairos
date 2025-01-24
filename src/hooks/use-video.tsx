@@ -3,50 +3,30 @@
 import React, { createContext, useContext, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { IVideo } from '@/types/video';
+import { usePagination } from './use-pagination';
+import { useFetchData } from './use-fetch-data';
 
 interface VideoContextProps {
     videos: IVideo[];
     isLoading: boolean;
     error: string;
-    currentPage: number;
+    page: number;
+    setPage: (page: number) => void;
     totalPages: number;
-    loadMoreVideos: () => void;
+    limit: number;
 }
 
 const VideoContext = createContext<VideoContextProps | undefined>(undefined);
 
 export const VideoProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [currentPage, setCurrentPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
-    const [videos, setVideos] = useState<IVideo[]>([]);
     const [error, setError] = useState<string>('');
 
-    const { isLoading } = useQuery<IVideo[], Error>({
-        queryKey: ['videos', currentPage],
-        queryFn: async () => {
-            const response = await fetch(`/api/videos?page=${currentPage}`);
-            if (!response.ok) {
-                throw new Error('Erro ao buscar vídeos');
-            }
-            const { data, totalPages } = await response.json();
+    const { page, setPage, limit } = usePagination(2);
 
-            setVideos((prevVideos: IVideo[]) => {
-                const newVideos: IVideo[] = data.filter(
-                    (video: IVideo) => !prevVideos.some((prevVideo) => prevVideo.id === video.id),
-                );
-                return [...prevVideos, ...newVideos];
-            });
+    const { data, isLoading, refetch } = useFetchData<IVideo>('videos', { page, limit }, 'videos');
 
-            setTotalPages(totalPages);
-            return data;
-        },
-    });
-
-    const loadMoreVideos = () => {
-        if (currentPage < totalPages) {
-            setCurrentPage((prevPage) => prevPage + 1);
-        }
-    };
+    const videos = data?.data || [];
+    const totalPages = data?.pagination?.totalPages || 1;
 
     return (
         <VideoContext.Provider
@@ -54,9 +34,10 @@ export const VideoProvider: React.FC<{ children: React.ReactNode }> = ({ childre
                 videos,
                 isLoading,
                 error,
-                currentPage,
+                page,
+                setPage,
                 totalPages,
-                loadMoreVideos,
+                limit,
             }}
         >
             {children}

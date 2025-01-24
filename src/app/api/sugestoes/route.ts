@@ -6,7 +6,6 @@ import { headers } from 'next/headers';
 import { getSession, isAuthorized, validateExternalRequest } from '@/lib/api';
 import { UserRoles } from '@/types/user';
 import { Status } from '@prisma/client';
-import { notEqual } from 'assert';
 
 export async function POST(request: Request) {
     const headersList = await headers();
@@ -40,12 +39,22 @@ export async function POST(request: Request) {
 
 export async function GET(request: Request) {
     const session = await getSession();
-    if (!session?.user || !isAuthorized(session, [UserRoles.USER]))
+
+    if (!session?.user || !isAuthorized(session, [UserRoles.USER])) {
         return NextResponse.json({ error: 'Not Authorized!', status: 401 });
+    }
 
     const { searchParams } = new URL(request.url);
+
     const pageParam = searchParams.get('page') || '1';
     const limitParam = searchParams.get('limit') || '10';
+
+    const search = searchParams.get('search') || ''; // Obtém o termo de busca
+
+    const statusParam = searchParams.get('status');
+    const status: Status = Object.values(Status).includes(statusParam as Status)
+        ? (statusParam as Status)
+        : Status.EM_ANALISE;
 
     const page = parseInt(pageParam, 10) || 1;
     const limit = parseInt(limitParam, 10) || 10;
@@ -56,8 +65,9 @@ export async function GET(request: Request) {
             prisma.suggestion.findMany({
                 where: {
                     userId: session.user.id,
-                    status: {
-                        not: 'ARQUIVADO',
+                    status: status,
+                    title: {
+                        contains: search,
                     },
                 },
                 skip,
@@ -67,8 +77,9 @@ export async function GET(request: Request) {
             prisma.suggestion.count({
                 where: {
                     userId: session.user.id,
-                    status: {
-                        not: 'ARQUIVADO',
+                    status: status,
+                    title: {
+                        contains: search,
                     },
                 },
             }),
@@ -83,8 +94,15 @@ export async function GET(request: Request) {
                 totalPages: Math.ceil(totalCount / limit),
             },
         });
-    } catch (e) {
-        return NextResponse.json({ status: 500, message: 'Erro ao buscar sugestões', error: e });
+    } catch (error) {
+        return NextResponse.json(
+            {
+                status: 500,
+                message: 'Erro ao buscar sugestões',
+                error: error instanceof Error ? error.message : 'Erro desconhecido',
+            },
+            { status: 500 },
+        );
     }
 }
 

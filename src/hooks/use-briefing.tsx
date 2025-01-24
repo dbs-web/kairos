@@ -5,6 +5,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 // Types
 import { IBriefing, IAvatar } from '@/types/briefing';
+import { useFetchData } from './use-fetch-data';
+import { usePagination } from './use-pagination';
 
 interface BriefingContextProps {
     briefings: IBriefing[];
@@ -18,6 +20,10 @@ interface BriefingContextProps {
     selectAvatar: (avatar_id: string, widht: number, height: number) => void;
     clearSelectedAvatar: () => void;
     sendVideoToProduction: (briefing: number) => void;
+    page: number;
+    setPage: (page: number) => void;
+    totalPages: number;
+    limit: number;
 }
 
 const BriefingContext = createContext<BriefingContextProps | undefined>(undefined);
@@ -31,21 +37,13 @@ export const BriefingProvider = ({ children }: { children: React.ReactNode }) =>
     const [height, setHeight] = useState<number>(1080);
     const [error, setError] = useState<string>('');
 
-    const {
-        data: briefings = [],
-        isLoading,
-        refetch,
-    } = useQuery<IBriefing[]>({
-        queryKey: ['briefings'],
-        queryFn: async () => {
-            const response = await fetch('/api/briefings');
-            if (!response.ok) {
-                throw new Error('Erro ao buscar briefings');
-            }
-            const { data } = await response.json();
-            return data;
-        },
-    });
+    const { page, setPage, limit } = usePagination();
+
+    const { data, isLoading, refetch } = useFetchData<IBriefing>(
+        'briefings',
+        { page, limit },
+        'briefings',
+    );
 
     const fetchAvatars = async () => {
         try {
@@ -163,6 +161,9 @@ export const BriefingProvider = ({ children }: { children: React.ReactNode }) =>
         await deleteMutation.mutateAsync(id);
     };
 
+    const briefings = data?.data || [];
+    const totalPages = data?.pagination?.totalPages || 1;
+
     return (
         <BriefingContext.Provider
             value={{
@@ -177,6 +178,10 @@ export const BriefingProvider = ({ children }: { children: React.ReactNode }) =>
                 selectAvatar,
                 clearSelectedAvatar,
                 sendVideoToProduction,
+                page,
+                setPage,
+                totalPages,
+                limit,
             }}
         >
             {children}

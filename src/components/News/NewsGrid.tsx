@@ -2,10 +2,10 @@
 
 import NewsCard from './NewsCard';
 import { INews } from '@/types/news';
-import { useDataFilter } from '@/hooks/use-data-filter';
 import { useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { useNews } from '@/hooks/use-news';
+import { useSearchData } from '@/hooks/use-search-data';
 
 const statuses = [
     {
@@ -29,11 +29,9 @@ const statuses = [
 export default function NewsGrid() {
     const { news, selectedNews, toggleSelectNews, sendToProduction } = useNews();
     const { toast } = useToast();
-    const { filteredData, setInitialData, setStatuses } = useDataFilter();
-
+    const { setStatuses } = useSearchData();
     useEffect(() => {
         setStatuses(statuses);
-        setInitialData(news);
     }, [news]);
 
     const handleSubmit = () => {
@@ -46,8 +44,8 @@ export default function NewsGrid() {
     };
     return (
         <div className="relative h-full w-full">
-            <div className="flex flex-wrap gap-y-8 p-8 !pt-0">
-                {filteredData.map((news: INews) => (
+            <div className="flex flex-wrap gap-y-8 !pt-0 pb-24 md:p-8">
+                {news.map((news: INews) => (
                     <div className="basis-1/1 sm:basis-1/2 md:basis-1/3 xl:basis-1/4" key={news.id}>
                         <NewsCard
                             news={news}

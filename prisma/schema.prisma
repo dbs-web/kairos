@@ -87,7 +87,6 @@ model Video {
   @@index([userId], map: "Video_userId_fkey")
 }
 
-
 enum Role {
   USER
   ADMIN

@@ -1,32 +1,29 @@
-import { useDataFilter } from '@/hooks/use-data-filter';
-import { ScrollArea, ScrollBar } from '../ui/scroll-area';
 import BriefingCard from './BriefingCard';
 import { useBriefing } from '@/hooks/use-briefing';
-import { useEffect } from 'react';
-import { Status } from '@/types/status';
+import Pagination from '../ui/pagination';
 
 export default function BriefingGrid() {
-    const { briefings } = useBriefing();
-    const { filteredData, setInitialData } = useDataFilter();
-
-    useEffect(() => {
-        setInitialData(briefings);
-    }, [briefings]);
+    const { briefings, page, totalPages, setPage } = useBriefing();
 
     return (
-        <ScrollArea className="max-h-full">
-            <div className="flex flex-wrap gap-y-8 p-8 !pt-0">
-                {filteredData?.length > 0 &&
-                    filteredData.map((briefing) => {
-                        if (["EM_ANALISE", "PRODUZIDO"].includes(briefing.status))
+        <div className="flex h-full w-full flex-col items-center justify-between pb-[90px] transition-all duration-300">
+            <div className="flex flex-wrap gap-y-8 !pt-0 lg:p-8">
+                {briefings?.length > 0 &&
+                    briefings.map((briefing) => {
+                        if (['EM_ANALISE', 'PRODUZIDO'].includes(briefing.status))
                             return (
-                                <div className="basis-1/4" key={briefing.id}>
+                                <div
+                                    className="basis-1/1 w-full lg:basis-1/2 2xl:basis-1/4"
+                                    key={briefing.id}
+                                >
                                     <BriefingCard briefing={briefing} />
                                 </div>
                             );
                     })}
             </div>
-            <ScrollBar orientation="horizontal" />
-        </ScrollArea>
+            <div className="flex w-full flex-col items-center justify-center">
+                <Pagination page={page} totalPages={totalPages} setPage={setPage} />
+            </div>
+        </div>
     );
 }

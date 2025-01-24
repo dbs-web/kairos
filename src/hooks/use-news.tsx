@@ -3,6 +3,8 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { INews } from '@/types/news';
+import { usePagination } from './use-pagination';
+import { useFetchData } from './use-fetch-data';
 
 interface NewsContextProps {
     news: INews[];
@@ -10,6 +12,10 @@ interface NewsContextProps {
     isLoading: boolean;
     toggleSelectNews: (id: number) => void;
     sendToProduction: () => Promise<void>;
+    page: number;
+    setPage: (page: number) => void;
+    totalPages: number;
+    limit: number;
 }
 
 const NewsContext = createContext<NewsContextProps | undefined>(undefined);
@@ -18,18 +24,12 @@ export const NewsProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const queryClient = useQueryClient();
 
     const [selectedNews, setSelectedNews] = useState<number[]>([]);
+    const { page, setPage, limit } = usePagination();
 
-    const { data: news = [], isLoading } = useQuery<INews[]>({
-        queryKey: ['news'],
-        queryFn: async (): Promise<INews[]> => {
-            const response = await fetch('/api/news', { method: 'GET' });
-            if (!response.ok) {
-                throw new Error('Erro ao buscar notícias');
-            }
-            const { data } = await response.json();
-            return data;
-        },
-    });
+    const { data, isLoading, refetch } = useFetchData<INews>('news', { page, limit }, 'news');
+
+    const news = data?.data || [];
+    const totalPages = data?.pagination?.totalPages || 1;
 
     const toggleSelectNews = useCallback((id: number) => {
         setSelectedNews((prev) =>
@@ -70,6 +70,10 @@ export const NewsProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 isLoading,
                 toggleSelectNews,
                 sendToProduction,
+                page,
+                setPage,
+                totalPages,
+                limit,
             }}
         >
             {children}
