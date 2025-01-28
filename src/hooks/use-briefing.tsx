@@ -33,8 +33,8 @@ export const BriefingProvider = ({ children }: { children: React.ReactNode }) =>
 
     const [avatars, setAvatars] = useState<IAvatar[]>([]);
     const [selectedAvatar, setSelectedAvatar] = useState<IAvatar | null>(null);
-    const [width, setWidth] = useState<number>(1920);
-    const [height, setHeight] = useState<number>(1080);
+    const [width, setWidth] = useState<number>(1280);
+    const [height, setHeight] = useState<number>(720);
     const [error, setError] = useState<string>('');
 
     const { page, setPage, limit } = usePagination();
