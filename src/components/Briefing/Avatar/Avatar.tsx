@@ -11,8 +11,8 @@ interface AvatarProps {
 export function Avatar({ avatar }: AvatarProps) {
     const { selectAvatar, selectedAvatar } = useBriefing();
     const [imageFormat, setImageFormat] = useState<string | null>(null);
-    const [width, setWidth] = useState<number>(1920);
-    const [height, setHeight] = useState<number>(1080);
+    const [width, setWidth] = useState<number>(1280);
+    const [height, setHeight] = useState<number>(720);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -24,12 +24,12 @@ export function Avatar({ avatar }: AvatarProps) {
                 setLoading(false);
                 if (img.naturalWidth > img.naturalHeight) {
                     setImageFormat('Horizontal');
-                    setWidth(1920);
-                    setHeight(1080);
+                    setWidth(1280);
+                    setHeight(720);
                 } else {
                     setImageFormat('Vertical');
-                    setWidth(1080);
-                    setHeight(1920);
+                    setWidth(720);
+                    setHeight(1280);
                 }
             };
         }
