@@ -84,7 +84,7 @@ export async function POST(request: Request) {
                 where: { newsId: noticia.id, userId: session.user.id },
             });
             if (briefing) {
-                const query = `Faça um conteúdo sobre: ${noticia.title}`;
+                const query = `Faça um conteúdo sobre: ${noticia.title} | ${noticia.date}\n${noticia.title}`;
                 await sendContentCreationRequest(briefing.id, query, difyAgentToken);
             }
         });
