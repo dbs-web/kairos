@@ -5,7 +5,7 @@ import { IApiLog } from "@/types/api"
 import { useApiLogs } from "@/hooks/use-logs"
 import { DataTable } from "@/components/Admin/Logs/DataTable" 
   
-export const columns: ColumnDef<IApiLog>[] = [
+const columns: ColumnDef<IApiLog>[] = [
     {
       accessorKey: "id",
       header: "ID",
@@ -17,6 +17,7 @@ export const columns: ColumnDef<IApiLog>[] = [
     {
       accessorKey: "body",
       header: "Body",
+    
     },
     {
         accessorKey: "error",
