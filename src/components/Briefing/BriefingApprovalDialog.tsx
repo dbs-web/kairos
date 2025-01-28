@@ -23,7 +23,7 @@ export default function BriefingApprovalDialog({ children, briefing }: EditBrief
     const [open, setOpen] = useState<boolean>();
     const { clearSelectedAvatar, selectedAvatar } = useBriefing();
     const { toast } = useToast();
-    
+
     const handleSubmit = async () => {
         try {
             sendVideoToProduction(briefing.id);

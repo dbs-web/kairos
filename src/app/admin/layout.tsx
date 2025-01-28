@@ -6,12 +6,18 @@ import Nav from '@/components/ui/Nav/nav';
 import SessionProvider from '../AuthProvider';
 import { authOptions } from '@/lib/auth';
 import { CiUser } from 'react-icons/ci';
+import { LuLogs } from 'react-icons/lu';
 
 const adminLinks = [
     {
         Icon: <CiUser className="mb-1 text-xl" />,
         text: 'Clientes',
         href: '/admin/clientes',
+    },
+    {
+        Icon: <LuLogs className="mb-1 text-xl" />,
+        text: 'Logs',
+        href: '/admin/logs',
     },
 ];
 

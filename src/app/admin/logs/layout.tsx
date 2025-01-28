@@ -11,10 +11,7 @@ export default function RootLayout({
 }>) {
     return (
         <QueryClientProvider client={queryClient}>
-            <section className="grid h-full w-full grid-rows-[100px_1fr] gap-y-4 px-12">
-                <ClientTools />
-                {children}
-            </section>
+            <section className="grid h-full w-full grid-rows-1 gap-y-4 px-12">{children}</section>
         </QueryClientProvider>
     );
 }
