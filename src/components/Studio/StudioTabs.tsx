@@ -13,14 +13,14 @@ import { ScrollArea, ScrollBar } from '../ui/scroll-area';
 
 const tabs = [
     {
-        Icon: <GoLightBulb className="mb-1 lg:text-xl" />,
-        text: 'Planejamento Mensal',
-        href: '/panel/estudio/planejamento',
-    },
-    {
         Icon: <PiNewspaperLight className="mb-1 lg:text-xl" />,
         text: 'Notícias',
         href: '/panel/estudio/noticias',
+    },
+    {
+        Icon: <GoLightBulb className="mb-1 lg:text-xl" />,
+        text: 'Planejamento Mensal',
+        href: '/panel/estudio/planejamento',
     },
     {
         Icon: <CiCircleCheck className="mb-1 lg:text-xl" />,
@@ -31,11 +31,6 @@ const tabs = [
         Icon: <IoPlaySkipForwardOutline className="mb-1 lg:text-xl" />,
         text: 'Finalizados',
         href: '/panel/estudio/finalizados',
-    },
-    {
-        Icon: <IoPlayForwardOutline className="mb-1 lg:text-xl" />,
-        text: 'Vídeo Rápido',
-        href: '/panel/estudio/video-rapido',
     },
 ];
 

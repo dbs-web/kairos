@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
 @layer base {
     :root {
         --background: 214 24% 96%;
@@ -79,4 +80,42 @@
     body {
         @apply bg-background text-foreground;
     }
+}
+
+.fc-today-button {
+    display: none !important;
+}
+.fc-toolbar-title {
+    text-transform: capitalize;
+}
+
+.fc-prev-button,
+.fc-next-button {
+    margin: 0px 4px !important;
+    border-radius: 50% !important;
+    padding: 8px !important;
+    display: grid !important;
+    align-items: center !important;
+    background-color: hsl(var(--primary)) !important;
+    border-color: hsl(var(--primary)) !important;
+    transition: all 0.3s;
+}
+
+.fc-prev-button:hover,
+.fc-next-button:hover {
+    transform: scale(1.1);
+    background-color: hsl(var(--primary) / 0.85) !important;
+}
+.fc-daygrid-event-harness {
+    cursor: pointer;
+}
+
+table.fc-scrollgrid.fc-scrollgrid-liquid {
+    border-color: hsl(var(--primary) / 0.5);
+    overflow: hidden;
+    border-radius: 4px;
+}
+
+table.fc-scrollgrid.fc-scrollgrid-liquid * {
+    border-color: hsl(var(--primary) / 0.5) !important;
 }

@@ -7,7 +7,7 @@ export default async function Home() {
     const session = await getServerSession(authOptions);
 
     if (session?.user?.role === 'USER') {
-        return redirect('/panel/estudio');
+        return redirect('/panel/estudio/noticias');
     }
     return <div className=""></div>;
 }
