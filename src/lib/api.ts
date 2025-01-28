@@ -12,6 +12,7 @@ type ApiResponseParams = {
     status: number;
     message: string;
     error?: string;
+    data?: {};
 };
 
 const API_SECRET = process.env.API_SECRET ?? '';
@@ -43,6 +44,7 @@ export async function createApiResponse({
     status,
     message,
     error,
+    data,
 }: ApiResponseParams) {
     // Log the API response to the database
     await prisma.apiLog.create({
@@ -55,5 +57,5 @@ export async function createApiResponse({
     });
 
     // Return the response to the API
-    return NextResponse.json({ message, status }, { status });
+    return NextResponse.json({ message, status, ...data }, { status });
 }

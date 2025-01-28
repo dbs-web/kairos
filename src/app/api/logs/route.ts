@@ -11,7 +11,11 @@ export async function GET(request: NextRequest) {
     if (!isAuthorized(session, [UserRoles.ADMIN]))
         return NextResponse.json({ error: 'Not Authorized!', status: 401 });
 
-    const logs = await prisma.apiLog.findMany();
+    const logs = await prisma.apiLog.findMany({
+        orderBy: {
+            time: 'desc',
+        },
+    });
 
     return NextResponse.json({ data: logs, status: 200 });
 }

@@ -10,14 +10,21 @@ const columns: ColumnDef<IApiLog>[] = [
     {
         accessorKey: 'id',
         header: 'ID',
+        enableColumnFilter: false,
+        enableSorting: true,
     },
     {
         accessorKey: 'route',
         header: 'Rota',
+        enableSorting: true,
+        enableColumnFilter: true,
+        cell: ({ row }) => row.getValue('route'),
     },
     {
         accessorKey: 'body',
         header: 'Body da Requisição',
+        enableColumnFilter: false,
+        enableSorting: false,
         cell: ({ row }) => {
             const raw: {} = row.getValue('body');
             return (
@@ -44,10 +51,13 @@ const columns: ColumnDef<IApiLog>[] = [
     {
         accessorKey: 'error',
         header: 'Erro',
+        enableColumnFilter: false,
+        enableSorting: true,
     },
     {
         accessorKey: 'responseCode',
         header: 'Código de Resposta',
+        enableSorting: true,
         cell: ({ row }) => {
             const responseCode: number = row.getValue('responseCode');
             return (
@@ -59,10 +69,12 @@ const columns: ColumnDef<IApiLog>[] = [
                 </div>
             );
         },
+        filterFn: 'equals',
     },
     {
         accessorKey: 'time',
         header: 'Hora',
+        enableSorting: true,
         cell: ({ row }) => {
             const date: string = row.getValue('time');
             const datestring = `${new Date(date).toLocaleDateString('pt-br')} ${new Date(date).toLocaleTimeString('pt-br')}`;
