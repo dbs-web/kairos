@@ -36,6 +36,7 @@ export default function Calendar() {
                 ref={calendarRef}
                 locale={ptLocale}
                 plugins={[dayGridPlugin]}
+                //@ts-expect-error events are just placeholders ATM
                 events={events}
                 fixedWeekCount={false}
                 initialView="dayGridMonth"
