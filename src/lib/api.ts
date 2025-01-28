@@ -3,6 +3,16 @@ import { getServerSession } from 'next-auth';
 import { ReadonlyHeaders } from 'next/dist/server/web/spec-extension/adapters/headers';
 import { authOptions } from './auth';
 import { Session } from 'next-auth';
+import { NextResponse } from 'next/server';
+import { prisma } from '@/lib/prisma';
+
+type ApiResponseParams = {
+    route: string;
+    body: any;
+    status: number;
+    message: string;
+    error?: string;
+};
 
 const API_SECRET = process.env.API_SECRET ?? '';
 
@@ -22,4 +32,28 @@ export function isAuthorized(session: Session | null, allowedRoles: UserRoles[])
 export async function getSession(): Promise<Session | null> {
     const session = await getServerSession(authOptions);
     return session;
+}
+
+/**
+ * Wrapper function to create API responses and log them to the database.
+ */
+export async function createApiResponse({
+    route,
+    body,
+    status,
+    message,
+    error,
+}: ApiResponseParams) {
+    // Log the API response to the database
+    await prisma.apiLog.create({
+        data: {
+            route,
+            body,
+            responseCode: status,
+            error: error || null,
+        },
+    });
+
+    // Return the response to the API
+    return NextResponse.json({ message, status }, { status });
 }

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { createApiResponse } from '@/lib/api';
 
 const HEYGEN_SECRET = process.env.HEYGEN_SECRET;
 
@@ -8,13 +9,20 @@ function verifySignature(req: NextRequest): boolean {
 }
 
 export async function POST(request: NextRequest) {
-    try {
-        const body = await request.json();
+    const body = await request.json();
+    const route = '/api/heygen/callback';
 
+    try {
         const { event_type, event_data } = body;
 
         if (!event_type || !event_data) {
-            return NextResponse.json({ message: 'Invalid payload', status: 400 }, { status: 400 });
+            return createApiResponse({
+                route,
+                body,
+                status: 400,
+                message: 'Invalid payload',
+                error: 'Missing event_type or event_data',
+            });
         }
 
         const { video_id, url, callback_id, msg } = event_data;
@@ -26,7 +34,13 @@ export async function POST(request: NextRequest) {
         });
 
         if (!video) {
-            return NextResponse.json({ message: 'Video not found', status: 404 }, { status: 404 });
+            return createApiResponse({
+                route,
+                body,
+                status: 404,
+                message: 'Video not found',
+                error: 'No video found with the provided video_id',
+            });
         }
 
         if (event_type === 'avatar_video.success') {
@@ -38,10 +52,12 @@ export async function POST(request: NextRequest) {
                 },
             });
 
-            return NextResponse.json(
-                { message: 'Video updated successfully', status: 200 },
-                { status: 200 },
-            );
+            return createApiResponse({
+                route,
+                body,
+                status: 200,
+                message: 'Video updated successfully',
+            });
         } else if (event_type === 'avatar_video.fail') {
             await prisma.video.update({
                 where: { id: video.id },
@@ -51,21 +67,29 @@ export async function POST(request: NextRequest) {
                 },
             });
 
-            return NextResponse.json(
-                { message: 'Video update failed', status: 200 },
-                { status: 200 },
-            );
+            return createApiResponse({
+                route,
+                body,
+                status: 200,
+                message: 'Video update failed',
+                error: msg,
+            });
         } else {
-            return NextResponse.json(
-                { message: 'Unhandled event type', status: 400 },
-                { status: 400 },
-            );
+            return createApiResponse({
+                route,
+                body,
+                status: 400,
+                message: 'Unhandled event type',
+                error: 'Event type is not supported',
+            });
         }
     } catch (error) {
-        console.error('Error handling HeyGen callback:', error);
-        return NextResponse.json(
-            { message: 'Internal Server Error', status: 500 },
-            { status: 500 },
-        );
+        return createApiResponse({
+            route,
+            body,
+            status: 500,
+            message: 'Internal Server Error',
+            error: `Internal server error: ${error instanceof Error ? error.message : error}`,
+        });
     }
 }

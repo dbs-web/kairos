@@ -1,31 +1,60 @@
 import { prisma } from '@/lib/prisma';
-import { NextResponse } from 'next/server';
 import { headers } from 'next/headers';
-import { validateExternalRequest } from '@/lib/api';
+import { validateExternalRequest, createApiResponse } from '@/lib/api';
 
 export async function POST(request: Request) {
+    const route = '/api/briefings/callback';
     const headersList = await headers();
-    const valid = await validateExternalRequest(headersList);
+    const body = await request.json();
 
-    if (!valid) {
-        return NextResponse.json({ error: 'Not Authorized.', status: 401 });
+    try {
+        const valid = await validateExternalRequest(headersList);
+
+        if (!valid) {
+            return createApiResponse({
+                route,
+                body: body,
+                status: 401,
+                message: 'Not Authorized.',
+                error: 'Unauthorized request',
+            });
+        }
+
+        const { briefingId, text } = body;
+
+        if (!briefingId || !text) {
+            return createApiResponse({
+                route,
+                body: body,
+                status: 405,
+                message: 'Dados incompletos.',
+                error: 'Missing briefingId or text',
+            });
+        }
+
+        await prisma.briefing.update({
+            where: {
+                id: briefingId,
+            },
+            data: {
+                text,
+                status: 'PRODUZIDO',
+            },
+        });
+
+        return createApiResponse({
+            route,
+            body: body,
+            status: 200,
+            message: 'Briefing atualizado',
+        });
+    } catch (error) {
+        return createApiResponse({
+            route,
+            body: body,
+            status: 500,
+            message: 'Internal Server Error',
+            error: `Internal server error: ${error instanceof Error ? error.message : error}`,
+        });
     }
-
-    const { briefingId, text } = await request.json();
-
-    if (!briefingId || !text) {
-        return NextResponse.json({ error: 'Dados incompletos.', status: 405 });
-    }
-
-    await prisma.briefing.update({
-        where: {
-            id: briefingId,
-        },
-        data: {
-            text,
-            status: 'PRODUZIDO',
-        },
-    });
-
-    return NextResponse.json({ message: 'Briefing autalizado' });
 }

@@ -9,18 +9,19 @@ datasource db {
 }
 
 model User {
-  id            Int          @id @default(autoincrement())
-  name          String
-  email         String       @unique
-  password      String
-  role          Role         @default(USER)
-  avatarGroupId String
-  voiceId       String?
-  difyAgent     String?
-  briefings     Briefing[]
-  news          News[]
-  suggestions   Suggestion[]
-  videos        Video[]
+  id                  Int          @id @default(autoincrement())
+  name                String
+  email               String       @unique
+  password            String
+  role                Role         @default(USER)
+  avatarGroupId       String
+  voiceId             String?
+  difyAgent           String?
+  difyContentCreation String?
+  briefings           Briefing[]
+  news                News[]
+  suggestions         Suggestion[]
+  videos              Video[]
 }
 
 model Suggestion {
@@ -85,6 +86,15 @@ model Video {
   creationDate   DateTime     @default(now())
 
   @@index([userId], map: "Video_userId_fkey")
+}
+
+model ApiLog {
+  id           Int      @id @default(autoincrement())
+  route        String   @db.VarChar(500)
+  body         Json?
+  error        String?  @db.VarChar(1000)
+  responseCode Int?
+  time         DateTime @default(now())
 }
 
 enum Role {
