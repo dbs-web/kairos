@@ -27,18 +27,20 @@ export async function POST(request: Request) {
     if (!isAuthorized(session, [UserRoles.ADMIN]))
         return NextResponse.json({ error: 'Not Authorized!', status: 401 });
 
-    const { name, email, password, avatarGroupId, voiceId, difyAgent } = await request.json();
+    const { name, email, password, avatarGroupId, voiceId, difyAgent, difyContentCreation } =
+        await request.json();
     const passHash = await bcrypt.hash(password, 10);
 
     const newUser = await prisma.user.create({
         data: {
-            name: name,
-            email: email,
+            name,
+            email,
             password: passHash,
             role: UserRoles.USER,
-            avatarGroupId: avatarGroupId,
-            voiceId: voiceId,
-            difyAgent: difyAgent,
+            avatarGroupId,
+            voiceId,
+            difyAgent,
+            difyContentCreation,
         },
     });
 

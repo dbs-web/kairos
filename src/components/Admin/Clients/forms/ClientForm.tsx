@@ -35,6 +35,9 @@ const formSchema = z
             .string()
             .min(1, { message: 'Sem o VoiceID não conseguiremos criar os vídeos para o cliente' }),
         difyAgent: z.string().min(1, { message: 'O Token de Agente do DIFY é obrigatório' }),
+        difyContentCreation: z.string().min(1, {
+            message: 'O token de Agente do DIFY para geração de conteúdo é obrigatório',
+        }),
     })
     .superRefine(({ passwordConfirmation, password }, ctx) => {
         if (passwordConfirmation !== password) {
@@ -59,6 +62,7 @@ export default function ClientForm({ setModalOpen }: ClientFormProps) {
             avatarGroupId: '',
             voiceId: '',
             difyAgent: '',
+            difyContentCreation: '',
         },
     });
 
@@ -84,6 +88,7 @@ export default function ClientForm({ setModalOpen }: ClientFormProps) {
             role: UserRoles.USER,
             avatarGroupId: data.avatarGroupId,
             voiceId: data.voiceId,
+            difyContentCreation: data.difyContentCreation,
         });
 
         setModalOpen(false);
@@ -199,6 +204,26 @@ export default function ClientForm({ setModalOpen }: ClientFormProps) {
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel>Token API do Agente do DIFY</FormLabel>
+                            <FormControl>
+                                <Input
+                                    type="text"
+                                    placeholder="Token API do Agente da DIFY"
+                                    {...field}
+                                />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+
+                <FormField
+                    control={form.control}
+                    name="difyContentCreation"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>
+                                Token API do DiFY para geração de conteúdos automático do cliente.
+                            </FormLabel>
                             <FormControl>
                                 <Input
                                     type="text"

@@ -10,6 +10,7 @@ export interface IUser {
     avatarGroupId?: string;
     voiceId?: string;
     difyAgent?: string;
+    difyContentCreation?: string;
     role: UserRoles;
     briefings?: IBriefing[];
     videos?: IVideo[];

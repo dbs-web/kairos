@@ -34,7 +34,10 @@ export async function POST(request: Request) {
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ token: user.difyContentCreation, message: 'Gere novos conteúdos' }),
+        body: JSON.stringify({
+            token: user.difyContentCreation,
+            message: 'Gere novos conteúdos para o usuário.',
+        }),
     });
 
     return NextResponse.json({
