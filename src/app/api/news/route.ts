@@ -45,14 +45,14 @@ export async function GET() {
         return NextResponse.json({ error: 'Not Authorized!', status: 401 });
 
     const userId = session.user.id;
-    
+
     const news = await prisma.news.findMany({
         where: {
-            userId: userId
+            userId: userId,
         },
         orderBy: {
-            id: "desc"
-        }
+            id: 'desc',
+        },
     });
 
     return NextResponse.json({ data: news });

@@ -1,61 +1,15 @@
-import { getSession, isAuthorized } from '@/lib/api';
+import {
+    createBriefings,
+    getSession,
+    getSuggestionsData,
+    getUserDifyAgent,
+    isAuthorized,
+    sendContentCreationRequest,
+    updateSuggestionsStatus,
+} from '@/lib/api';
 import { prisma } from '@/lib/prisma';
 import { UserRoles } from '@/types/user';
 import { NextResponse } from 'next/server';
-import { Status } from '@/types/status';
-
-async function getUserDifyAgent(userId: number) {
-    const user = await prisma.user.findUnique({ where: { id: userId } });
-    if (!user || !user.difyAgent) {
-        throw new Error('User not found or difyAgent not set.');
-    }
-    return user.difyAgent;
-}
-
-async function createBriefings(suggestionsData: any[], userId: number) {
-    const briefingsToCreate = suggestionsData.map((suggestion) => ({
-        title: suggestion.title,
-        date: new Date().toISOString(),
-        suggestionId: suggestion.id,
-        status: Status.EM_ANALISE,
-        userId: userId,
-    }));
-    return prisma.briefing.createMany({ data: briefingsToCreate });
-}
-
-async function sendContentCreationRequest(
-    briefingId: number,
-    query: string,
-    difyAgentToken: string,
-) {
-    const CONTENT_CREATION_URL = process.env.CONTENT_CREATION_URL ?? '';
-    if (!CONTENT_CREATION_URL) {
-        throw new Error('CONTENT_CREATION_URL is not set');
-    }
-
-    await fetch(CONTENT_CREATION_URL, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ token: difyAgentToken, briefingId, message: query, callback: true }),
-    });
-}
-
-async function getSuggestionsData(suggestions: number[]) {
-    return prisma.suggestion.findMany({
-        where: { id: { in: suggestions } },
-    });
-}
-
-async function updateSuggestionsStatus(suggestions: number[]) {
-    await prisma.suggestion.updateMany({
-        where: { id: { in: suggestions } },
-        data: {
-            status: Status.EM_PRODUCAO,
-        },
-    });
-}
 
 export async function POST(request: Request) {
     const session = await getSession();

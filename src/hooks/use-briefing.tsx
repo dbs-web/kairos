@@ -16,6 +16,7 @@ interface BriefingContextProps {
     error: string;
     refetch: () => void;
     updateBriefing: (id: number, updatedText: string, status: string) => Promise<void>;
+    redoBriefing: (id: number) => Promise<void>;
     deleteBriefing: (id: number) => Promise<void>;
     selectAvatar: (avatar_id: string, widht: number, height: number) => void;
     clearSelectedAvatar: () => void;
@@ -96,6 +97,7 @@ export const BriefingProvider = ({ children }: { children: React.ReactNode }) =>
                 },
                 body: JSON.stringify({ id, text: updatedText, status }),
             });
+
             if (!response.ok) {
                 throw new Error('Erro ao atualizar briefing');
             }
@@ -107,6 +109,29 @@ export const BriefingProvider = ({ children }: { children: React.ReactNode }) =>
 
     const updateBriefing = async (id: number, updatedText: string, status: string) => {
         await updateMutation.mutateAsync({ id, updatedText, status });
+    };
+
+    const redoMutation = useMutation({
+        mutationFn: async ({ id }: { id: number }) => {
+            const response = await fetch('/api/briefings/redo', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ briefingId: id }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Erro ao refazer o briefing');
+            }
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['briefings'] });
+        },
+    });
+
+    const redoBriefing = async (id: number) => {
+        await redoMutation.mutateAsync({ id });
     };
 
     const sendVideoToProduction = async (briefing: number) => {
@@ -174,6 +199,7 @@ export const BriefingProvider = ({ children }: { children: React.ReactNode }) =>
                 error,
                 refetch,
                 updateBriefing,
+                redoBriefing,
                 deleteBriefing,
                 selectAvatar,
                 clearSelectedAvatar,

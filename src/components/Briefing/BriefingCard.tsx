@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 
 // Icons
-import { CiCircleCheck } from 'react-icons/ci';
+import { CiCircleCheck, CiRedo } from 'react-icons/ci';
 import { BiDotsHorizontalRounded } from 'react-icons/bi';
 
 import EditBriefingDialog from './EditBriefingDialog';
@@ -25,10 +25,16 @@ interface BriefingCardProps {
     briefing: IBriefing;
 }
 export default function BriefingCard({ briefing }: BriefingCardProps) {
-    const { deleteBriefing } = useBriefing();
+    const { deleteBriefing, redoBriefing } = useBriefing();
+
     const handleArchive = () => {
         deleteBriefing(briefing.id);
     };
+
+    const handleRedoBriefing = () => {
+        redoBriefing(briefing.id);
+    };
+
     return (
         <div className="items-center space-y-4 rounded-xl bg-white p-4 pt-6 lg:me-4">
             <div className="flex w-full items-start justify-between">
@@ -60,24 +66,27 @@ export default function BriefingCard({ briefing }: BriefingCardProps) {
                 </DropdownMenu>
             </div>
 
-            <div className="grid grid-cols-1 grid-rows-[400px_48px]">
-                <MarkdownText text={briefing.text} />
-
-                <div className="mt-4 grid grid-cols-2 grid-rows-1 justify-between gap-x-4">
-                    <BriefingApprovalDialog briefing={briefing}>
-                        <div className="flex w-full max-w-40 items-center justify-center gap-x-1 rounded-lg bg-secondary py-1 text-white transition duration-300 hover:shadow-md">
-                            <CiCircleCheck className="text-xl" />
-                            Aprovar
-                        </div>
-                    </BriefingApprovalDialog>
-
-                    <EditBriefingDialog briefing={briefing}>
-                        <div className="ms-auto flex w-full max-w-40 items-center justify-center gap-x-1 rounded-lg bg-secondary py-1 text-white transition duration-300 hover:shadow-md">
-                            <CiCircleCheck className="text-xl" />
-                            Editar
-                        </div>
-                    </EditBriefingDialog>
+            <MarkdownText text={briefing.text} />
+            <div className="mt-4 flex w-full items-center justify-between gap-x-2">
+                <BriefingApprovalDialog briefing={briefing}>
+                    <div className="flex min-w-32 basis-1/3 items-center justify-center gap-x-1 rounded-lg bg-secondary py-2 text-white transition duration-300 hover:shadow-md">
+                        <CiCircleCheck className="text-xl" />
+                        Aprovar
+                    </div>
+                </BriefingApprovalDialog>
+                <div
+                    onClick={handleRedoBriefing}
+                    className="flex basis-1/3 cursor-pointer items-center justify-center gap-x-1 rounded-lg bg-secondary py-2 text-white transition duration-300 hover:shadow-md"
+                >
+                    <CiRedo className="text-xl" />
+                    Refazer Conteudo
                 </div>
+                <EditBriefingDialog briefing={briefing}>
+                    <div className="ms-auto flex min-w-32 basis-1/3 items-center justify-center gap-x-1 rounded-lg bg-secondary py-2 text-white transition duration-300 hover:shadow-md">
+                        <CiCircleCheck className="text-xl" />
+                        Editar
+                    </div>
+                </EditBriefingDialog>
             </div>
         </div>
     );

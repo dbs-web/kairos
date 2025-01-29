@@ -46,10 +46,10 @@ export async function createApiResponse({
     message,
     error,
     data,
-    log=true
+    log = true,
 }: ApiResponseParams) {
     // Log the API response to the database
-    if(log)
+    if (log)
         await prisma.apiLog.create({
             data: {
                 route,
@@ -61,4 +61,57 @@ export async function createApiResponse({
 
     // Return the response to the API
     return NextResponse.json({ message, status, ...data }, { status });
+}
+
+export async function getUserDifyAgent(userId: number) {
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user || !user.difyAgent) {
+        throw new Error('User not found or difyAgent not set.');
+    }
+    return user.difyAgent;
+}
+
+export async function createBriefings(suggestionsData: any[], userId: number) {
+    const briefingsToCreate = suggestionsData.map((suggestion) => ({
+        title: suggestion.title,
+        date: new Date().toISOString(),
+        suggestionId: suggestion.id,
+        status: Status.EM_ANALISE,
+        userId: userId,
+    }));
+    return prisma.briefing.createMany({ data: briefingsToCreate });
+}
+
+export async function sendContentCreationRequest(
+    briefingId: number,
+    query: string,
+    difyAgentToken: string,
+) {
+    const CONTENT_CREATION_URL = process.env.CONTENT_CREATION_URL ?? '';
+    if (!CONTENT_CREATION_URL) {
+        throw new Error('CONTENT_CREATION_URL is not set');
+    }
+
+    await fetch(CONTENT_CREATION_URL, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ token: difyAgentToken, briefingId, message: query, callback: true }),
+    });
+}
+
+export async function getSuggestionsData(suggestions: number[]) {
+    return prisma.suggestion.findMany({
+        where: { id: { in: suggestions } },
+    });
+}
+
+export async function updateSuggestionsStatus(suggestions: number[]) {
+    await prisma.suggestion.updateMany({
+        where: { id: { in: suggestions } },
+        data: {
+            status: Status.EM_PRODUCAO,
+        },
+    });
 }

@@ -13,7 +13,7 @@ export default function BriefingGrid() {
                         if (['EM_ANALISE', 'PRODUZIDO'].includes(briefing.status))
                             return (
                                 <div
-                                    className="basis-1/1 w-full lg:basis-1/2 2xl:basis-1/4"
+                                    className="basis-1/1 h-full w-full lg:basis-1/2 2xl:basis-1/3"
                                     key={briefing.id}
                                 >
                                     <BriefingCard briefing={briefing} />
