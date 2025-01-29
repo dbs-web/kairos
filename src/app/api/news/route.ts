@@ -1,7 +1,8 @@
 import { headers } from 'next/headers';
-import { validateExternalRequest } from '@/lib/api';
+import { getSession, isAuthorized, validateExternalRequest } from '@/lib/api';
 import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
+import { UserRoles } from '@/types/user';
 
 export async function POST(request: Request) {
     const headersList = await headers();
@@ -38,7 +39,21 @@ export async function POST(request: Request) {
 }
 
 export async function GET() {
-    const news = await prisma.news.findMany();
+    const session = await getSession();
+
+    if (!session?.user || !isAuthorized(session, [UserRoles.USER]))
+        return NextResponse.json({ error: 'Not Authorized!', status: 401 });
+
+    const userId = session.user.id;
+    
+    const news = await prisma.news.findMany({
+        where: {
+            userId: userId
+        },
+        orderBy: {
+            id: "desc"
+        }
+    });
 
     return NextResponse.json({ data: news });
 }
