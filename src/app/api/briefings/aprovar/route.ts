@@ -84,7 +84,7 @@ export async function POST(request: Request) {
             await prisma.briefing.update({
                 where: { id: briefing },
                 data: {
-                    status: 'EM_PRODUCAO',
+                    status: 'APROVADO',
                 },
             });
         } else {

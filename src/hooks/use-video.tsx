@@ -23,7 +23,11 @@ export const VideoProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
     const { page, setPage, limit } = usePagination(2);
 
-    const { data, isLoading, refetch } = useFetchData<IVideo>('videos', { page, limit }, 'videos');
+    const { data, isLoading } = useFetchData<IVideo>(
+        'videos',
+        { page, limit, pollingEnabled: true },
+        'video',
+    );
 
     const videos = data?.data || [];
     const totalPages = data?.pagination?.totalPages || 1;

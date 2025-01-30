@@ -1,6 +1,7 @@
 import { prisma } from '@/lib/prisma';
 import { headers } from 'next/headers';
 import { validateExternalRequest, createApiResponse } from '@/lib/api';
+import { insertRedisData } from '@/lib/redis';
 
 export async function POST(request: Request) {
     const route = '/api/briefings/callback';
@@ -32,14 +33,19 @@ export async function POST(request: Request) {
             });
         }
 
-        await prisma.briefing.update({
+        const briefing = await prisma.briefing.update({
             where: {
                 id: briefingId,
             },
             data: {
                 text,
-                status: 'PRODUZIDO',
+                status: 'EM_ANALISE',
             },
+        });
+
+        await insertRedisData({
+            userId: briefing.userId,
+            dataType: 'briefing',
         });
 
         return createApiResponse({

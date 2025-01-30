@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { createApiResponse } from '@/lib/api';
+import { insertRedisData } from '@/lib/redis';
 
 const HEYGEN_SECRET = process.env.HEYGEN_SECRET;
 
@@ -59,12 +60,17 @@ export async function POST(request: NextRequest) {
                 message: 'Video updated successfully',
             });
         } else if (event_type === 'avatar_video.fail') {
-            await prisma.video.update({
+            const updatedVideo = await prisma.video.update({
                 where: { id: video.id },
                 data: {
                     heygenStatus: 'FAILED',
                     heygenErrorMsg: msg,
                 },
+            });
+
+            insertRedisData({
+                userId: updatedVideo.userId,
+                dataType: 'video',
             });
 
             return createApiResponse({

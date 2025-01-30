@@ -52,7 +52,7 @@ async function updateNewsStatus(news: number[]) {
     await prisma.news.updateMany({
         where: { id: { in: news } },
         data: {
-            status: Status.EM_PRODUCAO,
+            status: Status.APROVADO,
         },
     });
 }

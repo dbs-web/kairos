@@ -42,8 +42,8 @@ export const BriefingProvider = ({ children }: { children: React.ReactNode }) =>
 
     const { data, isLoading, refetch } = useFetchData<IBriefing>(
         'briefings',
-        { page, limit },
-        'briefings',
+        { page, limit, pollingEnabled: true },
+        'briefing',
     );
 
     const fetchAvatars = async () => {

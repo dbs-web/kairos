@@ -33,6 +33,7 @@ export async function POST(request: Request) {
         const briefing = await prisma.briefing.findUnique({
             where: {
                 id: briefingId,
+                userId: session.user.id,
             },
         });
 

@@ -47,10 +47,10 @@ export async function createApiResponse({
     message,
     error,
     data,
-    log=true
+    log = true,
 }: ApiResponseParams) {
     // Log the API response to the database
-    if(log)
+    if (log)
         await prisma.apiLog.create({
             data: {
                 route,
@@ -63,7 +63,6 @@ export async function createApiResponse({
     // Return the response to the API
     return NextResponse.json({ message, status, ...data }, { status });
 }
-
 
 export async function getUserDifyAgent(userId: number) {
     const user = await prisma.user.findUnique({ where: { id: userId } });

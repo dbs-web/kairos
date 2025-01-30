@@ -19,11 +19,13 @@ import EditBriefingDialog from './EditBriefingDialog';
 import MarkdownText from './MarkdownText';
 import { useBriefing } from '@/hooks/use-briefing';
 import BriefingApprovalDialog from './BriefingApprovalDialog';
+import { Status } from '@/types/status';
 import StatusBadge from '../ui/status-badge';
 
 interface BriefingCardProps {
     briefing: IBriefing;
 }
+
 export default function BriefingCard({ briefing }: BriefingCardProps) {
     const { deleteBriefing, redoBriefing } = useBriefing();
 
@@ -39,6 +41,7 @@ export default function BriefingCard({ briefing }: BriefingCardProps) {
         <div className="items-center space-y-4 rounded-xl bg-white p-4 pt-6 lg:me-4">
             <div className="flex w-full items-start justify-between">
                 <div className="flex h-full max-w-[80%] flex-col items-start justify-between">
+                    <span>{briefing.id}</span>
                     <h1 className="text-medium line-clamp-2 text-lg font-bold">{briefing.title}</h1>
                     <time className="text-sm text-neutral-500">
                         Data:{' '}
@@ -66,7 +69,12 @@ export default function BriefingCard({ briefing }: BriefingCardProps) {
                 </DropdownMenu>
             </div>
 
-            <MarkdownText text={briefing.text} />
+            {briefing.status === Status.EM_PRODUCAO ? (
+                <TextFallBack />
+            ) : (
+                <MarkdownText text={briefing.text} />
+            )}
+
             <div className="mt-4 flex w-full items-center justify-between gap-x-2">
                 <BriefingApprovalDialog briefing={briefing}>
                     <div className="flex min-w-32 basis-1/3 items-center justify-center gap-x-1 rounded-lg bg-secondary py-2 text-white transition duration-300 hover:shadow-md">
@@ -88,6 +96,20 @@ export default function BriefingCard({ briefing }: BriefingCardProps) {
                     </div>
                 </EditBriefingDialog>
             </div>
+        </div>
+    );
+}
+
+function TextFallBack() {
+    return (
+        <div className="h-80 animate-pulse space-y-2 rounded-lg border-b border-t bg-muted/80 p-2 pr-4 shadow-sm">
+            <div className="h-3 w-[97%] rounded-full bg-neutral-500/50"></div>
+            <div className="h-3 w-[92%] rounded-full bg-neutral-500/50"></div>
+            <div className="h-3 w-[99%] rounded-full bg-neutral-500/50"></div>
+            <div className="h-3 w-[97%] rounded-full bg-neutral-500/50"></div>
+            <div className="h-3 w-[98%] rounded-full bg-neutral-500/50"></div>
+            <div className="h-3 w-[90%] rounded-full bg-neutral-500/50"></div>
+            <div className="h-3 w-[32%] rounded-full bg-neutral-500/50"></div>
         </div>
     );
 }
