@@ -37,7 +37,6 @@ export async function POST(request: Request) {
             },
             data: {
                 status: 'EM_PRODUCAO',
-                text: '',
             },
         });
 
