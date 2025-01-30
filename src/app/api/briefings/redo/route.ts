@@ -30,10 +30,14 @@ export async function POST(request: Request) {
             });
         }
 
-        const briefing = await prisma.briefing.findUnique({
+        const briefing = await prisma.briefing.update({
             where: {
                 id: briefingId,
                 userId: session.user.id,
+            },
+            data: {
+                status: 'EM_PRODUCAO',
+                text: '',
             },
         });
 
