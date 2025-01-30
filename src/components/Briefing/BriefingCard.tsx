@@ -41,7 +41,6 @@ export default function BriefingCard({ briefing }: BriefingCardProps) {
         <div className="items-center space-y-4 rounded-xl bg-white p-4 pt-6 lg:me-4">
             <div className="flex w-full items-start justify-between">
                 <div className="flex h-full max-w-[80%] flex-col items-start justify-between">
-                    <span>{briefing.id}</span>
                     <h1 className="text-medium line-clamp-2 text-lg font-bold">{briefing.title}</h1>
                     <time className="text-sm text-neutral-500">
                         Data:{' '}
