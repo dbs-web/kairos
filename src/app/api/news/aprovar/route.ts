@@ -17,7 +17,7 @@ async function createBriefings(newsData: any[], userId: number) {
         title: noticia.title,
         date: new Date().toISOString(),
         newsId: noticia.id,
-        status: Status.EM_ANALISE,
+        status: Status.EM_PRODUCAO,
         userId: userId,
     }));
     return prisma.briefing.createMany({ data: briefingsToCreate });
