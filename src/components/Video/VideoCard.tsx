@@ -64,16 +64,20 @@ export default function VideoCard({ video }: VideoCardProps) {
                         <time>{new Date(video.creationDate).toLocaleDateString('pt-br')}</time>
                     </span>
                 )}
-                {video.legenda ? (
-                    <p className="mt-12 text-xs text-neutral-400 md:text-sm">
-                        <strong className="text-neutral-700">Legenda:</strong>
-                        <br />
-                        <br />
-                        {video.legenda}
-                    </p>
-                ) : (
+                {video.heygenStatus === 'PROCESSING' && (
                     <p className="mt-4 text-xs text-neutral-700 md:text-sm">
                         Aguarde enquanto estamos produzindo seu vídeo
+                    </p>
+                )}
+                {video.heygenStatus === 'SUCCESS' && (
+                    <p className="mt-12 text-xs text-neutral-400 md:text-sm">{video.text}</p>
+                )}
+
+                {video.heygenStatus === 'FAILED' && (
+                    <p className="mt-12 text-xs text-neutral-400 md:text-sm">
+                        Ocorreu um erro no processamento do seu vídeo:
+                        <br></br>
+                        {video.heygenErrorMsg}
                     </p>
                 )}
             </div>
