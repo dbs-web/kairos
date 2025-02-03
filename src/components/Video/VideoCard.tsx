@@ -1,6 +1,9 @@
 import { IVideo } from '@/types/video';
+
 import { FiDownload } from 'react-icons/fi';
 import { PiSpinnerThin } from 'react-icons/pi';
+import { BiErrorCircle } from 'react-icons/bi';
+
 import TranscriptionDialog from './VideoTranscriptionDialog';
 
 interface VideoCardProps {
@@ -25,7 +28,7 @@ export default function VideoCard({ video }: VideoCardProps) {
     return (
         <div className="flex flex-col gap-x-12 gap-y-6 rounded-xl bg-white p-3 shadow-md md:me-8 md:max-h-[65vh] md:flex-row md:p-6">
             <div className="grid min-w-56 grid-cols-1 grid-rows-[1fr_32px] gap-y-4 md:grid-rows-[1fr_48px]">
-                {video.heygenStatus === 'SUCCESS' ? (
+                {video.heygenStatus === 'SUCCESS' && (
                     <video
                         controls
                         className="max-h-[50vh] w-full rounded-xl"
@@ -35,7 +38,8 @@ export default function VideoCard({ video }: VideoCardProps) {
                     >
                         <source src={video.url} type="video/mp4" />
                     </video>
-                ) : (
+                )}
+                {video.heygenStatus === 'PROCESSING' && (
                     <div
                         className="grid animate-pulse items-center justify-center rounded-xl bg-neutral-300"
                         style={{
@@ -43,6 +47,16 @@ export default function VideoCard({ video }: VideoCardProps) {
                         }}
                     >
                         <PiSpinnerThin className="animate-ping text-xl drop-shadow-sm" />
+                    </div>
+                )}
+                {video.heygenStatus === 'FAILED' && (
+                    <div
+                        className="grid items-center justify-center rounded-xl bg-neutral-900"
+                        style={{
+                            aspectRatio: video.width === 1920 ? '16/9' : '9/16',
+                        }}
+                    >
+                        <BiErrorCircle className="text-lg text-red-500 md:text-xl xl:text-3xl" />
                     </div>
                 )}
 
@@ -71,8 +85,10 @@ export default function VideoCard({ video }: VideoCardProps) {
                 )}
 
                 {video.heygenStatus === 'FAILED' && (
-                    <p className="mt-12 text-xs text-neutral-400 md:text-sm">
-                        Ocorreu um erro no processamento do seu vídeo:
+                    <p className="mt-12 text-xs text-neutral-600 md:text-sm">
+                        <strong className="text-red-500">
+                            Ocorreu um erro no processamento do seu vídeo:
+                        </strong>
                         <br></br>
                         {video.heygenErrorMsg}
                     </p>

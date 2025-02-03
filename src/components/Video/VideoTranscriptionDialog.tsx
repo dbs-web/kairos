@@ -32,8 +32,8 @@ export default function TranscriptionDialog({ video }: TranscriptionDialogProps)
                 <TooltipProvider>
                     <Tooltip>
                         <TooltipTrigger asChild>
-                            <div className="absolute right-2 top-2 grid h-8 w-8 items-center justify-center rounded bg-primary transition-all duration-300 hover:scale-105">
-                                <CgTranscript className="text-2xl text-white" />
+                            <div className="absolute right-2 top-2 cursor-pointer rounded-lg bg-neutral-200 p-1 transition-all duration-300 hover:scale-105">
+                                <CgTranscript className="text-2xl text-neutral-500" />
                             </div>
                         </TooltipTrigger>
                         <TooltipContent className="bg-white shadow-lg">
