@@ -1,15 +1,14 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { createApiResponse } from '@/lib/api';
 import { insertRedisData } from '@/lib/redis';
 
 const HEYGEN_SECRET = process.env.HEYGEN_SECRET;
 
-function verifySignature(req: NextRequest): boolean {
+function verifySignature(req: Request): boolean {
     return HEYGEN_SECRET == req.headers.get('secret');
 }
 
-export async function POST(request: NextRequest) {
+export async function POST(request: Request) {
     const body = await request.json();
     const route = '/api/heygen/callback';
 

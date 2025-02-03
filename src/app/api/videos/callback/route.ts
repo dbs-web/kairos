@@ -6,7 +6,7 @@ import { insertRedisData } from '@/lib/redis';
 
 const route = '/api/videos/callback';
 
-export default async function POST(request: Request) {
+export async function POST(request: Request) {
     const headersList = await headers();
     const body = await request.json();
 
