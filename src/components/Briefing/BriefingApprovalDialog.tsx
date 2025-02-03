@@ -45,8 +45,8 @@ export default function BriefingApprovalDialog({ children, briefing }: EditBrief
     return (
         <Dialog open={open} onOpenChange={handleDialogClose}>
             <DialogTrigger>{children}</DialogTrigger>
-            <DialogContent className="max-w-[90vw] !rounded">
-                <div className="relative flex max-w-[90%] flex-col items-center">
+            <DialogContent className="max-w-[90vw] !rounded xl:max-w-[600px]">
+                <div className="relative flex flex-col items-center">
                     <DialogHeader>
                         <DialogTitle>{briefing.title}</DialogTitle>
                         <DialogDescription>

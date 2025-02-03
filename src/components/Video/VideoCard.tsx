@@ -65,7 +65,8 @@ export default function VideoCard({ video }: VideoCardProps) {
                 )}
                 {video.heygenStatus === 'PROCESSING' && (
                     <p className="mt-4 text-xs text-neutral-700 md:text-sm">
-                        Aguarde enquanto estamos produzindo seu vídeo, isto pode demorar alguns minutos.
+                        Aguarde enquanto estamos produzindo seu vídeo, isto pode demorar alguns
+                        minutos.
                     </p>
                 )}
 
