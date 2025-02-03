@@ -68,7 +68,7 @@ export default function VideoCard({ video }: VideoCardProps) {
                     Download
                 </button>
             </div>
-            <div className="relative flex w-full flex-col items-start justify-start pe-8">
+            <div className="relative flex w-full flex-col items-start justify-start pe-12">
                 <TranscriptionDialog video={video} />
                 <h2 className="font-medium md:text-lg">{video.title}</h2>
                 {video?.creationDate && (
