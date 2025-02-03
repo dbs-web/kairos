@@ -49,7 +49,7 @@ model Briefing {
   suggestion   Suggestion? @relation(fields: [suggestionId], references: [id])
   news         News?       @relation(fields: [newsId], references: [id])
   user         User        @relation(fields: [userId], references: [id])
-
+  sources      Json?
   @@index([suggestionId], map: "Briefing_suggestionId_fkey")
   @@index([newsId], map: "Briefing_newsId_fkey")
   @@index([userId], map: "Briefing_userId_fkey")

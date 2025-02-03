@@ -3,6 +3,23 @@ import { headers } from 'next/headers';
 import { validateExternalRequest, createApiResponse } from '@/lib/api';
 import { insertRedisData } from '@/lib/redis';
 
+interface CallbackBody {
+    briefingId?: number;
+    sources?: string;
+    text?: string;
+}
+
+async function getTitle(url: string): Promise<{ url: string; title: string }> {
+    try {
+        const response = await fetch(url);
+        const html = await response.text();
+        const match = html.match(/<title>(.*?)<\/title>/);
+        return { url, title: match ? match[1] : '' };
+    } catch (e) {
+        return { url, title: '' };
+    }
+}
+
 export async function POST(request: Request) {
     const route = '/api/briefings/callback';
     const headersList = await headers();
@@ -21,26 +38,52 @@ export async function POST(request: Request) {
             });
         }
 
-        const { briefingId, text } = body;
+        const { briefingId, sources, text }: CallbackBody = body;
+        if (!briefingId) {
+            return createApiResponse({
+                route,
+                body: body,
+                status: 405,
+                message: 'You should provide the briefingId',
+                error: 'Missing briefingId',
+            });
+        }
 
-        if (!briefingId || !text) {
+        if (!text && !sources) {
             return createApiResponse({
                 route,
                 body: body,
                 status: 405,
                 message: 'Dados incompletos.',
-                error: 'Missing briefingId or text',
+                error: 'Missing sources or text',
             });
+        }
+
+        const updateData: any = {
+            status: 'EM_ANALISE',
+        };
+
+        if (text) {
+            updateData.text = text;
+        }
+
+        if (sources) {
+            const parsedSources = JSON.parse(sources);
+            const urls = parsedSources?.citations || [];
+
+            const sourcesWithTitles = await Promise.all(urls.map(getTitle));
+            const content = parsedSources?.content || [];
+            updateData.sources = {
+                content,
+                citations: sourcesWithTitles,
+            };
         }
 
         const briefing = await prisma.briefing.update({
             where: {
                 id: briefingId,
             },
-            data: {
-                text,
-                status: 'EM_ANALISE',
-            },
+            data: updateData,
         });
 
         await insertRedisData({
