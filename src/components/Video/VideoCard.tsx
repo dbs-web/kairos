@@ -1,6 +1,7 @@
 import { IVideo } from '@/types/video';
 import { FiDownload } from 'react-icons/fi';
 import { PiSpinnerThin } from 'react-icons/pi';
+import TranscriptionDialog from './VideoTranscriptionDialog';
 
 interface VideoCardProps {
     video: IVideo;
@@ -22,10 +23,7 @@ export default function VideoCard({ video }: VideoCardProps) {
     };
 
     return (
-        <div
-            key={video.id}
-            className="flex flex-col gap-x-12 gap-y-6 rounded-xl bg-white p-3 shadow-md md:me-8 md:max-h-[65vh] md:flex-row md:p-6"
-        >
+        <div className="flex flex-col gap-x-12 gap-y-6 rounded-xl bg-white p-3 shadow-md md:me-8 md:max-h-[65vh] md:flex-row md:p-6">
             <div className="grid min-w-56 grid-cols-1 grid-rows-[1fr_32px] gap-y-4 md:grid-rows-[1fr_48px]">
                 {video.heygenStatus === 'SUCCESS' ? (
                     <video
@@ -56,7 +54,8 @@ export default function VideoCard({ video }: VideoCardProps) {
                     Download
                 </button>
             </div>
-            <div className="flex flex-col items-start justify-start">
+            <div className="relative flex w-full flex-col items-start justify-start pe-8">
+                <TranscriptionDialog video={video} />
                 <h2 className="font-medium md:text-lg">{video.title}</h2>
                 {video?.creationDate && (
                     <span className="text-xs font-medium text-neutral-500 md:text-sm">
@@ -68,9 +67,6 @@ export default function VideoCard({ video }: VideoCardProps) {
                     <p className="mt-4 text-xs text-neutral-700 md:text-sm">
                         Aguarde enquanto estamos produzindo seu vídeo
                     </p>
-                )}
-                {video.heygenStatus === 'SUCCESS' && (
-                    <p className="mt-12 text-xs text-neutral-400 md:text-sm">{video.text}</p>
                 )}
 
                 {video.heygenStatus === 'FAILED' && (

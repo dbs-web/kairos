@@ -76,6 +76,7 @@ model Video {
   userId         Int
   title          String       @db.VarChar(500)
   legenda        String       @db.VarChar(2000)
+  transcription  String       @db.VarChar(2000) @default("")
   url            String?      @db.VarChar(500)
   width          Int
   height         Int

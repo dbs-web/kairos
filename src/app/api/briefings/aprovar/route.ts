@@ -73,6 +73,7 @@ export async function POST(request: Request) {
                 data: {
                     userId: session.user.id,
                     title: brief.title,
+                    transcription: brief.text,
                     legenda: '',
                     heygenVideoId: heygenVideoId,
                     heygenStatus: HeyGenStatus.PROCESSING,
