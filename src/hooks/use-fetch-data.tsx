@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { useSearchData } from '@/hooks/use-search-data';
 import { useEffect, useRef } from 'react';
 
@@ -46,6 +46,7 @@ export const useFetchData = <T,>(
             if (!response.ok) throw new Error(`Erro ao buscar ${endpoint}`);
             return response.json();
         },
+        placeholderData: keepPreviousData,
     });
 
     const checkForUpdates = async () => {

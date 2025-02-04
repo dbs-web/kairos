@@ -9,7 +9,7 @@ export const usePagination = (max: number = 8) => {
             const width = window.innerWidth;
 
             let newLimit = 8;
-            
+
             if (width <= 768) {
                 newLimit = 3;
             } else if (width <= 1040) {

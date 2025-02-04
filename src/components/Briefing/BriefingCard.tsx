@@ -10,6 +10,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import TextFallBack from './TextFallBack';
 
 // Icons
 import { CiCircleCheck, CiRedo } from 'react-icons/ci';
@@ -39,13 +40,11 @@ export default function BriefingCard({ briefing }: BriefingCardProps) {
     };
 
     return (
-        <div className="items-center space-y-4 rounded-xl bg-white p-4 pt-6 lg:me-4">
+        <div className="grid h-full grid-cols-1 grid-rows-[96px_1fr_48px] rounded-xl bg-white p-4 pt-6 lg:me-4">
             <div className="flex w-full items-start justify-between">
-                <div className="flex h-full max-w-[80%] flex-col items-start justify-between">
-                    <h1 className="text-medium line-clamp-2 text-lg font-bold">
-                        {briefing.title}
-                    </h1>
-                    <time className="text-sm text-neutral-500">
+                <div className="flex h-full max-w-[80%] flex-col items-start justify-start">
+                    <h1 className="text-medium line-clamp-2 text-lg font-bold">{briefing.title}</h1>
+                    <time className="mt-2 text-sm text-neutral-500">
                         Data:{' '}
                         <strong className="text-neutral-600">
                             {new Date(briefing.date).toLocaleDateString('pt-br')}
@@ -84,8 +83,8 @@ export default function BriefingCard({ briefing }: BriefingCardProps) {
             )}
 
             <div className="mt-4 flex w-full items-center justify-between gap-x-2">
-                <BriefingApprovalDialog briefing={briefing}>
-                    <div className="flex min-w-32 basis-1/3 items-center justify-center gap-x-1 rounded-lg bg-secondary py-2 text-white transition duration-300 hover:shadow-md">
+                <BriefingApprovalDialog briefing={briefing} className="basis-1/3">
+                    <div className="flex min-w-32 items-center justify-center gap-x-1 rounded-lg bg-secondary py-2 text-white transition duration-300 hover:shadow-md">
                         <CiCircleCheck className="text-xl" />
                         Aprovar
                     </div>
@@ -97,27 +96,13 @@ export default function BriefingCard({ briefing }: BriefingCardProps) {
                     <CiRedo className="text-xl" />
                     Refazer Conteudo
                 </div>
-                <EditBriefingDialog briefing={briefing}>
-                    <div className="ms-auto flex min-w-32 basis-1/3 items-center justify-center gap-x-1 rounded-lg bg-secondary py-2 text-white transition duration-300 hover:shadow-md">
+                <EditBriefingDialog briefing={briefing} className="basis-1/3">
+                    <div className="ms-auto flex min-w-32 items-center justify-center gap-x-1 rounded-lg bg-secondary py-2 text-white transition duration-300 hover:shadow-md">
                         <CiCircleCheck className="text-xl" />
                         Editar
                     </div>
                 </EditBriefingDialog>
             </div>
-        </div>
-    );
-}
-
-function TextFallBack() {
-    return (
-        <div className="h-80 animate-pulse space-y-2 rounded-lg border-b border-t bg-muted/80 p-2 pr-4 shadow-sm">
-            <div className="h-3 w-[97%] rounded-full bg-neutral-500/50"></div>
-            <div className="h-3 w-[92%] rounded-full bg-neutral-500/50"></div>
-            <div className="h-3 w-[99%] rounded-full bg-neutral-500/50"></div>
-            <div className="h-3 w-[97%] rounded-full bg-neutral-500/50"></div>
-            <div className="h-3 w-[98%] rounded-full bg-neutral-500/50"></div>
-            <div className="h-3 w-[90%] rounded-full bg-neutral-500/50"></div>
-            <div className="h-3 w-[32%] rounded-full bg-neutral-500/50"></div>
         </div>
     );
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
 
 // Types
 import { IBriefing, IAvatar } from '@/types/briefing';
@@ -38,9 +38,9 @@ export const BriefingProvider = ({ children }: { children: React.ReactNode }) =>
     const [height, setHeight] = useState<number>(720);
     const [error, setError] = useState<string>('');
 
-    const { page, setPage, limit } = usePagination();
+    const { page, setPage, limit } = usePagination(3);
 
-    const { data, isLoading, refetch } = useFetchData<IBriefing>(
+    const { data, isFetching, refetch } = useFetchData<IBriefing>(
         'briefings',
         { page, limit, pollingEnabled: true },
         'briefing',
@@ -189,14 +189,13 @@ export const BriefingProvider = ({ children }: { children: React.ReactNode }) =>
 
     const briefings = data?.data || [];
     const totalPages = data?.pagination?.totalPages || 1;
-
     return (
         <BriefingContext.Provider
             value={{
                 briefings,
                 avatars,
                 selectedAvatar,
-                isLoading,
+                isLoading: isFetching,
                 error,
                 refetch,
                 updateBriefing,

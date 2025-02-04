@@ -3,11 +3,13 @@ import { prisma } from '@/lib/prisma';
 import { authOptions } from '@/lib/auth';
 import { parseDateStringDate } from '@/lib/date';
 import { createApiResponse } from '@/lib/api';
+import { Status } from '@prisma/client';
 
 export async function GET(request: Request) {
     const route = '/api/briefings';
     const session = await getServerSession(authOptions);
     const { searchParams } = new URL(request.url);
+
     if (!session?.user) {
         return createApiResponse({
             route,
@@ -21,6 +23,21 @@ export async function GET(request: Request) {
     const pageParam = searchParams.get('page') || '1';
     const limitParam = searchParams.get('limit') || '10';
 
+    const statusQuery = searchParams.get('status') || Status.EM_ANALISE;
+
+    // Validate status against the Status enum
+    if (!Object.values(Status).includes(statusQuery as Status)) {
+        return createApiResponse({
+            route,
+            body: { searchParams: searchParams.toString() },
+            status: 400,
+            message: 'Invalid status provided',
+            error: 'Status is not valid',
+        });
+    }
+
+    const status = statusQuery as Status;
+
     const search = searchParams.get('search') || '';
 
     const page = parseInt(pageParam, 10) || 1;
@@ -32,7 +49,9 @@ export async function GET(request: Request) {
             prisma.briefing.findMany({
                 where: {
                     userId: Number(session.user.id),
-                    OR: [{ title: { contains: search } }, { text: { contains: search } }],
+                    title: { contains: search },
+                    text: { contains: search },
+                    status: status,
                 },
                 include: {
                     suggestion: true,
@@ -46,7 +65,9 @@ export async function GET(request: Request) {
             prisma.briefing.count({
                 where: {
                     userId: Number(session.user.id),
-                    OR: [{ title: { contains: search } }],
+                    title: { contains: search },
+                    text: { contains: search },
+                    status: status,
                 },
             }),
         ]);
@@ -56,7 +77,7 @@ export async function GET(request: Request) {
             body: { searchParams: searchParams.toString() },
             status: 200,
             message: 'Briefings retrieved successfully',
-            data: { data: briefings, pagination: { totalCount } },
+            data: { data: briefings, pagination: { totalPages: Math.ceil(totalCount / limit) } },
         });
     } catch (error) {
         return createApiResponse({

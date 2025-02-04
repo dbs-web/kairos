@@ -13,10 +13,15 @@ import { useBriefing } from '@/hooks/use-briefing';
 
 interface EditBriefingDialogProps {
     briefing: IBriefing;
+    className?: string;
     children: React.ReactNode;
 }
 
-export default function EditBriefingDialog({ children, briefing }: EditBriefingDialogProps) {
+export default function EditBriefingDialog({
+    children,
+    briefing,
+    className,
+}: EditBriefingDialogProps) {
     const [text, setText] = useState(briefing.text);
     const [isSaving, setIsSaving] = useState(false);
     const { updateBriefing } = useBriefing();
@@ -35,7 +40,7 @@ export default function EditBriefingDialog({ children, briefing }: EditBriefingD
 
     return (
         <Dialog open={open} onOpenChange={() => setOpen(!open)}>
-            <DialogTrigger>{children}</DialogTrigger>
+            <DialogTrigger className={className}>{children}</DialogTrigger>
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle>{briefing.title}</DialogTitle>

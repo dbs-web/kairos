@@ -15,10 +15,15 @@ import { useToast } from '@/hooks/use-toast';
 
 interface EditBriefingDialogProps {
     briefing: IBriefing;
+    className?: string;
     children: React.ReactNode;
 }
 
-export default function BriefingApprovalDialog({ children, briefing }: EditBriefingDialogProps) {
+export default function BriefingApprovalDialog({
+    children,
+    briefing,
+    className,
+}: EditBriefingDialogProps) {
     const { sendVideoToProduction } = useBriefing();
     const [open, setOpen] = useState<boolean>();
     const { clearSelectedAvatar, selectedAvatar } = useBriefing();
@@ -44,7 +49,7 @@ export default function BriefingApprovalDialog({ children, briefing }: EditBrief
 
     return (
         <Dialog open={open} onOpenChange={handleDialogClose}>
-            <DialogTrigger>{children}</DialogTrigger>
+            <DialogTrigger className={className}>{children}</DialogTrigger>
             <DialogContent className="max-w-[90vw] !rounded xl:max-w-[600px]">
                 <div className="relative flex flex-col items-center">
                     <DialogHeader>
