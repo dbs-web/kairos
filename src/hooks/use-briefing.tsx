@@ -110,7 +110,7 @@ export const BriefingProvider = ({ children }: { children: React.ReactNode }) =>
             }
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['briefings'] });
+            queryClient.invalidateQueries({ queryKey: ['briefing'] });
         },
     });
 
@@ -133,7 +133,7 @@ export const BriefingProvider = ({ children }: { children: React.ReactNode }) =>
             }
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['briefings'] });
+            queryClient.invalidateQueries({ queryKey: ['briefing'] });
             refetch();
         },
     });
@@ -168,7 +168,7 @@ export const BriefingProvider = ({ children }: { children: React.ReactNode }) =>
             return;
         }
 
-        await queryClient.invalidateQueries({ queryKey: ['briefings'] });
+        await queryClient.invalidateQueries({ queryKey: ['briefing'] });
         setError('');
     };
 
@@ -186,7 +186,7 @@ export const BriefingProvider = ({ children }: { children: React.ReactNode }) =>
             }
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['briefings'] });
+            queryClient.invalidateQueries({ queryKey: ['briefing'] });
         },
     });
 
