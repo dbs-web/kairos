@@ -7,7 +7,7 @@ import { useBriefing } from '@/hooks/use-briefing';
 
 export default function BriefingGrid() {
     const { briefings, page, totalPages, setPage, isLoading } = useBriefing();
-    useEffect(() => console.log(isLoading), [isLoading]);
+    
     return (
         <div className="flex h-full w-full flex-col items-center justify-between pb-[90px] transition-all duration-300">
             <div className="flex w-full flex-wrap items-center justify-start gap-y-8 !pt-0 lg:p-8">
