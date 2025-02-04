@@ -21,7 +21,14 @@ const VideoContext = createContext<VideoContextProps | undefined>(undefined);
 export const VideoProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [error, setError] = useState<string>('');
 
-    const { page, setPage, limit } = usePagination(2);
+    const limits = {
+        sm: 1,
+        md: 1,
+        lg: 2,
+        xl: 2
+    }
+
+    const { page, setPage, limit } = usePagination(limits);
 
     const { data, isLoading } = useFetchData<IVideo>(
         'videos',
