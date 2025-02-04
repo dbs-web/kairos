@@ -1,8 +1,7 @@
-'use client';
-import Image from 'next/image';
+import { useState } from 'react';
 import { INews } from '@/types/news';
 import StatusBadge from '../ui/status-badge';
-import { MdChevronRight } from 'react-icons/md';
+import { MdChevronRight, MdImageNotSupported } from 'react-icons/md';
 
 interface NewsCardProps {
     news: INews;
@@ -11,6 +10,7 @@ interface NewsCardProps {
 }
 
 export default function NewsCard({ news, isSelected, onSelect }: NewsCardProps) {
+    const [imageError, setImageError] = useState(false);
     const handleSelect = () => {
         if (news.status === 'EM_ANALISE') {
             onSelect(news.id);
@@ -30,6 +30,10 @@ export default function NewsCard({ news, isSelected, onSelect }: NewsCardProps) 
 
     const siteName = getSiteName(news.url);
 
+    const handleImageError = () => {
+        setImageError(true);
+    };
+
     return (
         <div
             className={`cursor-pointer space-y-4 rounded-lg border bg-white p-5 transition-all duration-300 sm:mx-4 ${
@@ -42,13 +46,18 @@ export default function NewsCard({ news, isSelected, onSelect }: NewsCardProps) 
             onClick={handleSelect}
         >
             <div className="relative h-48 w-full overflow-hidden rounded-xl border drop-shadow-md">
-                <Image
-                    src={news.thumbnail}
-                    alt={news.title}
-                    layout="fill"
-                    objectFit="cover"
-                    className="absolute inset-0"
-                />
+                {imageError || !news.thumbnail ? (
+                    <div className="flex h-full w-full items-center justify-center bg-neutral-300 text-neutral-500">
+                        <MdImageNotSupported className="text-4xl" />
+                    </div>
+                ) : (
+                    <img
+                        src={news.thumbnail}
+                        alt={news.title}
+                        className="absolute inset-0 h-full w-full object-cover"
+                        onError={handleImageError}
+                    />
+                )}
             </div>
             <div className="flex w-full items-start justify-between gap-x-2">
                 <div className="flex !max-w-[70%] flex-col items-start">
