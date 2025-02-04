@@ -23,6 +23,7 @@ import BriefingApprovalDialog from './BriefingApprovalDialog';
 import { Status } from '@/types/status';
 import StatusBadge from '../ui/status-badge';
 import SourcesDialog from './SourcesDialog';
+import { useToast } from '@/hooks/use-toast';
 
 interface BriefingCardProps {
     briefing: IBriefing;
@@ -30,13 +31,22 @@ interface BriefingCardProps {
 
 export default function BriefingCard({ briefing }: BriefingCardProps) {
     const { deleteBriefing, redoBriefing } = useBriefing();
+    const {toast} = useToast()
 
-    const handleArchive = () => {
-        deleteBriefing(briefing.id);
+    const handleArchive = async () => {
+        deleteBriefing(briefing.id).then(() => {
+            toast({
+                title: 'Seu briefing foi arquivado com sucesso!',
+            });
+        })
     };
 
-    const handleRedoBriefing = () => {
-        redoBriefing(briefing.id);
+    const handleRedoBriefing = async () => {
+        redoBriefing(briefing.id)
+        toast({
+            title: 'Seu briefing está sendo gerado.',
+            description: "Aguarde um momento enquanto seu novo briefing será gerado."
+        });
     };
 
     return (

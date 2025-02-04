@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/dialog';
 import { IBriefing } from '@/types/briefing';
 import { useBriefing } from '@/hooks/use-briefing';
+import { useToast } from '@/hooks/use-toast';
 
 interface EditBriefingDialogProps {
     briefing: IBriefing;
@@ -26,11 +27,15 @@ export default function EditBriefingDialog({
     const [isSaving, setIsSaving] = useState(false);
     const { updateBriefing } = useBriefing();
     const [open, setOpen] = useState<boolean>();
+    const {toast} = useToast()
 
     const handleSubmit = async () => {
         setIsSaving(true);
         try {
             await updateBriefing(briefing.id, text, briefing.status);
+            toast({
+                title: 'Seu briefing foi editado com sucesso!',
+            });
             setIsSaving(false);
             setOpen(false);
         } catch (e) {
