@@ -38,7 +38,14 @@ export const BriefingProvider = ({ children }: { children: React.ReactNode }) =>
     const [height, setHeight] = useState<number>(720);
     const [error, setError] = useState<string>('');
 
-    const { page, setPage, limit } = usePagination(3);
+    const limits = {
+        sm: 1,
+        md: 1,
+        lg: 2,
+        xl: 3,
+    };
+
+    const { page, setPage, limit } = usePagination(limits);
 
     const { data, isFetching, refetch } = useFetchData<IBriefing>(
         'briefings',
