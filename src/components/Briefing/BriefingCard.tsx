@@ -43,7 +43,7 @@ export default function BriefingCard({ briefing }: BriefingCardProps) {
             <div className="flex w-full items-start justify-between">
                 <div className="flex h-full max-w-[80%] flex-col items-start justify-between">
                     <h1 className="text-medium line-clamp-2 text-lg font-bold">
-                        {briefing.title} {briefing.id}
+                        {briefing.title}
                     </h1>
                     <time className="text-sm text-neutral-500">
                         Data:{' '}
