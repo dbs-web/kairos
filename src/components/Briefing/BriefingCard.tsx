@@ -21,9 +21,10 @@ import MarkdownText from './MarkdownText';
 import { useBriefing } from '@/hooks/use-briefing';
 import BriefingApprovalDialog from './BriefingApprovalDialog';
 import { Status } from '@/types/status';
-import StatusBadge from '../ui/status-badge';
+
 import SourcesDialog from './SourcesDialog';
 import { useToast } from '@/hooks/use-toast';
+import RedoBriefingDialog from './RedoBriefingDialog';
 
 interface BriefingCardProps {
     briefing: IBriefing;
@@ -38,14 +39,6 @@ export default function BriefingCard({ briefing }: BriefingCardProps) {
             toast({
                 title: 'Seu briefing foi arquivado com sucesso!',
             });
-        });
-    };
-
-    const handleRedoBriefing = async () => {
-        redoBriefing(briefing.id);
-        toast({
-            title: 'Seu briefing está sendo gerado.',
-            description: 'Aguarde um momento enquanto seu novo briefing será gerado.',
         });
     };
 
@@ -99,13 +92,7 @@ export default function BriefingCard({ briefing }: BriefingCardProps) {
                         Aprovar
                     </div>
                 </BriefingApprovalDialog>
-                <div
-                    onClick={handleRedoBriefing}
-                    className="flex basis-1/3 cursor-pointer items-center justify-center gap-x-1 rounded-lg bg-secondary py-2 text-white transition duration-300 hover:shadow-md"
-                >
-                    <CiRedo className="text-xl" />
-                    Refazer Conteudo
-                </div>
+                <RedoBriefingDialog briefing={briefing} />
                 <EditBriefingDialog briefing={briefing} className="basis-1/3">
                     <div className="ms-auto flex min-w-32 items-center justify-center gap-x-1 rounded-lg bg-secondary py-2 text-white transition duration-300 hover:shadow-md">
                         <CiCircleCheck className="text-xl" />

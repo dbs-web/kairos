@@ -16,7 +16,7 @@ interface BriefingContextProps {
     error: string;
     refetch: () => void;
     updateBriefing: (id: number, updatedText: string, status: string) => Promise<void>;
-    redoBriefing: (id: number) => Promise<void>;
+    redoBriefing: (id: number, instruction: string) => Promise<void>;
     deleteBriefing: (id: number) => Promise<void>;
     selectAvatar: (avatar_id: string, widht: number, height: number) => void;
     clearSelectedAvatar: () => void;
@@ -119,13 +119,13 @@ export const BriefingProvider = ({ children }: { children: React.ReactNode }) =>
     };
 
     const redoMutation = useMutation({
-        mutationFn: async ({ id }: { id: number }) => {
+        mutationFn: async ({ id, instruction }: { id: number; instruction: string }) => {
             const response = await fetch('/api/briefings/redo', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ briefingId: id }),
+                body: JSON.stringify({ briefingId: id, instruction }),
             });
 
             if (!response.ok) {
@@ -138,8 +138,8 @@ export const BriefingProvider = ({ children }: { children: React.ReactNode }) =>
         },
     });
 
-    const redoBriefing = async (id: number) => {
-        await redoMutation.mutateAsync({ id });
+    const redoBriefing = async (id: number, instruction: string) => {
+        await redoMutation.mutateAsync({ id, instruction });
     };
 
     const sendVideoToProduction = async (briefing: number) => {

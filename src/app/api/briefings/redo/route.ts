@@ -18,7 +18,7 @@ export async function POST(request: Request) {
     }
 
     try {
-        const { briefingId } = body;
+        const { briefingId, instruction } = body;
 
         if (!briefingId) {
             return createApiResponse({
@@ -50,7 +50,7 @@ export async function POST(request: Request) {
             });
         }
 
-        const query = `Refaça esse conteúdo: ${briefing.text}`;
+        const query = `Refaça esse conteúdo: ${briefing.title} | ${briefing.date} \n\n ${briefing.text}\n\n\n\n Instruções para refação:\n${instruction}`;
         const difyContentCreation = await getUserDifyAgent(session.user.id);
         await sendContentCreationRequest(briefing.id, query, difyContentCreation);
         return createApiResponse({
