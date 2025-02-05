@@ -23,20 +23,21 @@ export async function GET(request: Request) {
     const pageParam = searchParams.get('page') || '1';
     const limitParam = searchParams.get('limit') || '10';
 
-    const statusQuery = searchParams.get('status') || Status.EM_ANALISE;
+    let statusQuery = searchParams.get('status') || null;
+    let status: Status[] = [Status.EM_ANALISE, Status.EM_PRODUCAO];
 
-    // Validate status against the Status enum
-    if (!Object.values(Status).includes(statusQuery as Status)) {
-        return createApiResponse({
-            route,
-            body: { searchParams: searchParams.toString() },
-            status: 400,
-            message: 'Invalid status provided',
-            error: 'Status is not valid',
-        });
+    if (statusQuery) {
+        if (!Object.values(Status).includes(statusQuery as Status)) {
+            return createApiResponse({
+                route,
+                body: { searchParams: searchParams.toString() },
+                status: 400,
+                message: 'Invalid status provided',
+                error: 'Status is not valid',
+            });
+        }
+        status = [statusQuery as Status];
     }
-
-    const status = statusQuery as Status;
 
     const search = searchParams.get('search') || '';
 
@@ -51,7 +52,7 @@ export async function GET(request: Request) {
                     userId: Number(session.user.id),
                     title: { contains: search },
                     text: { contains: search },
-                    status: status,
+                    status: { in: status },
                 },
                 include: {
                     suggestion: true,
@@ -67,7 +68,7 @@ export async function GET(request: Request) {
                     userId: Number(session.user.id),
                     title: { contains: search },
                     text: { contains: search },
-                    status: status,
+                    status: { in: status },
                 },
             }),
         ]);
@@ -89,6 +90,7 @@ export async function GET(request: Request) {
         });
     }
 }
+
 
 export async function POST(request: Request) {
     const route = '/api/briefings';
