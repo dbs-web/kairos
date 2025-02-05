@@ -27,7 +27,7 @@ export default function EditBriefingDialog({
     const [isSaving, setIsSaving] = useState(false);
     const { updateBriefing } = useBriefing();
     const [open, setOpen] = useState<boolean>();
-    const {toast} = useToast()
+    const { toast } = useToast();
 
     const handleSubmit = async () => {
         setIsSaving(true);

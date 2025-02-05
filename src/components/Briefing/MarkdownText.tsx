@@ -8,7 +8,7 @@ export default function MarkdownText({ text, className }: { text: string; classN
         <ScrollArea
             className={`${className} h-80 rounded-lg border-b border-t bg-muted/20 p-2 pr-4 shadow-sm`}
         >
-            <ReactMarkdown remarkPlugins={[remarkGfm]} className={'prose text-xs'}>
+            <ReactMarkdown remarkPlugins={[remarkGfm]} className={'prose min-w-full text-xs'}>
                 {text}
             </ReactMarkdown>
         </ScrollArea>

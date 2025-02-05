@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 
 interface UsePagination {
-    paginationLimits?: PaginationLimits
+    paginationLimits?: PaginationLimits;
 }
 
 type PaginationLimits = {

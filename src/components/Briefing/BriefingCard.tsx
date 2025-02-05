@@ -31,21 +31,21 @@ interface BriefingCardProps {
 
 export default function BriefingCard({ briefing }: BriefingCardProps) {
     const { deleteBriefing, redoBriefing } = useBriefing();
-    const {toast} = useToast()
+    const { toast } = useToast();
 
     const handleArchive = async () => {
         deleteBriefing(briefing.id).then(() => {
             toast({
                 title: 'Seu briefing foi arquivado com sucesso!',
             });
-        })
+        });
     };
 
     const handleRedoBriefing = async () => {
-        redoBriefing(briefing.id)
+        redoBriefing(briefing.id);
         toast({
             title: 'Seu briefing está sendo gerado.',
-            description: "Aguarde um momento enquanto seu novo briefing será gerado."
+            description: 'Aguarde um momento enquanto seu novo briefing será gerado.',
         });
     };
 
