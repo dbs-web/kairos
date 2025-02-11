@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { parseDateStringDate } from '@/lib/date';
 import { headers } from 'next/headers';
-import { getSession, isAuthorized, validateExternalRequest } from '@/lib/api';
+import { getPaginationParams, getSession, isAuthorized, validateExternalRequest } from '@/lib/api';
 import { UserRoles } from '@/types/user';
 import { Status } from '@prisma/client';
 
@@ -44,22 +44,7 @@ export async function GET(request: Request) {
         return NextResponse.json({ error: 'Not Authorized!', status: 401 });
     }
 
-    const { searchParams } = new URL(request.url);
-
-    const pageParam = searchParams.get('page') || '1';
-    const limitParam = searchParams.get('limit') || '10';
-
-    const search = searchParams.get('search') || ''; // Obtém o termo de busca
-
-    const statusParam = searchParams.get('status');
-    const status: Status = Object.values(Status).includes(statusParam as Status)
-        ? (statusParam as Status)
-        : Status.EM_ANALISE;
-
-    const page = parseInt(pageParam, 10) || 1;
-    const limit = parseInt(limitParam, 10) || 10;
-    const skip = (page - 1) * limit;
-
+    const { search, page, status, skip, limit } = getPaginationParams(request);
     try {
         const [suggestions, totalCount] = await Promise.all([
             prisma.suggestion.findMany({

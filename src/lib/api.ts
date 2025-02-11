@@ -116,3 +116,30 @@ export async function updateSuggestionsStatus(suggestions: number[]) {
         },
     });
 }
+
+interface Pagination {
+    search: string;
+    status: Status;
+    page: number;
+    limit: number;
+    skip: number;
+}
+
+export function getPaginationParams(request: Request): Pagination {
+    const { searchParams } = new URL(request.url);
+
+    const pageParam = searchParams.get('page') || '1';
+    const limitParam = searchParams.get('limit') || '10';
+
+    const search = searchParams.get('search') || '';
+
+    const statusParam = searchParams.get('status');
+    const status: Status = Object.values(Status).includes(statusParam as Status)
+        ? (statusParam as Status)
+        : Status.EM_ANALISE;
+
+    const page = parseInt(pageParam, 10) || 1;
+    const limit = parseInt(limitParam, 10) || 10;
+    const skip = (page - 1) * limit;
+    return { search, status, page, limit, skip };
+}

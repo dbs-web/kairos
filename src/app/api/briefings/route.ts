@@ -2,7 +2,7 @@ import { getServerSession } from 'next-auth';
 import { prisma } from '@/lib/prisma';
 import { authOptions } from '@/lib/auth';
 import { parseDateStringDate } from '@/lib/date';
-import { createApiResponse } from '@/lib/api';
+import { createApiResponse, getPaginationParams } from '@/lib/api';
 import { Status } from '@prisma/client';
 
 export async function GET(request: Request) {
@@ -20,30 +20,10 @@ export async function GET(request: Request) {
         });
     }
 
-    const pageParam = searchParams.get('page') || '1';
-    const limitParam = searchParams.get('limit') || '10';
+    var { search, status, page, limit, skip } = getPaginationParams(request);
 
-    let statusQuery = searchParams.get('status') || null;
-    let status: Status[] = [Status.EM_ANALISE, Status.EM_PRODUCAO];
-
-    if (statusQuery) {
-        if (!Object.values(Status).includes(statusQuery as Status)) {
-            return createApiResponse({
-                route,
-                body: { searchParams: searchParams.toString() },
-                status: 400,
-                message: 'Invalid status provided',
-                error: 'Status is not valid',
-            });
-        }
-        status = [statusQuery as Status];
-    }
-
-    const search = searchParams.get('search') || '';
-
-    const page = parseInt(pageParam, 10) || 1;
-    const limit = parseInt(limitParam, 10) || 10;
-    const skip = (page - 1) * limit;
+    const possibleStatuses =
+        status === Status.EM_ANALISE ? [Status.EM_ANALISE, Status.EM_PRODUCAO] : [status];
 
     try {
         const [briefings, totalCount] = await Promise.all([
@@ -52,7 +32,7 @@ export async function GET(request: Request) {
                     userId: Number(session.user.id),
                     title: { contains: search },
                     text: { contains: search },
-                    status: { in: status },
+                    status: { in: possibleStatuses },
                 },
                 include: {
                     suggestion: true,
@@ -68,7 +48,7 @@ export async function GET(request: Request) {
                     userId: Number(session.user.id),
                     title: { contains: search },
                     text: { contains: search },
-                    status: { in: status },
+                    status: { in: possibleStatuses },
                 },
             }),
         ]);
@@ -90,7 +70,6 @@ export async function GET(request: Request) {
         });
     }
 }
-
 
 export async function POST(request: Request) {
     const route = '/api/briefings';

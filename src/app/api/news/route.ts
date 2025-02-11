@@ -1,8 +1,9 @@
 import { headers } from 'next/headers';
-import { getSession, isAuthorized, validateExternalRequest } from '@/lib/api';
+import { getPaginationParams, getSession, isAuthorized, validateExternalRequest } from '@/lib/api';
 import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
 import { UserRoles } from '@/types/user';
+import { Status } from '@prisma/client';
 
 export async function POST(request: Request) {
     const headersList = await headers();
@@ -38,7 +39,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ message: 'News created successfully!' });
 }
 
-export async function GET() {
+export async function GET(request: Request) {
     const session = await getSession();
 
     if (!session?.user || !isAuthorized(session, [UserRoles.USER]))
@@ -46,14 +47,47 @@ export async function GET() {
 
     const userId = session.user.id;
 
-    const news = await prisma.news.findMany({
-        where: {
-            userId: userId,
-        },
-        orderBy: {
-            id: 'desc',
-        },
-    });
+    const { search, status, page, limit, skip } = getPaginationParams(request);
 
-    return NextResponse.json({ data: news });
+    try {
+        const [news, totalCount] = await Promise.all([
+            prisma.news.findMany({
+                where: {
+                    userId: session.user.id,
+                    status,
+                    title: {
+                        contains: search,
+                    },
+                },
+                skip,
+                take: limit,
+                orderBy: { id: 'desc' },
+            }),
+
+            prisma.news.count({
+                where: {
+                    userId: session.user.id,
+                    status: status,
+                    title: {
+                        contains: search,
+                    },
+                },
+            }),
+        ]);
+        return NextResponse.json({
+            data: news,
+            pagination: {
+                page,
+                limit,
+                totalCount,
+                totalPages: Math.ceil(totalCount / limit),
+            },
+        });
+    } catch (error) {
+        return NextResponse.json({
+            status: 500,
+            message: 'Erro ao buscar noticias',
+            error: error instanceof Error ? error.message : error,
+        });
+    }
 }
