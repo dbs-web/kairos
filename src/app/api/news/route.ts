@@ -3,7 +3,6 @@ import { getPaginationParams, getSession, isAuthorized, validateExternalRequest 
 import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
 import { UserRoles } from '@/types/user';
-import { Status } from '@prisma/client';
 
 export async function POST(request: Request) {
     const headersList = await headers();
