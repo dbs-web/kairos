@@ -66,10 +66,6 @@ model News {
   status    Status
   text      String     @db.VarChar(5000)
   date      DateTime   @default(now())
-<<<<<<< HEAD
-  user      User       @relation(fields: [userId], references: [id])
-=======
->>>>>>> ec125bcefc83214e95532e8b5db1d58d0a6cd84a
   Briefing  Briefing[]
   user      User       @relation(fields: [userId], references: [id])
 
