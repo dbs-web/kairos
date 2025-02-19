@@ -40,16 +40,17 @@ model Suggestion {
 model Briefing {
   id           Int         @id @default(autoincrement())
   suggestionId Int?
-  newsId       Int?
   title        String      @db.VarChar(500)
   text         String?     @db.VarChar(5000)
   date         DateTime
   status       Status
   userId       Int
-  suggestion   Suggestion? @relation(fields: [suggestionId], references: [id])
-  news         News?       @relation(fields: [newsId], references: [id])
-  user         User        @relation(fields: [userId], references: [id])
+  newsId       Int?
   sources      Json?
+  news         News?       @relation(fields: [newsId], references: [id])
+  suggestion   Suggestion? @relation(fields: [suggestionId], references: [id])
+  user         User        @relation(fields: [userId], references: [id])
+
   @@index([suggestionId], map: "Briefing_suggestionId_fkey")
   @@index([newsId], map: "Briefing_newsId_fkey")
   @@index([userId], map: "Briefing_userId_fkey")
@@ -65,8 +66,12 @@ model News {
   status    Status
   text      String     @db.VarChar(5000)
   date      DateTime   @default(now())
+<<<<<<< HEAD
   user      User       @relation(fields: [userId], references: [id])
+=======
+>>>>>>> ec125bcefc83214e95532e8b5db1d58d0a6cd84a
   Briefing  Briefing[]
+  user      User       @relation(fields: [userId], references: [id])
 
   @@index([userId], map: "News_userId_fkey")
 }
@@ -76,15 +81,15 @@ model Video {
   userId         Int
   title          String       @db.VarChar(500)
   legenda        String       @db.VarChar(2000)
-  transcription  String       @db.VarChar(2000) @default("")
   url            String?      @db.VarChar(500)
-  width          Int
-  height         Int
-  heygenVideoId  String?      @unique
-  heygenStatus   HeyGenStatus @default(PROCESSING)
   heygenErrorMsg String?
-  user           User         @relation(fields: [userId], references: [id])
+  heygenStatus   HeyGenStatus @default(PROCESSING)
+  heygenVideoId  String?      @unique
+  height         Int
+  width          Int
   creationDate   DateTime     @default(now())
+  transcription  String       @default("") @db.VarChar(2000)
+  user           User         @relation(fields: [userId], references: [id])
 
   @@index([userId], map: "Video_userId_fkey")
 }
