@@ -23,7 +23,7 @@ export default function EditBriefingDialog({
     briefing,
     className,
 }: EditBriefingDialogProps) {
-    const [text, setText] = useState(briefing.text);
+    const [text, setText] = useState<string>(briefing.text ?? "");
     const [isSaving, setIsSaving] = useState(false);
     const { updateBriefing } = useBriefing();
     const [open, setOpen] = useState<boolean>();

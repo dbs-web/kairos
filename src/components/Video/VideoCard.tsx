@@ -1,10 +1,11 @@
-import { IVideo } from '@/domain/entities/video';
-
+// UI
 import { FiDownload } from 'react-icons/fi';
 import { PiSpinnerThin } from 'react-icons/pi';
 import { BiErrorCircle } from 'react-icons/bi';
-
 import TranscriptionDialog from './VideoTranscriptionDialog';
+
+// Entities
+import { IVideo } from '@/domain/entities/video';
 
 interface VideoCardProps {
     video: IVideo;
@@ -12,17 +13,21 @@ interface VideoCardProps {
 
 export default function VideoCard({ video }: VideoCardProps) {
     const handleDownload = async () => {
-        const response = await fetch(video.url);
-        const blob = await response.blob();
-        const link = document.createElement('a');
-        const url = URL.createObjectURL(blob);
+        if(video.url){
+            const response = await fetch(video.url);
+            const blob = await response.blob();
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+    
+            link.href = url;
+            link.download = `${video.title}.mp4`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            return URL.revokeObjectURL(url);
+        }
 
-        link.href = url;
-        link.download = `${video.title}.mp4`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
+        console.error('Não foi possível baixar o vídeo');
     };
 
     return (

@@ -1,13 +1,20 @@
 'use client';
+import { useEffect } from 'react';
 
+// Hooks
 import { useSuggestions } from '@/hooks/use-suggestions';
-import SuggestionCard from './SuggestionCard';
-import { ISuggestion } from '@/domain/suggestion';
-import { useEffect, useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
-import Skeleton from './SuggestionSkeleton';
 import { useSearchData } from '@/hooks/use-search-data';
+
+// UI
+import SuggestionCard from './SuggestionCard';
+import Skeleton from './SuggestionSkeleton';
 import Pagination from '../ui/pagination';
+
+// Entities
+import { ISuggestion } from '@/domain/entities/suggestion';
+
+
 
 const enumStatuses = [
     { label: 'Em Análise', value: 'EM_ANALISE' },

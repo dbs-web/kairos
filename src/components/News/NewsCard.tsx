@@ -1,7 +1,11 @@
 import { useState } from 'react';
-import { INews } from '@/domain/news';
+
+// UI
 import StatusBadge from '../ui/status-badge';
 import { MdChevronRight, MdImageNotSupported } from 'react-icons/md';
+
+// Entities
+import { INews } from '@/domain/entities/news';
 
 interface NewsCardProps {
     news: INews;

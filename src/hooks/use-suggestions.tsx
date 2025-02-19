@@ -1,8 +1,11 @@
 'use client';
+import React, { createContext, useContext, useState, useCallback } from 'react';
 
-import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
+// Entities
+import { ISuggestion } from '@/domain/entities/suggestion';
+
+// Hooks
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { ISuggestion } from '@/domain/suggestion';
 import { useFetchData } from './use-fetch-data';
 import { usePagination } from './use-pagination';
 

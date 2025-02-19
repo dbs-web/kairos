@@ -1,7 +1,5 @@
 import { NextResponse } from 'next/server';
 
-import { getPaginationParams } from '@/lib/api';
-
 // Entities
 import { UserRoles } from '@/domain/entities/user';
 
@@ -9,10 +7,11 @@ import { UserRoles } from '@/domain/entities/user';
 import { getPaginatedLogsUseCase } from '@/use-cases/ApiLogUseCases';
 
 // Adapters
-import { withAuthorization } from '@/adapters/withAuthorization';
+import { Session, withAuthorization } from '@/adapters/withAuthorization';
+import { Pagination, withPagination } from '@/adapters/withPagination';
 
-export const GET = withAuthorization([UserRoles.ADMIN], async (request) => {
-    var { search, limit, skip } = getPaginationParams(request);
+async function getLogsHandler(request: Request, user: Session, pagination: Pagination){
+    var { search, limit, skip } = pagination;
 
     const [logs, totalCount] = await getPaginatedLogsUseCase.execute({
         search,
@@ -27,4 +26,8 @@ export const GET = withAuthorization([UserRoles.ADMIN], async (request) => {
         },
         status: 200,
     });
-});
+};
+
+export const GET = withAuthorization([UserRoles.ADMIN], async (request, user) => {
+    return withPagination((req, pagination) => getLogsHandler(req, user, pagination))(request);
+}); 

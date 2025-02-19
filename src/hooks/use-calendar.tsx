@@ -1,17 +1,12 @@
 'use client';
 
-import React, {
-    createContext,
-    useContext,
+import {
     useState,
-    useCallback,
-    useEffect,
-    ReactNode,
 } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { ISuggestion } from '@/domain/suggestion';
-import { useFetchData } from './use-fetch-data';
 import { EventHoveringArg } from '@fullcalendar/core/index.js';
+
+// Hooks
+import { useFetchData } from './use-fetch-data';
 
 type Event = {
     title: string;
