@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { IVideo } from '@/types/video';
+import { IVideo } from '@/domain/entities/video';
 import { usePagination } from './use-pagination';
 import { useFetchData } from './use-fetch-data';
 

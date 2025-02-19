@@ -1,20 +1,22 @@
-import { ISuggestion } from '@/types/suggestion';
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
-import { parseDateStringDate } from '@/lib/date';
-import { headers } from 'next/headers';
-import { getPaginationParams, getSession, isAuthorized, validateExternalRequest } from '@/lib/api';
-import { UserRoles } from '@/types/user';
-import { Status } from '@prisma/client';
 
-export async function POST(request: Request) {
-    const headersList = await headers();
-    const valid = await validateExternalRequest(headersList);
+// Entities
+import { UserRoles } from '@/domain/entities/user';
+import { Status } from '@/domain/entities/status';
 
-    if (!valid) {
-        return NextResponse.json({ error: 'Not Authorized.', status: 401 });
-    }
+// Use Cases
+import {
+    createManySuggestionsUseCase,
+    getPaginatedSuggestionsUseCase,
+    updateSuggestionsStatusUseCase,
+} from '@/use-cases/SuggestionUseCases';
 
+// Adapters
+import { Session, withAuthorization } from '@/adapters/withAuthorization';
+import { withExternalRequestValidation } from '@/adapters/withExternalRequestValidation';
+import { Pagination, withPagination } from '@/adapters/withPagination';
+
+export const POST = withExternalRequestValidation(async (request: Request) => {
     try {
         const { data } = await request.json();
 
@@ -22,53 +24,25 @@ export async function POST(request: Request) {
             return NextResponse.json({ status: 400, message: 'Dados inválidos' });
         }
 
-        await prisma.suggestion.createMany({
-            data: data.map((suggestion: ISuggestion) => ({
-                ...suggestion,
-                date: parseDateStringDate(suggestion.date),
-                userId: suggestion.userId,
-            })),
-            skipDuplicates: true,
-        });
+        await createManySuggestionsUseCase.execute({ suggestionsArr: data });
     } catch (e) {
         return NextResponse.json({ status: 500, message: 'Erro ao criar sugestões', error: e });
     }
 
     return NextResponse.json({ message: 'Suggestions created successfully!' });
-}
+});
 
-export async function GET(request: Request) {
-    const session = await getSession();
-
-    if (!session?.user || !isAuthorized(session, [UserRoles.USER])) {
-        return NextResponse.json({ error: 'Not Authorized!', status: 401 });
-    }
-
-    const { search, page, status, skip, limit } = getPaginationParams(request);
+async function getSuggestionsHandler(request: Request, user: Session, pagination: Pagination) {
+    const userId = user.id;
+    const { search, page, status, skip, limit } = pagination;
     try {
-        const [suggestions, totalCount] = await Promise.all([
-            prisma.suggestion.findMany({
-                where: {
-                    userId: session.user.id,
-                    status: status,
-                    title: {
-                        contains: search,
-                    },
-                },
-                skip,
-                take: limit,
-                orderBy: { id: 'desc' },
-            }),
-            prisma.suggestion.count({
-                where: {
-                    userId: session.user.id,
-                    status: status,
-                    title: {
-                        contains: search,
-                    },
-                },
-            }),
-        ]);
+        const [suggestions, totalCount] = await getPaginatedSuggestionsUseCase.execute({
+            userId,
+            statuses: [status],
+            search,
+            skip,
+            limit,
+        });
 
         return NextResponse.json({
             data: suggestions,
@@ -91,25 +65,36 @@ export async function GET(request: Request) {
     }
 }
 
-export async function DELETE(request: Request) {
-    try {
-        const { ids } = await request.json();
+export const DELETE = withAuthorization(
+    [UserRoles.USER, UserRoles.ADMIN],
+    async (request, user) => {
+        const userId = user.id;
+        try {
+            const { ids } = await request.json();
 
-        if (!Array.isArray(ids) || ids.length === 0) {
-            return NextResponse.json({ status: 400, message: 'Dados inválidos' });
-        }
+            if (!Array.isArray(ids) || ids.length === 0) {
+                return NextResponse.json({ status: 400, message: 'Dados inválidos' });
+            }
 
-        await prisma.suggestion.updateMany({
-            where: {
-                id: { in: ids },
-            },
-            data: {
+            await updateSuggestionsStatusUseCase.execute({
+                suggestions: ids,
+                userId,
                 status: Status.ARQUIVADO,
-            },
-        });
+            });
 
-        return NextResponse.json({ message: 'Suggestions archived successfully!' });
-    } catch (e) {
-        return NextResponse.json({ status: 500, message: 'Erro ao arquivar sugestões', error: e });
-    }
-}
+            return NextResponse.json({ message: 'Suggestions archived successfully!' });
+        } catch (e) {
+            return NextResponse.json({
+                status: 500,
+                message: 'Erro ao arquivar sugestões',
+                error: e,
+            });
+        }
+    },
+);
+
+export const GET = withAuthorization([UserRoles.USER], async (request, user) => {
+    return withPagination((req, pagination) => getSuggestionsHandler(req, user, pagination))(
+        request,
+    );
+});

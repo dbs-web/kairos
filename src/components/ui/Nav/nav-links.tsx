@@ -1,5 +1,5 @@
 'use client';
-import { ILink } from '@/types/link';
+import { ILink } from '@/domain/link';
 import NavLink from './nav-link';
 
 import { usePathname } from 'next/navigation';

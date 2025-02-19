@@ -6,7 +6,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
-import { IBriefing } from '@/types/briefing';
+import { IBriefing } from '@/domain/entities/briefing';
 import { useBriefing } from '@/hooks/use-briefing';
 import { DialogDescription } from '@radix-ui/react-dialog';
 import { CiRedo } from 'react-icons/ci';

@@ -1,5 +1,5 @@
 // Types
-import { ILink } from '@/types/link';
+import { ILink } from '@/domain/link';
 
 // Components
 import ClientRegisterDialog from './ClientRegisterDialog';

@@ -1,5 +1,5 @@
 'use client';
-import { IAvatar } from '@/types/briefing';
+import { IAvatar } from '@/domain/entities/briefing';
 import { default as NextImage } from 'next/image';
 import { useEffect, useState } from 'react';
 import { useBriefing } from '@/hooks/use-briefing';

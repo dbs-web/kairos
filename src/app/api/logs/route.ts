@@ -1,21 +1,30 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
-import { isAuthorized } from '@/lib/api';
-import { UserRoles } from '@/types/user';
-import { prisma } from '@/lib/prisma';
+import { NextResponse } from 'next/server';
 
-export async function GET(request: NextRequest) {
-    const session = await getServerSession(authOptions);
+import { getPaginationParams } from '@/lib/api';
 
-    if (!isAuthorized(session, [UserRoles.ADMIN]))
-        return NextResponse.json({ error: 'Not Authorized!', status: 401 });
+// Entities
+import { UserRoles } from '@/domain/entities/user';
 
-    const logs = await prisma.apiLog.findMany({
-        orderBy: {
-            time: 'desc',
-        },
+// Use Cases
+import { getPaginatedLogsUseCase } from '@/use-cases/ApiLogUseCases';
+
+// Adapters
+import { withAuthorization } from '@/adapters/withAuthorization';
+
+export const GET = withAuthorization([UserRoles.ADMIN], async (request) => {
+    var { search, limit, skip } = getPaginationParams(request);
+
+    const [logs, totalCount] = await getPaginatedLogsUseCase.execute({
+        search,
+        skip,
+        limit,
     });
 
-    return NextResponse.json({ data: logs, status: 200 });
-}
+    return NextResponse.json({
+        data: logs,
+        pagination: {
+            totalPages: Math.ceil(totalCount / limit),
+        },
+        status: 200,
+    });
+});

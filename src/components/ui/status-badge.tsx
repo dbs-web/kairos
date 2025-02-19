@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { Status } from '@/types/status';
+import { Status } from '@/domain/entities/status';
 
 enum ItemStatusLabel {
     EM_ANALISE = 'Em Análise',

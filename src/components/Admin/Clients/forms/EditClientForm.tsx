@@ -15,7 +15,7 @@ import {
     FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { IUser } from '@/types/user';
+import { IUser } from '@/domain/entities/user';
 
 interface EditClientFormProps {
     client: IUser;

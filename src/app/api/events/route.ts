@@ -1,6 +1,8 @@
+import { withAuthorization } from '@/adapters/withAuthorization';
+import { UserRoles } from '@/domain/entities/user';
 import { NextResponse } from 'next/server';
 
-export function GET(request: Request) {
+export const GET = withAuthorization([UserRoles.USER, UserRoles.ADMIN], async (request, user) => {
     return NextResponse.json({
         data: [
             {
@@ -25,4 +27,4 @@ export function GET(request: Request) {
             },
         ],
     });
-}
+});

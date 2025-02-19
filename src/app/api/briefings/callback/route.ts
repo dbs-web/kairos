@@ -1,13 +1,20 @@
-import { prisma } from '@/lib/prisma';
-import { headers } from 'next/headers';
-import { validateExternalRequest, createApiResponse } from '@/lib/api';
-import { insertRedisData } from '@/lib/redis';
+// Entities
+import { withExternalRequestValidation } from '@/adapters/withExternalRequestValidation';
+import { Status } from '@/domain/entities/status';
+
+import { PollingManager } from '@/infrastructure/polling/PollingManager';
+
+// Use Cases
+import { createApiResponseUseCase } from '@/use-cases/ApiLogUseCases';
+import { updateBriefingUseCase } from '@/use-cases/BriefingUseCases';
 
 interface CallbackBody {
     briefingId?: number;
     sources?: string;
     text?: string;
 }
+
+const route = '/api/briefings/callback';
 
 async function getTitle(url: string): Promise<{ url: string; title: string }> {
     try {
@@ -20,47 +27,32 @@ async function getTitle(url: string): Promise<{ url: string; title: string }> {
     }
 }
 
-export async function POST(request: Request) {
-    const route = '/api/briefings/callback';
-    const headersList = await headers();
+export const POST = withExternalRequestValidation(async (request: Request) => {
     const body = await request.json();
 
     try {
-        const valid = await validateExternalRequest(headersList);
-
-        if (!valid) {
-            return createApiResponse({
-                route,
-                body: body,
-                status: 401,
-                message: 'Not Authorized.',
-                error: 'Unauthorized request',
-            });
-        }
-
         const { briefingId, sources, text }: CallbackBody = body;
+
         if (!briefingId) {
-            return createApiResponse({
+            return createApiResponseUseCase.USER_NOT_ALLOWED({
                 route,
                 body: body,
-                status: 405,
                 message: 'You should provide the briefingId',
                 error: 'Missing briefingId',
             });
         }
 
         if (!text && !sources) {
-            return createApiResponse({
+            return createApiResponseUseCase.BAD_REQUEST({
                 route,
                 body: body,
-                status: 405,
                 message: 'Dados incompletos.',
                 error: 'Missing sources or text',
             });
         }
 
         const updateData: any = {
-            status: 'EM_ANALISE',
+            responseCode: Status.EM_ANALISE,
         };
 
         if (text) {
@@ -72,6 +64,7 @@ export async function POST(request: Request) {
             const urls = parsedSources?.citations || [];
 
             const sourcesWithTitles = await Promise.all(urls.map(getTitle));
+
             const content = parsedSources?.content || [];
             updateData.sources = {
                 content,
@@ -79,31 +72,37 @@ export async function POST(request: Request) {
             };
         }
 
-        const briefing = await prisma.briefing.update({
-            where: {
-                id: briefingId,
-            },
+        const UpdatedBriefing = await updateBriefingUseCase.dangerousUpdate({
+            id: briefingId,
             data: updateData,
         });
 
-        await insertRedisData({
-            userId: briefing.userId,
+        if (!UpdatedBriefing) {
+            return createApiResponseUseCase.USER_NOT_ALLOWED({
+                route,
+                body: body,
+                message: 'User dont have permission to this briefing.',
+            });
+        }
+
+        const pollingManager = new PollingManager();
+
+        await pollingManager.insertData({
+            userId: UpdatedBriefing.userId,
             dataType: 'briefing',
         });
 
-        return createApiResponse({
+        return createApiResponseUseCase.SUCCESS({
             route,
             body: body,
-            status: 200,
             message: 'Briefing atualizado',
         });
     } catch (error) {
-        return createApiResponse({
+        return createApiResponseUseCase.INTERNAL_SERVER_ERROR({
             route,
             body: body,
-            status: 500,
             message: 'Internal Server Error',
             error: `Internal server error: ${error instanceof Error ? error.message : error}`,
         });
     }
-}
+});

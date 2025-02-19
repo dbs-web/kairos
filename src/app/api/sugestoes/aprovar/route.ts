@@ -1,52 +1,55 @@
-import {
-    createBriefings,
-    getSession,
-    getSuggestionsData,
-    getUserDifyAgent,
-    isAuthorized,
-    sendContentCreationRequest,
-    updateSuggestionsStatus,
-} from '@/lib/api';
-import { prisma } from '@/lib/prisma';
-import { UserRoles } from '@/types/user';
 import { NextResponse } from 'next/server';
 
-export async function POST(request: Request) {
-    const session = await getSession();
-    if (!session?.user?.id || !isAuthorized(session, [UserRoles.USER])) {
-        return NextResponse.json({ message: 'Not Authorized', status: 401 });
-    }
+// Entities
+import { UserRoles } from '@/domain/entities/user';
+import { Status } from '@/domain/entities/status';
 
+// Use Cases
+import { updateSuggestionsStatusUseCase } from '@/use-cases/SuggestionUseCases';
+import { createBriefingsUseCase } from '@/use-cases/BriefingUseCases';
+import { getUserDifyAgentUseCase } from '@/use-cases/UserUseCases';
+import { sendContentCreationRequestsUseCase } from '@/use-cases/DifyUseCases';
+
+// Adapters
+import { withAuthorization } from '@/adapters/withAuthorization';
+
+export const POST = withAuthorization([UserRoles.USER], async (request, user) => {
+    const userId = user.id;
     try {
-        const difyAgentToken = await getUserDifyAgent(session.user.id);
+        const difyAgentToken = await getUserDifyAgentUseCase.execute({ userId });
         const { suggestions } = await request.json();
 
         if (!Array.isArray(suggestions) || suggestions.length === 0) {
             return NextResponse.json({ error: 'No suggestions provided.', status: 400 });
         }
 
-        const suggestionsData = await getSuggestionsData(suggestions.map(Number));
+        // Update suggestions status to EM_PRODUCAO
+        const suggestionsData = await updateSuggestionsStatusUseCase.execute({
+            suggestions,
+            userId,
+            status: Status.EM_PRODUCAO,
+        });
+
         if (suggestionsData.length === 0) {
+            // If no suggestion was updated, return an error
             return NextResponse.json({ error: 'No valid suggestions found.', status: 404 });
         }
 
-        const createdBriefings = await createBriefings(suggestionsData, session.user.id);
-
-        const sendContentCreationRequests = suggestionsData.map(async (suggestion) => {
-            const briefing = await prisma.briefing.findFirst({
-                //@ts-expect-error user.id will ever be defined here
-                where: { suggestionId: suggestion.id, userId: session.user.id },
-            });
-            if (briefing) {
-                const query = `Faça um conteúdo sobre: ${suggestion.title} | ${suggestion.date}\n ${suggestion.briefing}`;
-                await sendContentCreationRequest(briefing.id, query, difyAgentToken);
-            }
+        // Create the briefings for successfull updated suggestions
+        const createdBriefings = await createBriefingsUseCase.fromSuggestions({
+            suggestionsData,
+            userId,
         });
 
-        await Promise.all(sendContentCreationRequests);
-        await updateSuggestionsStatus(suggestions);
+        // Send request to dify create the content of briefing
+        await sendContentCreationRequestsUseCase.execute({
+            difyAgentToken,
+            dataArr: suggestionsData,
+            briefings: createdBriefings,
+        });
+
         return NextResponse.json({
-            message: `${createdBriefings.count} briefings created and requests sent successfully.`,
+            message: `${createdBriefings.length} briefings created and requests sent successfully.`,
             status: 200,
         });
     } catch (error) {
@@ -56,4 +59,4 @@ export async function POST(request: Request) {
             status: 500,
         });
     }
-}
+});

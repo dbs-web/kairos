@@ -7,7 +7,7 @@ import {
     DialogTrigger,
 } from '@/components/ui/dialog';
 
-import { Source } from '@/types/briefing';
+import { Source } from '@/domain/entities/briefing';
 import MarkdownText from './MarkdownText';
 
 interface SourcesDialogProps {
@@ -23,15 +23,19 @@ export default function SourcesDialog({ title, sources }: SourcesDialogProps) {
     };
 
     const handleMarkdownText = () => {
-        const urls = sources.citations.map((citation) => `[${citation.title}](${citation.url})\n`);
+        if (sources?.citations?.length > 0) {
+            const urls = sources.citations.map(
+                (citation) => `[${citation.title}](${citation.url})\n`,
+            );
 
-        let text = sources.content;
+            let text = sources.content;
 
-        text += '\n\n## Fontes:\n\n';
+            text += '\n\n## Fontes:\n\n';
 
-        urls.forEach((url) => (text += url + '\n'));
+            urls.forEach((url) => (text += url + '\n'));
 
-        setMarkdownText(text);
+            setMarkdownText(text);
+        }
     };
 
     useEffect(() => {

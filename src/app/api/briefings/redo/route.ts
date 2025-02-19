@@ -1,72 +1,76 @@
-import {
-    createApiResponse,
-    getSession,
-    getUserDifyAgent,
-    sendContentCreationRequest,
-} from '@/lib/api';
-import { prisma } from '@/lib/prisma';
-import { NextResponse } from 'next/server';
+// Entities
+import { Status } from '@/domain/entities/status';
+import { UserRoles } from '@/domain/entities/user';
+
+// Use Cases
+import { createApiResponseUseCase } from '@/use-cases/ApiLogUseCases';
+import { updateBriefingUseCase } from '@/use-cases/BriefingUseCases';
+import { getUserDifyAgentUseCase } from '@/use-cases/UserUseCases';
+
+// Adapters
+import DifyAdapter from '@/adapters/DifyAdapter';
+import { withAuthorization } from '@/adapters/withAuthorization';
 
 const route = '/api/briefings/redo';
 
-export async function POST(request: Request) {
-    const session = await getSession();
+export const POST = withAuthorization([UserRoles.USER], async (request: Request, user) => {
     const body = await request.json();
-
-    if (!session || !session?.user?.id) {
-        return NextResponse.json({ status: 401, message: 'Unauthorized' }, { status: 401 });
-    }
 
     try {
         const { briefingId, instruction } = body;
 
+        const userId = user.id;
+
         if (!briefingId) {
-            return createApiResponse({
+            return createApiResponseUseCase.BAD_REQUEST({
                 route,
                 body,
-                status: 405,
                 message: 'Dados incompletos',
                 error: 'Missing briefing ID',
             });
         }
 
-        const briefing = await prisma.briefing.update({
-            where: {
-                id: briefingId,
-                userId: session.user.id,
-            },
+        const briefing = await updateBriefingUseCase.execute({
+            id: briefingId,
+            userId: user.id,
             data: {
-                status: 'EM_PRODUCAO',
+                status: Status.EM_PRODUCAO,
             },
         });
 
         if (!briefing) {
-            return createApiResponse({
+            return createApiResponseUseCase.BAD_REQUEST({
                 route,
                 body,
-                status: 405,
                 message: 'Invalid briefing id.',
                 error: 'The ID provided is not valid.',
             });
         }
 
         const query = `Refaça esse conteúdo: ${briefing.title} | ${briefing.date} \n\n ${briefing.text}\n\n\n\n Instruções para refação:\n${instruction}`;
-        const difyContentCreation = await getUserDifyAgent(session.user.id);
-        await sendContentCreationRequest(briefing.id, query, difyContentCreation);
-        return createApiResponse({
+
+        // Get content creation token
+        const difyContentCreation = await getUserDifyAgentUseCase.execute({ userId });
+
+        // Send the request
+        await new DifyAdapter().sendContentCreationRequest({
+            briefingId: briefing.id,
+            query,
+            difyAgentToken: difyContentCreation,
+        });
+
+        return createApiResponseUseCase.SUCCESS({
             route,
             body,
-            status: 200,
             message: 'Briefing redo request successfull',
             error: '',
         });
     } catch (error) {
-        return createApiResponse({
+        return createApiResponseUseCase.INTERNAL_SERVER_ERROR({
             route,
             body,
-            status: 500,
             message: `Error on redoing briefing content`,
             error: `${error instanceof Error ? error.message : error}`,
         });
     }
-}
+});

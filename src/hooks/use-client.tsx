@@ -1,4 +1,4 @@
-import { IUser } from '@/types/user';
+import { IUser } from '@/domain/entities/user';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 const fetchUsers = async (filterBy?: string, filterValue?: string): Promise<IUser[]> => {
@@ -10,7 +10,7 @@ const fetchUsers = async (filterBy?: string, filterValue?: string): Promise<IUse
     return data.data;
 };
 
-const addUser = async (user: IUser) => {
+const addUser = async (user: Omit<IUser, 'id'>) => {
     const res = await fetch('/api/user', {
         method: 'POST',
         headers: {

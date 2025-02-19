@@ -1,7 +1,9 @@
 import bcrypt from 'bcryptjs';
 import NextAuth, { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import { prisma } from '@/lib/prisma';
+
+// Use Cases
+import { getUsersUseCase } from '@/use-cases/UserUseCases';
 
 export const authOptions: NextAuthOptions = {
     session: {
@@ -23,11 +25,7 @@ export const authOptions: NextAuthOptions = {
             async authorize(credentials) {
                 if (!credentials) return null;
 
-                const user = await prisma.user.findUnique({
-                    where: {
-                        email: credentials.email,
-                    },
-                });
+                const user = await getUsersUseCase.byEmail(credentials.email);
 
                 if (user) {
                     const isMatch = await bcrypt.compare(credentials.password, user.password);

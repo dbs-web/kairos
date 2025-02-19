@@ -64,7 +64,7 @@ model News {
   thumbnail String     @db.VarChar(500)
   status    Status
   text      String     @db.VarChar(5000)
-  date      String
+  date      DateTime   @default(now())
   user      User       @relation(fields: [userId], references: [id])
   Briefing  Briefing[]
 

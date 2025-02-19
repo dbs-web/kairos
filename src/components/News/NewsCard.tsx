@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { INews } from '@/types/news';
+import { INews } from '@/domain/news';
 import StatusBadge from '../ui/status-badge';
 import { MdChevronRight, MdImageNotSupported } from 'react-icons/md';
 
@@ -65,7 +65,7 @@ export default function NewsCard({ news, isSelected, onSelect }: NewsCardProps) 
                         {news.title}
                     </h3>
                     <span className="text-xs text-neutral-500 md:text-sm">
-                        Data: {new Date(news.date).toLocaleDateString("pt-br")}
+                        Data: {new Date(news.date).toLocaleDateString('pt-br')}
                     </span>
                 </div>
                 <StatusBadge status={news.status} />

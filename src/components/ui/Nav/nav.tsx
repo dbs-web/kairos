@@ -1,5 +1,5 @@
 'use client';
-import { ILink } from '@/types/link';
+import { ILink } from '@/domain/link';
 
 // Hooks
 import { useSession } from 'next-auth/react';

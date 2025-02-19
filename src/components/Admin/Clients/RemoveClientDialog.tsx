@@ -1,5 +1,5 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { IUser } from '@/types/user';
+import { IUser } from '@/domain/entities/user';
 import RemoveClientForm from './forms/RemoveClientForm';
 
 interface RemoveClientDialogProps {

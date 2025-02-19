@@ -1,18 +1,17 @@
-import { headers } from 'next/headers';
-import { getPaginationParams, getSession, isAuthorized, validateExternalRequest } from '@/lib/api';
-import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
-import { UserRoles } from '@/types/user';
-import { Status } from '@prisma/client';
 
-export async function POST(request: Request) {
-    const headersList = await headers();
-    const valid = await validateExternalRequest(headersList);
+// Entities
+import { UserRoles } from '@/domain/entities/user';
 
-    if (!valid) {
-        return NextResponse.json({ error: 'Not Authorized.', status: 401 });
-    }
+// Use Cases
+import { createManyNewsUseCase, getPaginatedNewsUseCase } from '@/use-cases/NewsUseCases';
 
+// Adapters
+import { withAuthorization, Session } from '@/adapters/withAuthorization';
+import { withExternalRequestValidation } from '@/adapters/withExternalRequestValidation';
+import { withPagination, type Pagination } from '@/adapters/withPagination';
+
+export const POST = withExternalRequestValidation(async (request: Request) => {
     const { data } = await request.json();
 
     if (!Array.isArray(data) || data.length === 0) {
@@ -22,58 +21,25 @@ export async function POST(request: Request) {
         });
     }
 
-    await prisma.news.createMany({
-        data: data.map((item: any) => ({
-            title: item.title,
-            summary: item.summary,
-            userId: item.userId,
-            url: item.url,
-            thumbnail: item.thumbnail,
-            status: 'EM_ANALISE',
-            text: item.text,
-            date: item.date,
-        })),
-        skipDuplicates: true,
-    });
+    await createManyNewsUseCase.execute({ newsDataArr: data });
 
     return NextResponse.json({ message: 'News created successfully!' });
-}
+});
 
-export async function GET(request: Request) {
-    const session = await getSession();
+async function getNewsHandler(request: Request, user: Session, pagination: Pagination) {
+    const userId = user.id;
 
-    if (!session?.user || !isAuthorized(session, [UserRoles.USER]))
-        return NextResponse.json({ error: 'Not Authorized!', status: 401 });
-
-    const userId = session.user.id;
-
-    const { search, status, page, limit, skip } = getPaginationParams(request);
+    const { search, status, page, limit, skip } = pagination;
 
     try {
-        const [news, totalCount] = await Promise.all([
-            prisma.news.findMany({
-                where: {
-                    userId: session.user.id,
-                    status,
-                    title: {
-                        contains: search,
-                    },
-                },
-                skip,
-                take: limit,
-                orderBy: { id: 'desc' },
-            }),
+        const [news, totalCount] = await getPaginatedNewsUseCase.execute({
+            userId,
+            statuses: [status],
+            search,
+            skip,
+            limit,
+        });
 
-            prisma.news.count({
-                where: {
-                    userId: session.user.id,
-                    status: status,
-                    title: {
-                        contains: search,
-                    },
-                },
-            }),
-        ]);
         return NextResponse.json({
             data: news,
             pagination: {
@@ -84,10 +50,16 @@ export async function GET(request: Request) {
             },
         });
     } catch (error) {
-        return NextResponse.json({
-            status: 500,
-            message: 'Erro ao buscar noticias',
-            error: error instanceof Error ? error.message : error,
-        });
+        return NextResponse.json(
+            {
+                message: 'Erro ao buscar noticias',
+                error: error instanceof Error ? error.message : error,
+            },
+            { status: 500 },
+        );
     }
 }
+
+export const GET = withAuthorization([UserRoles.USER], async (request, user) => {
+    return withPagination((req, pagination) => getNewsHandler(req, user, pagination))(request);
+});

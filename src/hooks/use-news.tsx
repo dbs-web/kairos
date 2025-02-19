@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { INews } from '@/types/news';
+import { INews } from '@/domain/entities/news';
 import { usePagination } from './use-pagination';
 import { useFetchData } from './use-fetch-data';
 

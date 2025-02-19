@@ -1,30 +1,31 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
-import { isAuthorized, getSession } from '@/lib/api';
-import { UserRoles } from '@/types/user';
 
-export async function GET(request: Request) {
-    const session = await getSession();
-    if (!session?.user || !isAuthorized(session, [UserRoles.USER, UserRoles.ADMIN]))
-        return NextResponse.json({ error: 'Not Authorized!', status: 401 });
+// Entities
+import { UserRoles } from '@/domain/entities/user';
 
-    const HEYGEN_API_KEY = process.env.HEYGEN_API_KEY ?? '';
+// Use cases
+import { getUsersUseCase } from '@/use-cases/UserUseCases';
 
+// Adapters
+import { withAuthorization } from '@/adapters/withAuthorization';
+
+const HEYGEN_API_KEY = process.env.HEYGEN_API_KEY ?? '';
+
+export const GET = withAuthorization([UserRoles.USER], async (request, user) => {
     const { searchParams } = new URL(request.url);
     const queryGroupId = searchParams.get('groupId');
 
-    let groupIdToFetch: string | null = null;
+    let groupIdToFetch: string | undefined = undefined;
 
-    if (session.user.role === 'ADMIN' && queryGroupId) {
+    if (user.role === 'ADMIN' && queryGroupId) {
         groupIdToFetch = queryGroupId;
     } else {
-        const user = await prisma.user.findUnique({
-            where: { id: session.user.id },
-        });
-        if (!user) {
+        const userData = await getUsersUseCase.byId(user.id);
+
+        if (!userData) {
             return NextResponse.json({ status: 404, message: 'User not found' });
         }
-        groupIdToFetch = user.avatarGroupId;
+        groupIdToFetch = userData.avatarGroupId;
     }
 
     if (!groupIdToFetch) {
@@ -49,4 +50,4 @@ export async function GET(request: Request) {
     const data = await heygenRes.json();
 
     return NextResponse.json(data);
-}
+});

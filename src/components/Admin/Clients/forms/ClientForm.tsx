@@ -5,7 +5,7 @@ import { z } from 'zod';
 
 import { useForm } from 'react-hook-form';
 import { useClients } from '@/hooks/use-client';
-import { UserRoles } from '@/types/user';
+import { UserRoles } from '@/domain/entities/user';
 import { Button } from '@/components/ui/button';
 import {
     Form,

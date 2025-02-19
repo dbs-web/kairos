@@ -1,47 +1,27 @@
-import { isAuthorized } from '@/lib/api';
-import { prisma } from '@/lib/prisma';
-import { UserRoles } from '@/types/user';
-import { getSession } from '@/lib/api';
 import { NextResponse } from 'next/server';
 
-export async function POST(request: Request) {
-    const session = await getSession();
+// Entities
+import { UserRoles } from '@/domain/entities/user';
 
-    if (!session?.user || !isAuthorized(session, [UserRoles.USER])) {
-        return NextResponse.json({ error: 'Not Authorized!', status: 401 });
-    }
+// UseCases
+import { getUserDifyAgentUseCase } from '@/use-cases/UserUseCases';
+import { generateNewSuggestionUseCase } from '@/use-cases/DifyUseCases';
+import { withAuthorization } from '@/adapters/withAuthorization';
 
-    const user = await prisma.user.findUnique({
-        where: {
-            id: session.user.id,
-        },
-    });
+export const POST = withAuthorization([UserRoles.USER], async (request, user) => {
+    const difyAgentToken = await getUserDifyAgentUseCase.execute({ userId: user.id });
 
-    if (!user || !user.difyContentCreation) {
+    if (difyAgentToken) {
+        await generateNewSuggestionUseCase.execute({ difyAgentToken });
+    } else {
         return NextResponse.json({
-            erro: 'Invalid user or token for content generation not found',
-            status: 404,
+            error: 'User difyAgentToken is missing.',
+            status: 500,
         });
     }
-
-    const CONTENT_CREATION_URL = process.env.CONTENT_CREATION_URL ?? '';
-    if (!CONTENT_CREATION_URL) {
-        throw new Error('CONTENT_CREATION_URL is not set');
-    }
-
-    await fetch(CONTENT_CREATION_URL, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            token: user.difyContentCreation,
-            message: 'Gere novos conteúdos para o usuário.',
-        }),
-    });
 
     return NextResponse.json({
         message: `Seu conteúdo está sendo gerado, em breve ele estará disponível aqui.`,
         status: 200,
     });
-}
+});

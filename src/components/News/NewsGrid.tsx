@@ -1,7 +1,7 @@
 'use client';
 
 import NewsCard from './NewsCard';
-import { INews } from '@/types/news';
+import { INews } from '@/domain/entities/news';
 import { useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { useNews } from '@/hooks/use-news';

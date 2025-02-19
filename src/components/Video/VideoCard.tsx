@@ -1,4 +1,4 @@
-import { IVideo } from '@/types/video';
+import { IVideo } from '@/domain/entities/video';
 
 import { FiDownload } from 'react-icons/fi';
 import { PiSpinnerThin } from 'react-icons/pi';

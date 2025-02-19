@@ -4,7 +4,7 @@ import { createContext, useContext, useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
 
 // Types
-import { IBriefing, IAvatar } from '@/types/briefing';
+import { IBriefing, IAvatar } from '@/domain/entities/briefing';
 import { useFetchData } from './use-fetch-data';
 import { usePagination } from './use-pagination';
 

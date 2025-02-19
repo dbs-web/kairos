@@ -1,4 +1,4 @@
-import { IUser } from '@/types/user';
+import { IUser } from '@/domain/entities/user';
 import { FiEdit, FiTrash2, FiClipboard } from 'react-icons/fi';
 import { useState } from 'react';
 import EditClientDialog from './EditClientDialog';

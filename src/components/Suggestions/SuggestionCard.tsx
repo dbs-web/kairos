@@ -1,8 +1,8 @@
 'use client';
 
-import { ISuggestion } from '@/types/suggestion';
+import { ISuggestion } from '@/domain/suggestion';
 import StatusBadge from '../ui/status-badge';
-import { Status } from '@/types/status';
+import { Status } from '@/domain/entities/status';
 
 interface SuggestionCardProps {
     suggestion: ISuggestion;

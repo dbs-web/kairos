@@ -1,61 +1,48 @@
 import bcrypt from 'bcryptjs';
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
-import { UserRoles } from '@/types/user';
-import { isAuthorized, getSession } from '@/lib/api';
 
-export async function GET(request: Request) {
-    const session = await getSession();
-    if (!isAuthorized(session, [UserRoles.ADMIN]))
-        return NextResponse.json({ error: 'Not Authorized!', status: 401 });
+// Entities
+import { UserRoles } from '@/domain/entities/user';
 
-    const url = new URL(request.url);
-    const filterBy = url.searchParams.get('filterBy');
-    const filterValue = url.searchParams.get('filterValue');
+// Use Cases
+import {
+    createUserUseCase,
+    deleteUserUseCase,
+    getUsersUseCase,
+    updateUserUseCase,
+} from '@/use-cases/UserUseCases';
 
-    const where = filterBy && filterValue ? { [filterBy]: filterValue } : {};
+import { withAuthorization } from '@/adapters/withAuthorization';
 
-    const users = await prisma.user.findMany({
-        where,
-    });
-
+export const GET = withAuthorization([UserRoles.ADMIN], async () => {
+    const users = await getUsersUseCase.all();
     return NextResponse.json({ data: users });
-}
+});
 
-export async function POST(request: Request) {
-    const session = await getSession();
-    if (!isAuthorized(session, [UserRoles.ADMIN]))
-        return NextResponse.json({ error: 'Not Authorized!', status: 401 });
-
+export const POST = withAuthorization([UserRoles.ADMIN], async (request: Request) => {
     const { name, email, password, avatarGroupId, voiceId, difyAgent, difyContentCreation } =
         await request.json();
     const passHash = await bcrypt.hash(password, 10);
 
-    const newUser = await prisma.user.create({
-        data: {
-            name,
-            email,
-            password: passHash,
-            role: UserRoles.USER,
-            avatarGroupId,
-            voiceId,
-            difyAgent,
-            difyContentCreation,
-        },
+    const newUser = await createUserUseCase.execute({
+        name,
+        email,
+        password: passHash,
+        role: UserRoles.USER,
+        avatarGroupId,
+        voiceId,
+        difyAgent,
+        difyContentCreation,
     });
 
     return NextResponse.json({ data: newUser });
-}
+});
 
-export async function PUT(request: Request) {
-    const session = await getSession();
-    if (!isAuthorized(session, [UserRoles.ADMIN]))
-        return NextResponse.json({ error: 'Not Authorized!', status: 401 });
-
+export const PUT = withAuthorization([UserRoles.ADMIN], async (request: Request) => {
     const body = await request.json();
 
-    const updatedUser = await prisma.user.update({
-        where: { id: Number(body.id) },
+    const updatedUser = await updateUserUseCase.execute({
+        id: Number(body.id),
         data: {
             name: body.name,
             email: body.email,
@@ -70,19 +57,17 @@ export async function PUT(request: Request) {
     });
 
     return NextResponse.json({ data: updatedUser });
-}
+});
 
-export async function DELETE(request: Request) {
-    const session = await getSession();
-    if (!isAuthorized(session, [UserRoles.ADMIN]))
-        return NextResponse.json({ error: 'Not Authorized!', status: 401 });
-
+export const DELETE = withAuthorization([UserRoles.ADMIN], async (request: Request) => {
     const body = await request.json();
     const { id } = body;
 
-    await prisma.user.delete({
-        where: { id: Number(id) },
-    });
+    const deletedUser = await deleteUserUseCase.execute({ id: Number(id) });
 
-    return NextResponse.json({ message: 'User deleted successfully' });
-}
+    if (!deletedUser) {
+        return NextResponse.json({ message: 'User not found', status: 400 });
+    }
+
+    return NextResponse.json({ message: 'User deleted successfully', user: deletedUser });
+});

@@ -1,5 +1,5 @@
 // Types
-import { IBriefing } from '@/types/briefing';
+import { IBriefing } from '@/domain/entities/briefing';
 
 // Components
 import {
@@ -20,7 +20,7 @@ import EditBriefingDialog from './EditBriefingDialog';
 import MarkdownText from './MarkdownText';
 import { useBriefing } from '@/hooks/use-briefing';
 import BriefingApprovalDialog from './BriefingApprovalDialog';
-import { Status } from '@/types/status';
+import { Status } from '@/domain/entities/status';
 
 import SourcesDialog from './SourcesDialog';
 import { useToast } from '@/hooks/use-toast';
@@ -50,7 +50,7 @@ export default function BriefingCard({ briefing }: BriefingCardProps) {
                     <time className="mt-2 text-sm text-neutral-500">
                         Data:{' '}
                         <strong className="text-neutral-600">
-                            {new Date(briefing.date).toLocaleDateString('pt-br')}
+                            {briefing.date && new Date(briefing.date).toLocaleDateString('pt-br')}
                         </strong>
                     </time>
                 </div>
@@ -82,6 +82,7 @@ export default function BriefingCard({ briefing }: BriefingCardProps) {
             {briefing.status === Status.EM_PRODUCAO ? (
                 <TextFallBack />
             ) : (
+                // @ts-expect-error Briefing will always have text field
                 <MarkdownText text={briefing.text} />
             )}
 

@@ -1,38 +1,23 @@
-import { getPaginationParams, getSession, isAuthorized } from '@/lib/api';
-import { prisma } from '@/lib/prisma';
-import { UserRoles } from '@/types/user';
 import { NextResponse } from 'next/server';
 
-export async function GET(request: Request) {
-    const session = await getSession();
+// Entities
+import { UserRoles } from '@/domain/entities/user';
 
-    if (!session?.user || !isAuthorized(session, [UserRoles.USER]))
-        return NextResponse.json({ error: 'Not Authorized!', status: 401 });
+// Use Cases
+import { getPaginatedVideosUseCase } from '@/use-cases/VideoUseCases';
 
-    const userId = session.user.id;
+// Adapters
+import { Session, withAuthorization } from '@/adapters/withAuthorization';
+import { Pagination, withPagination } from '@/adapters/withPagination';
 
-    const { search, page, skip, limit } = getPaginationParams(request);
+async function getVideosHandler(request: Request, user: Session, pagination: Pagination) {
+    const { page, skip, limit } = pagination;
 
-    const [videos, totalCount] = await Promise.all([
-        prisma.video.findMany({
-            where: {
-                userId,
-                OR: [{ title: { contains: search } }, { legenda: { contains: search } }],
-            },
-            orderBy: {
-                id: 'desc',
-            },
-            skip,
-            take: limit,
-        }),
-
-        prisma.video.count({
-            where: {
-                userId,
-                OR: [{ title: { contains: search } }, { legenda: { contains: search } }],
-            },
-        }),
-    ]);
+    const [videos, totalCount] = await getPaginatedVideosUseCase.execute({
+        userId: user.id,
+        skip,
+        limit,
+    });
 
     return NextResponse.json({
         data: videos,
@@ -46,3 +31,7 @@ export async function GET(request: Request) {
         status: 200,
     });
 }
+
+export const GET = withAuthorization([UserRoles.USER], async (request, user) => {
+    return withPagination((req, pagination) => getVideosHandler(req, user, pagination))(request);
+});

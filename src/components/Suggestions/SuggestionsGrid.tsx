@@ -2,7 +2,7 @@
 
 import { useSuggestions } from '@/hooks/use-suggestions';
 import SuggestionCard from './SuggestionCard';
-import { ISuggestion } from '@/types/suggestion';
+import { ISuggestion } from '@/domain/suggestion';
 import { useEffect, useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import Skeleton from './SuggestionSkeleton';

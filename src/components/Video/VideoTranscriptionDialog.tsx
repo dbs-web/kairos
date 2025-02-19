@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/dialog';
 
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { IVideo } from '@/types/video';
+import { IVideo } from '@/domain/entities/video';
 import { Button } from '../ui/button';
 
 import { CgTranscript } from 'react-icons/cg';

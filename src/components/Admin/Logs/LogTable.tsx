@@ -1,10 +1,12 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { ColumnDef } from '@tanstack/react-table';
-import { IApiLog } from '@/types/api';
+import { IApiLog } from '@/domain/entities/api-log';
 
 import { useApiLogs } from '@/hooks/use-logs';
 import { DataTable } from '@/components/Admin/Logs/DataTable';
 import { DialogTrigger } from '@radix-ui/react-dialog';
+import { ScrollArea } from '@radix-ui/react-scroll-area';
+import Pagination from '@/components/ui/pagination';
 
 const columns: ColumnDef<IApiLog>[] = [
     {
@@ -84,7 +86,12 @@ const columns: ColumnDef<IApiLog>[] = [
 ];
 
 export default function LogTable() {
-    const { logs } = useApiLogs();
+    const { logs, page, totalPages, setPage } = useApiLogs();
 
-    return <DataTable columns={columns} data={logs} />;
+    return (
+        <ScrollArea className="mb-8 h-full space-y-12">
+            <DataTable columns={columns} data={logs} />
+            <Pagination page={page} totalPages={totalPages} setPage={setPage} />
+        </ScrollArea>
+    );
 }
