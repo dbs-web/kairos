@@ -29,7 +29,7 @@ export default class UserService implements IUserService {
     }
 
     async findAll(): Promise<IUser[]> {
-        return await this.repository.find({ criteria: [] });
+        return await this.repository.find({ criteria: {} });
     }
 
     async findById(id: number): Promise<IUser | undefined> {

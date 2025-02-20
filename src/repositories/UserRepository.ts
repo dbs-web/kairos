@@ -5,6 +5,7 @@ import IDatabaseClient, {
     FindUniqueArgs,
     UpdateArgs,
 } from '@/infrastructure/database/IDatabaseClient';
+import { RepositoryError } from '@/shared/errors';
 
 export interface IUserRepository extends IRepository<IUser> {}
 
@@ -20,12 +21,16 @@ export default class UserRepository implements IUserRepository {
     }
 
     async find({ criteria = { role: 'USER' }, skip, take, orderBy }: FindPaginatedArgs) {
-        return await this.db.findMany<IUser>('news', {
-            criteria,
-            skip,
-            take,
-            orderBy: orderBy,
-        });
+        try{
+            return await this.db.findMany<IUser>('user', {
+                criteria,
+                skip,
+                take,
+                orderBy: orderBy,
+            });
+        }catch(e) {
+            throw new RepositoryError(`Error on find user: ${e instanceof Error ? e.message : e}`);
+        }
     }
 
     async count({ criteria }: CountPaginatedArgs) {
@@ -33,15 +38,15 @@ export default class UserRepository implements IUserRepository {
     }
 
     async create(data: Omit<IUser, 'id'>): Promise<IUser> {
-        const news = await this.db.create<IUser>('news', {
+        const user = await this.db.create<IUser>('user', {
             data: data,
         });
 
-        return news;
+        return user;
     }
 
     async update(args: UpdateArgs<IUser>): Promise<IUser | undefined> {
-        return await this.db.update<IUser>('news', args);
+        return await this.db.update<IUser>('user', args);
     }
 
     async delete(args: DeleteArgs<IUser>): Promise<IUser | undefined> {

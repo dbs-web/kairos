@@ -1,5 +1,7 @@
 import { IUser } from '@/domain/entities/user';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { usePagination } from './use-pagination';
+import { useFetchData } from './use-fetch-data';
 
 const fetchUsers = async (filterBy?: string, filterValue?: string): Promise<IUser[]> => {
     let query = '';
@@ -46,13 +48,19 @@ const deleteUser = async (id: number) => {
     return data.data;
 };
 
-export const useClients = (filterBy?: string, filterValue?: string) => {
+export const useClients = () => {
     const queryClient = useQueryClient();
 
-    const { data: users, ...queryInfo } = useQuery({
-        queryKey: ['users', filterBy, filterValue],
-        queryFn: () => fetchUsers(filterBy, filterValue),
-    });
+    const limits ={
+        sm: 5,
+        md: 10,
+        lg: 15,
+        xl: 20,
+    };
+
+    const {page, setPage, limit} = usePagination(limits);
+
+    const {data, isFetching, refetch} = useFetchData<IUser>("user", {page, limit}, "user");
 
     const addMutation = useMutation({
         mutationFn: addUser,
@@ -75,11 +83,18 @@ export const useClients = (filterBy?: string, filterValue?: string) => {
         },
     });
 
+    const users = data?.data || [];
+    const totalPages = data?.pagination?.totalPages || 1;
+
     return {
         users,
         addUser: addMutation.mutate,
         updateUser: updateMutation.mutate,
         deleteUser: deleteMutation.mutate,
-        ...queryInfo,
+        page,
+        setPage,
+        totalPages,
+        limit,
+        isFetching,
     };
 };

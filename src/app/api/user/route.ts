@@ -2,7 +2,7 @@ import bcrypt from 'bcryptjs';
 import { NextResponse } from 'next/server';
 
 // Entities
-import { UserRoles } from '@/domain/entities/user';
+import { IUser, UserRoles } from '@/domain/entities/user';
 
 // Use Cases
 import {
@@ -12,11 +12,16 @@ import {
     updateUserUseCase,
 } from '@/use-cases/UserUseCases';
 
-import { withAuthorization } from '@/adapters/withAuthorization';
+import { Session, withAuthorization } from '@/adapters/withAuthorization';
+import { Pagination, withPagination } from '@/adapters/withPagination';
 
-export const GET = withAuthorization([UserRoles.ADMIN], async () => {
+const getUsersHandler = async (request : Request, user: Session, pagination: Pagination) => {
     const users = await getUsersUseCase.all();
     return NextResponse.json({ data: users });
+};
+
+export const GET = withAuthorization([UserRoles.ADMIN], async (request, user) => {
+    return withPagination((req, pagination) => getUsersHandler(req, user, pagination))(request);
 });
 
 export const POST = withAuthorization([UserRoles.ADMIN], async (request: Request) => {
