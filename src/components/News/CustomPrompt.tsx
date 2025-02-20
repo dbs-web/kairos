@@ -68,57 +68,61 @@ export default function CustomPrompt() {
         }
 
         form.reset();
-        setIsSubmitting(false);  
+        setIsSubmitting(false);
     };
 
     return (
-        <div className="flex flex-col gap-y-8 rounded-lg border bg-white p-5 shadow-lg h-[450px]">
+        <div className="flex h-[450px] flex-col gap-y-8 rounded-lg border bg-white p-5 shadow-lg">
             <h2 className="text-2xl font-medium text-neutral-700">Criação de Vídeo</h2>
-            {
-            !isSubmitting ? 
-            <Form {...form}><form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-y-4">
-                    <FormField
-                        control={form.control}
-                        name="title"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel htmlFor="title">Título</FormLabel>
-                                <FormControl>
-                                    <Input {...field} disabled={isSubmitting} placeholder='Título do seu vídeo'/>
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
+            {!isSubmitting ? (
+                <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-y-4">
+                        <FormField
+                            control={form.control}
+                            name="title"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel htmlFor="title">Título</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            {...field}
+                                            disabled={isSubmitting}
+                                            placeholder="Título do seu vídeo"
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
 
-                    <FormField
-                        control={form.control}
-                        name="prompt"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel htmlFor="prompt">Instruções</FormLabel>
-                                <FormControl>
-                                    <Textarea
-                                        {...field}
-                                        className="h-40"
-                                        placeholder="Sobre o que deseja que o vídeo aborde?"
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
+                        <FormField
+                            control={form.control}
+                            name="prompt"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel htmlFor="prompt">Instruções</FormLabel>
+                                    <FormControl>
+                                        <Textarea
+                                            {...field}
+                                            className="h-40"
+                                            placeholder="Sobre o que deseja que o vídeo aborde?"
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
 
-                    <Button type="submit" className="w-full">
-                        Criar Vídeo
-                    </Button>
-                </form>
-            </Form>
-            : 
-            <div className="w-full h-full grid place-items-center bg-neutral-50 animate-pulse">
-                <ImSpinner8 className="animate-spin text-4xl text-primary" />
-            </div>
-            }
+                        <Button type="submit" className="w-full">
+                            Criar Vídeo
+                        </Button>
+                    </form>
+                </Form>
+            ) : (
+                <div className="grid h-full w-full animate-pulse place-items-center bg-neutral-50">
+                    <ImSpinner8 className="animate-spin text-4xl text-primary" />
+                </div>
+            )}
         </div>
     );
 }

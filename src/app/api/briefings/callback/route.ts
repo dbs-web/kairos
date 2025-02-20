@@ -31,7 +31,6 @@ export const POST = withExternalRequestValidation(async (request: Request) => {
     const body = await request.json();
 
     try {
-
         const { briefingId, sources, text }: CallbackBody = body;
 
         if (!briefingId) {

@@ -40,7 +40,7 @@ export async function POST(request: Request) {
 
         if (event_type === 'avatar_video.success') {
             const video = await addVideoUrlUseCase.execute({
-                id: video_id,
+                heygenVideoId: video_id,
                 url,
                 heygenStatus: HeyGenStatus.SUCCESS,
             });

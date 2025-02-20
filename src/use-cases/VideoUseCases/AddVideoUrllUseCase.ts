@@ -9,16 +9,16 @@ export default class AddVideoUrlUseCase {
     }
 
     async execute({
-        id,
+        heygenVideoId,
         url,
         heygenStatus,
     }: {
-        id: number;
+        heygenVideoId: string;
         url: string;
         heygenStatus: HeyGenStatus;
     }) {
-        return this.videoService.update({
-            id,
+        return this.videoService.updateByHeyGenId({
+            heygenVideoId,
             data: {
                 url,
                 heygenStatus,

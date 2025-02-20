@@ -74,8 +74,8 @@ export const POST = withAuthorization([UserRoles.USER, UserRoles.ADMIN], async (
     }
 
     const difyAgentToken = await getUserDifyAgentUseCase.execute({ userId: user.id });
-    
-    if(!difyAgentToken) {
+
+    if (!difyAgentToken) {
         return createApiResponseUseCase.INTERNAL_SERVER_ERROR({
             route,
             body: body,
@@ -90,7 +90,7 @@ export const POST = withAuthorization([UserRoles.USER, UserRoles.ADMIN], async (
             title,
         });
 
-        if(!createdBriefing) {
+        if (!createdBriefing) {
             return createApiResponseUseCase.INTERNAL_SERVER_ERROR({
                 route,
                 body: body,

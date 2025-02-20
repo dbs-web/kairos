@@ -27,6 +27,13 @@ export interface IVideoService extends IPaginatedDataService<IVideo> {
     findById({ id, userId }: FindByIdArgs): Promise<IVideo | undefined>;
     findByHeyGenId({ heygenVideoId }: FindByHeygenVideoId): Promise<IVideo | undefined>;
     update(args: UpdateVideoArgs): Promise<IVideo | undefined>;
+    updateByHeyGenId({
+        heygenVideoId,
+        data,
+    }: {
+        heygenVideoId: string;
+        data: Partial<IVideo>;
+    }): Promise<IVideo | undefined>;
     delete(args: DeleteVideoArgs): Promise<IVideo | undefined>;
 }
 
@@ -76,6 +83,21 @@ export default class VideoService implements IVideoService {
             criteria: {
                 id,
                 userId,
+            },
+            data,
+        });
+    }
+
+    async updateByHeyGenId({
+        heygenVideoId,
+        data,
+    }: {
+        heygenVideoId: string;
+        data: Partial<IVideo>;
+    }): Promise<IVideo | undefined> {
+        return this.repository.update({
+            criteria: {
+                heygenVideoId,
             },
             data,
         });
