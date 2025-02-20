@@ -10,6 +10,7 @@ import { createManyNewsUseCase, getPaginatedNewsUseCase } from '@/use-cases/News
 import { withAuthorization, Session } from '@/adapters/withAuthorization';
 import { withExternalRequestValidation } from '@/adapters/withExternalRequestValidation';
 import { withPagination, type Pagination } from '@/adapters/withPagination';
+import { Status } from '@/domain/entities/status';
 
 export const POST = withExternalRequestValidation(async (request: Request) => {
     const { data } = await request.json();
@@ -20,6 +21,11 @@ export const POST = withExternalRequestValidation(async (request: Request) => {
             status: 400,
         });
     }
+
+    // Add Status EM_ANALISE to each news
+    data.forEach((news) => {
+        news.status = Status.EM_ANALISE;
+    });
 
     await createManyNewsUseCase.execute({ newsDataArr: data });
 
