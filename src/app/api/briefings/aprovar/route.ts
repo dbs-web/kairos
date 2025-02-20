@@ -71,7 +71,7 @@ export const POST = withAuthorization(
                 },
                 body: JSON.stringify(payload),
             });
-
+            
             if (res.ok) {
                 const responseData = await res.json();
                 const heygenVideoId = responseData.data.video_id;
@@ -83,15 +83,18 @@ export const POST = withAuthorization(
                     );
                 }
 
+
                 await createVideoUseCase.execute({
                     userId: session.user.id,
                     title: brief.title,
+                    legenda: "",
                     transcription: brief.text ?? '',
                     heygenVideoId: heygenVideoId,
                     heygenStatus: HeyGenStatus.PROCESSING,
                     width,
                     height,
                 });
+
 
                 await updateBriefingUseCase.execute({
                     id: briefing,
@@ -120,6 +123,7 @@ export const POST = withAuthorization(
                 { status: 200 },
             );
         } catch (error) {
+
             return NextResponse.json(
                 { status: 500, message: 'Erro interno ao criar o vídeo' },
                 { status: 500 },

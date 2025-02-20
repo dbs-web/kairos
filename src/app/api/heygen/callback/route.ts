@@ -36,7 +36,7 @@ export async function POST(request: Request) {
             });
         }
 
-        const { video_id, url, callback_id, msg } = event_data;
+        const { video_id, url, msg } = event_data;
 
         if (event_type === 'avatar_video.success') {
             const video = await addVideoUrlUseCase.execute({
