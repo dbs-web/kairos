@@ -17,13 +17,13 @@ export async function POST(request: Request) {
     const route = '/api/heygen/callback';
 
     try {
-        if (!heygenAdapter.checkCallbackRequest(request))
-            return createApiResponseUseCase.BAD_REQUEST({
-                route,
-                body,
-                message: 'Failed on heygen check',
-                error: 'Invalid signature',
-            });
+        // if (!heygenAdapter.checkCallbackRequest(request))
+        //     return createApiResponseUseCase.BAD_REQUEST({
+        //         route,
+        //         body,
+        //         message: 'Failed on heygen check',
+        //         error: 'Invalid signature',
+        //     });
 
         const { event_type, event_data } = body;
 

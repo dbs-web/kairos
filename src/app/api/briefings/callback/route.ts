@@ -52,7 +52,7 @@ export const POST = withExternalRequestValidation(async (request: Request) => {
         }
 
         const updateData: any = {
-            responseCode: Status.EM_ANALISE,
+            status: Status.EM_ANALISE,
         };
 
         if (text) {
@@ -78,10 +78,10 @@ export const POST = withExternalRequestValidation(async (request: Request) => {
         });
 
         if (!UpdatedBriefing) {
-            return createApiResponseUseCase.USER_NOT_ALLOWED({
+            return createApiResponseUseCase.NOT_FOUND({
                 route,
                 body: body,
-                message: 'User dont have permission to this briefing.',
+                message: 'Briefing not found',
             });
         }
 
@@ -98,6 +98,7 @@ export const POST = withExternalRequestValidation(async (request: Request) => {
             message: 'Briefing atualizado',
         });
     } catch (error) {
+        console.log(`error: ${error instanceof Error ? error.message : error}`);
         return createApiResponseUseCase.INTERNAL_SERVER_ERROR({
             route,
             body: body,

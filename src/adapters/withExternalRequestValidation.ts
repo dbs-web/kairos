@@ -6,7 +6,7 @@ export function withExternalRequestValidation(handler: (request: Request) => Pro
     return async (request: Request) => {
         if (!API_SECRET) throw new Error('API SECRET IS NOT SET');
         const headers = request.headers;
-        console.log(headers.get("x-api-key"), API_SECRET);
+        
         const secret = headers.get('x-api-key');
 
         if (secret !== API_SECRET) {

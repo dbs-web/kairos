@@ -51,14 +51,9 @@ export default class BriefingRepository implements IBriefingRepository {
         userId,
         sources,
     }: Partial<IBriefing>): Promise<IBriefing> {
-        if (!newsId && !suggestionId) {
-            throw new Error('You must provide either a newsId or a suggestionId.');
-        }
-
         const dataToCreate: any = {
             title,
             date,
-            userId,
             status: Status.EM_PRODUCAO,
             user: {
                 connect: {

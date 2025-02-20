@@ -7,7 +7,6 @@ import { GoLightBulb } from 'react-icons/go';
 import { PiNewspaperLight } from 'react-icons/pi';
 import { CiCircleCheck } from 'react-icons/ci';
 import { IoPlaySkipForwardOutline } from 'react-icons/io5';
-import { IoPlayForwardOutline } from 'react-icons/io5';
 import NavLink from '../ui/Nav/nav-link';
 import { ScrollArea, ScrollBar } from '../ui/scroll-area';
 
@@ -37,7 +36,7 @@ const tabs = [
 export default function StudioTabs() {
     const path = usePathname();
     return (
-        <ScrollArea className="w-full pb-4 lg:w-2/3">
+        <ScrollArea className="w-full lg:w-2/3">
             <ul className="flex w-full flex-nowrap items-center justify-between gap-2 md:gap-x-4 lg:w-2/3 lg:justify-start">
                 {tabs?.length > 0 &&
                     tabs.map((tab, index) => (

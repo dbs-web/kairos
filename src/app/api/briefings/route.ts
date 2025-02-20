@@ -1,7 +1,5 @@
 import { Status } from '@/domain/entities/status';
 
-import { parseDateStringDate } from '@/lib/date';
-
 // Entities
 import { UserRoles } from '@/domain/entities/user';
 
@@ -13,10 +11,14 @@ import {
     getPaginatedBriefingsUseCase,
     updateBriefingUseCase,
 } from '@/use-cases/BriefingUseCases';
+import { customBriefingRequestUseCase } from '@/use-cases/DifyUseCases';
 
 // Adapters
 import { Session, withAuthorization } from '@/adapters/withAuthorization';
 import { Pagination, withPagination } from '@/adapters/withPagination';
+import { IBriefing } from '@/domain/entities/briefing';
+import GetUserDifyAgentUseCase from '@/use-cases/UserUseCases/GetUserDifyAgentUseCase';
+import { getUserDifyAgentUseCase } from '@/use-cases/UserUseCases';
 
 const route = '/api/briefings';
 
@@ -60,10 +62,9 @@ export const GET = withAuthorization([UserRoles.USER], async (request, user) => 
 export const POST = withAuthorization([UserRoles.USER, UserRoles.ADMIN], async (request, user) => {
     const body = await request.json();
 
-    const { suggestionId, title, date }: { suggestionId: number; title: string; date: string } =
-        await request.json();
+    const { title, prompt }: { title: string; prompt: string } = body;
 
-    if (!suggestionId || !title || !date) {
+    if (!title || !prompt) {
         return createApiResponseUseCase.BAD_REQUEST({
             route,
             body,
@@ -72,31 +73,57 @@ export const POST = withAuthorization([UserRoles.USER, UserRoles.ADMIN], async (
         });
     }
 
-    try {
-        const userId = user.id;
-
-        await createBriefingsUseCase.fromSuggestions({
-            suggestionsData: [
-                {
-                    id: suggestionId,
-                    title,
-                    date: parseDateStringDate(date),
-                    userId,
-                    status: Status.EM_PRODUCAO,
-                },
-            ],
-            userId,
-        });
-
-        return createApiResponseUseCase.SUCCESS({
-            route,
-            body,
-            message: 'Briefing created successfully',
-        });
-    } catch (error) {
+    const difyAgentToken = await getUserDifyAgentUseCase.execute({ userId: user.id });
+    
+    if(!difyAgentToken) {
         return createApiResponseUseCase.INTERNAL_SERVER_ERROR({
             route,
-            body,
+            body: body,
+            message: 'Failed to create briefing',
+            error: 'Internal server error: failed to get Dify agent token',
+        });
+    }
+
+    try {
+        const createdBriefing = await createBriefingsUseCase.fromPrompt({
+            userId: user.id,
+            title,
+        });
+
+        if(!createdBriefing) {
+            return createApiResponseUseCase.INTERNAL_SERVER_ERROR({
+                route,
+                body: body,
+                message: 'Failed to create briefing',
+                error: 'Internal server error: failed to create briefing',
+            });
+        }
+
+        const res = await customBriefingRequestUseCase.execute({
+            difyAgentToken: difyAgentToken,
+            briefing: createdBriefing,
+            prompt,
+        });
+
+        if (res.ok)
+            return createApiResponseUseCase.SUCCESS({
+                route,
+                body: body,
+                message: 'Briefing created successfully',
+                data: createdBriefing,
+            });
+
+        return createApiResponseUseCase.INTERNAL_SERVER_ERROR({
+            route,
+            body: body,
+            message: 'Failed to create briefing',
+            error: `Internal server error: ${res.statusText}`,
+        });
+    } catch (error) {
+        console.log(`${error instanceof Error ? error.message : error}`);
+        return createApiResponseUseCase.INTERNAL_SERVER_ERROR({
+            route,
+            body: body,
             message: 'Failed to create briefing',
             error: `Internal server error: ${error instanceof Error ? error.message : error}`,
         });

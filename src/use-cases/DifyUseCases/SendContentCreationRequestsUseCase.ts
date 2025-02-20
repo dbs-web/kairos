@@ -36,7 +36,7 @@ export default class SendContentCreationRequestsUseCase {
         await Promise.all(sendContentCreationRequests);
     }
 
-    buildQuery({ data }: { data: INews | ISuggestion }) {
+    private buildQuery({ data }: { data: INews | ISuggestion }) {
         let query = '';
 
         if ((data as ISuggestion).briefing !== undefined)
@@ -47,7 +47,11 @@ export default class SendContentCreationRequestsUseCase {
         return query;
     }
 
-    mapBriefingsToRefId({ briefings }: { briefings: IBriefing[] }): Record<number, IBriefing> {
+    private mapBriefingsToRefId({
+        briefings,
+    }: {
+        briefings: IBriefing[];
+    }): Record<number, IBriefing> {
         const briefingMap = briefings.reduce<Record<number, (typeof briefings)[0]>>(
             (acc, briefing) => {
                 if (briefing.newsId) {

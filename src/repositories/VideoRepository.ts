@@ -37,7 +37,7 @@ export default class VideoRepository implements IVideoRepository {
 
     async create(suggestionData: Omit<IVideo, 'id'>): Promise<IVideo> {
         console.log(suggestionData);
-        
+
         const suggestion = await this.db.create<IVideo>('video', {
             data: suggestionData,
         });

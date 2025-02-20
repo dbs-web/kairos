@@ -1,8 +1,6 @@
 'use client';
 
-import {
-    useState,
-} from 'react';
+import { useState } from 'react';
 import { EventHoveringArg } from '@fullcalendar/core/index.js';
 
 // Hooks

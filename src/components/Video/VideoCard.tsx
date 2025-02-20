@@ -13,12 +13,12 @@ interface VideoCardProps {
 
 export default function VideoCard({ video }: VideoCardProps) {
     const handleDownload = async () => {
-        if(video.url){
+        if (video.url) {
             const response = await fetch(video.url);
             const blob = await response.blob();
             const link = document.createElement('a');
             const url = URL.createObjectURL(blob);
-    
+
             link.href = url;
             link.download = `${video.title}.mp4`;
             document.body.appendChild(link);

@@ -36,6 +36,7 @@ interface FindByRelatedSuggestionIdArgs {
 
 export interface IBriefingService extends IPaginatedDataService<IBriefing> {
     findById: (args: FindByIdArgs) => Promise<IBriefing | undefined>;
+    create: (data: Omit<IBriefing, 'id'>) => Promise<IBriefing | undefined>;
     createMany: (dataArr: Omit<IBriefing, 'id'>[]) => Promise<IBriefing[]>;
     deleteMany: ({ ids, userId }: { ids: number[]; userId: number }) => Promise<void>;
     update: (args: UpdateBriefingArgs) => Promise<IBriefing | undefined>;

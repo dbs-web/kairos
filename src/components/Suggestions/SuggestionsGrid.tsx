@@ -14,8 +14,6 @@ import Pagination from '../ui/pagination';
 // Entities
 import { ISuggestion } from '@/domain/entities/suggestion';
 
-
-
 const enumStatuses = [
     { label: 'Em Análise', value: 'EM_ANALISE' },
     { label: 'Em produção', value: 'EM_PRODUCAO' },

@@ -14,7 +14,7 @@ export default function Pagination({ page, totalPages, setPage }: PaginationProp
     };
 
     return (
-        <div className="mb-8 flex items-center justify-center space-x-4">
+        <div className="my-8 flex items-center justify-center space-x-4">
             <button
                 className="rounded bg-gray-200 px-3 py-2 hover:bg-gray-300 disabled:cursor-not-allowed disabled:bg-gray-200/50 disabled:text-neutral-400"
                 onClick={handlePreviousPage}

@@ -46,4 +46,19 @@ export default class CreateBriefingsUseCase {
 
         return await this.briefingService.createMany(briefingsToCreate);
     }
+
+    async fromPrompt({
+        title,
+        userId,
+    }: {
+        title: string;
+        userId: number;
+    }): Promise<IBriefing | undefined> {
+        return await this.briefingService.create({
+            title,
+            date: new Date(),
+            userId,
+            status: Status.EM_PRODUCAO,
+        });
+    }
 }
