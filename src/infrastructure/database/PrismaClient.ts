@@ -34,19 +34,11 @@ export default class PrismaDatabaseClient implements IDatabaseClient {
     }
 
     async connect(): Promise<void> {
-        try {
-            await this.prisma.$connect();
-        } catch (error) {
-            throw new DatabaseError('Error while conecting on database', error as Error);
-        }
+        // pass
     }
 
     async disconnect(): Promise<void> {
-        try {
-            await this.prisma.$disconnect();
-        } catch (error) {
-            throw new DatabaseError('Error while disconecting on database', error as Error);
-        }
+        // pass
     }
 
     private applyMapper<T>(model: string, data: any): T {

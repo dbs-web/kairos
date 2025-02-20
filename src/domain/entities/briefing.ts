@@ -5,7 +5,6 @@ export interface IBriefing {
     suggestionId?: number | null;
     newsId?: number | null;
     title: string;
-    legenda: string;
     text?: string | null | undefined;
     date?: Date;
     status: Status;

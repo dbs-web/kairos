@@ -7,7 +7,6 @@ const globalForDb = global as typeof global & {
 const db = globalForDb.db || new PrismaDatabaseClient();
 
 if (!globalForDb.db) {
-    db.connect();
     globalForDb.db = db;
 }
 
