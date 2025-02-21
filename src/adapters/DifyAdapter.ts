@@ -5,13 +5,24 @@ export interface SendContentCreationRequestArgs {
 }
 
 export default class DifyAdapter {
-    private content_creation_url: string;
+    private contentCreationUrl: string;
+    private agentMessageUrl: string;
+    private subtitleAgentToken: string;
 
     constructor() {
-        this.content_creation_url = process.env.CONTENT_CREATION_URL ?? '';
+        this.contentCreationUrl = process.env.CONTENT_CREATION_URL ?? '';
+        if (!this.contentCreationUrl) {
+            throw new Error('contentCreationUrl is not set');
+        }
 
-        if (!this.content_creation_url) {
-            throw new Error('CONTENT_CREATION_URL is not set');
+        this.agentMessageUrl = process.env.AGENT_MESSAGE_URL ?? '';
+        if (!this.agentMessageUrl) {
+            throw new Error('agentMessageUrl is not set');
+        }
+
+        this.subtitleAgentToken = process.env.SUBTITLE_AGENT_TOKEN ?? '';
+        if (!this.subtitleAgentToken) {
+            throw new Error('SUBTITLE_AGENT_TOKEN is not set');
         }
     }
 
@@ -20,7 +31,7 @@ export default class DifyAdapter {
         query,
         difyAgentToken,
     }: SendContentCreationRequestArgs) {
-        return await fetch(this.content_creation_url, {
+        return await fetch(this.contentCreationUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -33,8 +44,21 @@ export default class DifyAdapter {
         });
     }
 
+    async sendAgentMessageRequest(message: string) {
+        return await fetch(this.agentMessageUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                token: this.subtitleAgentToken,
+                message,
+            }),
+        });
+    }
+
     async generateNewSuggestions({ difyAgentToken }: { difyAgentToken: string }) {
-        await fetch(this.content_creation_url, {
+        await fetch(this.contentCreationUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

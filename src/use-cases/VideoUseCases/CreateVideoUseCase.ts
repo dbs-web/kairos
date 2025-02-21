@@ -8,7 +8,20 @@ export default class CreateVideoUseCase {
         this.videoService = videoService;
     }
 
+    /**
+     * Create video
+     * @param data Video data
+     *
+     * @returns Created video
+     * @throws Error if video not found
+     */
     async execute(data: Omit<IVideo, 'id'>) {
-        return this.videoService.create(data);
+        const video = await this.videoService.create(data);
+
+        if (!video) {
+            throw new Error('Video not found');
+        }
+
+        return video;
     }
 }

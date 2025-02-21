@@ -1,3 +1,4 @@
+import { IBriefing } from '@/domain/entities/briefing';
 import { IBriefingService } from '@/services/BriefingService';
 
 export default class GetBriefingsUseCase {
@@ -7,7 +8,13 @@ export default class GetBriefingsUseCase {
         this.briefingService = briefingService;
     }
 
-    async byId({ id, userId }: { id: number; userId: number }) {
-        return this.briefingService.findById({ id, userId });
+    async byId({ id, userId }: { id: number; userId: number }): Promise<IBriefing> {
+        const briefing = await this.briefingService.findById({ id, userId });
+
+        if (!briefing) {
+            throw new Error('Briefing not found');
+        }
+
+        return briefing;
     }
 }

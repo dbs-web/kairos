@@ -8,11 +8,17 @@ export default class AddVideoSubtitleUseCase {
     }
 
     async execute({ id, subtitle }: { id: number; subtitle: string }) {
-        return this.videoService.update({
+        const video = await this.videoService.update({
             id,
             data: {
                 legenda: subtitle,
             },
         });
+
+        if (!video) {
+            throw new Error('Video not found');
+        }
+
+        return video;
     }
 }

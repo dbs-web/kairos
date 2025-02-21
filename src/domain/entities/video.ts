@@ -18,3 +18,8 @@ export enum HeyGenStatus {
     SUCCESS = 'SUCCESS',
     FAILED = 'FAILED',
 }
+
+export enum HeyGenAvatarVideoStatus {
+    SUCCESS = 'avatar_video.success',
+    FAIL = 'avatar_video.fail',
+}

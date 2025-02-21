@@ -90,37 +90,19 @@ export const POST = withAuthorization([UserRoles.USER, UserRoles.ADMIN], async (
             title,
         });
 
-        if (!createdBriefing) {
-            return createApiResponseUseCase.INTERNAL_SERVER_ERROR({
-                route,
-                body: body,
-                message: 'Failed to create briefing',
-                error: 'Internal server error: failed to create briefing',
-            });
-        }
-
-        const res = await customBriefingRequestUseCase.execute({
+        await customBriefingRequestUseCase.execute({
             difyAgentToken: difyAgentToken,
             briefing: createdBriefing,
             prompt,
         });
 
-        if (res.ok)
-            return createApiResponseUseCase.SUCCESS({
-                route,
-                body: body,
-                message: 'Briefing created successfully',
-                data: createdBriefing,
-            });
-
-        return createApiResponseUseCase.INTERNAL_SERVER_ERROR({
+        return createApiResponseUseCase.SUCCESS({
             route,
             body: body,
-            message: 'Failed to create briefing',
-            error: `Internal server error: ${res.statusText}`,
+            message: 'Briefing created successfully',
+            data: createdBriefing,
         });
     } catch (error) {
-        console.log(`${error instanceof Error ? error.message : error}`);
         return createApiResponseUseCase.INTERNAL_SERVER_ERROR({
             route,
             body: body,
@@ -145,7 +127,7 @@ export const PUT = withAuthorization([UserRoles.USER], async (request, user) => 
     }
 
     try {
-        const updatedBriefing = updateBriefingUseCase.execute({
+        const updatedBriefing = await updateBriefingUseCase.execute({
             id,
             userId: user.id,
             data: {
@@ -153,15 +135,6 @@ export const PUT = withAuthorization([UserRoles.USER], async (request, user) => 
                 status,
             },
         });
-
-        if (!updatedBriefing) {
-            return createApiResponseUseCase.USER_NOT_ALLOWED({
-                route,
-                body,
-                message: 'Acesso negado.',
-                error: 'Unauthorized access to briefing',
-            });
-        }
 
         return createApiResponseUseCase.SUCCESS({
             route,
@@ -195,19 +168,10 @@ export const DELETE = withAuthorization(
         }
 
         try {
-            const archivedBriefing = await deleteBriefingUseCase.execute({
+            await deleteBriefingUseCase.execute({
                 id,
                 userId: user.id,
             });
-
-            if (!archivedBriefing) {
-                return createApiResponseUseCase.USER_NOT_ALLOWED({
-                    route,
-                    body,
-                    message: 'Acesso negado.',
-                    error: 'Unauthorized access to briefing',
-                });
-            }
 
             return createApiResponseUseCase.SUCCESS({
                 route,

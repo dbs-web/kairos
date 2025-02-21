@@ -20,7 +20,7 @@ interface BriefingContextProps {
     deleteBriefing: (id: number) => Promise<void>;
     selectAvatar: (avatar_id: string, widht: number, height: number) => void;
     clearSelectedAvatar: () => void;
-    sendVideoToProduction: (briefing: number) => void;
+    sendVideoToProduction: (briefing: number) => Promise<boolean>;
     page: number;
     setPage: (page: number) => void;
     totalPages: number;
@@ -145,7 +145,7 @@ export const BriefingProvider = ({ children }: { children: React.ReactNode }) =>
     const sendVideoToProduction = async (briefing: number) => {
         if (!selectedAvatar) {
             setError('Nenhum avatar selecionado');
-            return;
+            return false;
         }
 
         const { avatar_id } = selectedAvatar;
@@ -165,11 +165,12 @@ export const BriefingProvider = ({ children }: { children: React.ReactNode }) =>
 
         if (!response.ok) {
             setError('Erro ao enviar vídeo para produção');
-            return;
+            return false;
         }
 
         await queryClient.invalidateQueries({ queryKey: ['briefing'] });
         setError('');
+        return true;
     };
 
     const deleteMutation = useMutation({

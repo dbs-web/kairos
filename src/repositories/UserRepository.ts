@@ -21,14 +21,14 @@ export default class UserRepository implements IUserRepository {
     }
 
     async find({ criteria = { role: 'USER' }, skip, take, orderBy }: FindPaginatedArgs) {
-        try{
+        try {
             return await this.db.findMany<IUser>('user', {
                 criteria,
                 skip,
                 take,
                 orderBy: orderBy,
             });
-        }catch(e) {
+        } catch (e) {
             throw new RepositoryError(`Error on find user: ${e instanceof Error ? e.message : e}`);
         }
     }

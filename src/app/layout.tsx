@@ -1,9 +1,11 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Plus_Jakarta_Sans } from 'next/font/google';
 import { Toaster } from '@/components/ui/toaster';
-const font = Inter({
-    weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
+
+const font = Plus_Jakarta_Sans({
+    weight: ['200', '300', '400', '500', '600', '700', '800'],
     subsets: ['latin'],
+    variable: '--font-plus-jakarta',
 });
 
 import './globals.css';

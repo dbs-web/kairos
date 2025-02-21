@@ -15,7 +15,7 @@ import {
 import { Session, withAuthorization } from '@/adapters/withAuthorization';
 import { Pagination, withPagination } from '@/adapters/withPagination';
 
-const getUsersHandler = async (request : Request, user: Session, pagination: Pagination) => {
+const getUsersHandler = async (request: Request, user: Session, pagination: Pagination) => {
     const users = await getUsersUseCase.all();
     return NextResponse.json({ data: users });
 };

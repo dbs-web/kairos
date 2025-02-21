@@ -12,7 +12,7 @@ export interface CountPaginatedArgs {
 }
 
 export default interface IRepository<T> {
-    findUnique(args: FindUniqueArgs<T>): Promise<T>;
+    findUnique(args: FindUniqueArgs<T>): Promise<T | undefined>;
     find({ criteria, skip, take, orderBy }: FindPaginatedArgs): Promise<T[]>;
     count(args: CountPaginatedArgs): Promise<number>;
     create(data: Omit<T, 'id'>): Promise<T>;

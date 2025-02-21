@@ -1,16 +1,14 @@
 // Entities
-import { HeyGenStatus } from '@/domain/entities/video';
+import { HeyGenAvatarVideoStatus, HeyGenStatus } from '@/domain/entities/video';
 
 // Use Cases
 import { createApiResponseUseCase } from '@/use-cases/ApiLogUseCases';
-import { addVideoFailedStatusUseCase, addVideoUrlUseCase } from '@/use-cases/VideoUseCases';
-
-import { PollingManager } from '@/infrastructure/polling/PollingManager';
-
-// Adapters
-import HeyGenAdapter from '@/adapters/HeygenAdapter';
-
-const heygenAdapter = new HeyGenAdapter();
+import {
+    addVideoFailedStatusUseCase,
+    addVideoSubtitleUseCase,
+    addVideoUrlUseCase,
+} from '@/use-cases/VideoUseCases';
+import { createSubtitlesUseCase } from '@/use-cases/DifyUseCases';
 
 export async function POST(request: Request) {
     const body = await request.json();
@@ -38,48 +36,36 @@ export async function POST(request: Request) {
 
         const { video_id, url, msg } = event_data;
 
-        if (event_type === 'avatar_video.success') {
+        if (event_type === HeyGenAvatarVideoStatus.SUCCESS) {
+            // Update video url
             const video = await addVideoUrlUseCase.execute({
                 heygenVideoId: video_id,
                 url,
                 heygenStatus: HeyGenStatus.SUCCESS,
             });
 
-            if (!video) {
-                return createApiResponseUseCase.BAD_REQUEST({
-                    route,
-                    body,
-                    message: 'Video not found!',
-                });
-            }
-
-            return createApiResponseUseCase.SUCCESS({
-                route,
-                body,
-                message: 'Video updated successfully',
+            // Create subtitles for video
+            const subtitle = await createSubtitlesUseCase.execute({
+                transcription: video.transcription as string,
             });
-        } else if (event_type === 'avatar_video.fail') {
-            const video = await addVideoFailedStatusUseCase.execute(video_id);
 
-            if (!video) {
-                return createApiResponseUseCase.BAD_REQUEST({
-                    route,
-                    body,
-                    message: 'Video not found!',
-                });
-            }
-
-            const pollingManager = new PollingManager();
-
-            await pollingManager.insertData({
-                userId: video.userId,
-                dataType: 'video',
+            await addVideoSubtitleUseCase.execute({
+                id: video.id,
+                subtitle,
             });
 
             return createApiResponseUseCase.SUCCESS({
                 route,
                 body,
-                message: 'Video update failed',
+                message: 'Video generataded successfully!',
+            });
+        } else if (event_type === HeyGenAvatarVideoStatus.FAIL) {
+            await addVideoFailedStatusUseCase.execute(video_id);
+
+            return createApiResponseUseCase.SUCCESS({
+                route,
+                body,
+                message: 'Video generation failed!',
                 error: msg,
             });
         } else {

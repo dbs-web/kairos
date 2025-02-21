@@ -2,8 +2,6 @@
 import { withExternalRequestValidation } from '@/adapters/withExternalRequestValidation';
 import { Status } from '@/domain/entities/status';
 
-import { PollingManager } from '@/infrastructure/polling/PollingManager';
-
 // Use Cases
 import { createApiResponseUseCase } from '@/use-cases/ApiLogUseCases';
 import { updateBriefingUseCase } from '@/use-cases/BriefingUseCases';
@@ -53,11 +51,8 @@ export const POST = withExternalRequestValidation(async (request: Request) => {
 
         const updateData: any = {
             status: Status.EM_ANALISE,
+            text,
         };
-
-        if (text) {
-            updateData.text = text;
-        }
 
         if (sources) {
             const parsedSources = JSON.parse(sources);
@@ -72,24 +67,10 @@ export const POST = withExternalRequestValidation(async (request: Request) => {
             };
         }
 
-        const UpdatedBriefing = await updateBriefingUseCase.dangerousUpdate({
+        await updateBriefingUseCase.dangerousUpdate({
             id: briefingId,
             data: updateData,
-        });
-
-        if (!UpdatedBriefing) {
-            return createApiResponseUseCase.NOT_FOUND({
-                route,
-                body: body,
-                message: 'Briefing not found',
-            });
-        }
-
-        const pollingManager = new PollingManager();
-
-        await pollingManager.insertData({
-            userId: UpdatedBriefing.userId,
-            dataType: 'briefing',
+            poll: true,
         });
 
         return createApiResponseUseCase.SUCCESS({
@@ -98,7 +79,6 @@ export const POST = withExternalRequestValidation(async (request: Request) => {
             message: 'Briefing atualizado',
         });
     } catch (error) {
-        console.log(`error: ${error instanceof Error ? error.message : error}`);
         return createApiResponseUseCase.INTERNAL_SERVER_ERROR({
             route,
             body: body,

@@ -24,18 +24,30 @@ export default function BriefingApprovalDialog({
     briefing,
     className,
 }: EditBriefingDialogProps) {
+    const [loading, setLoading] = useState<boolean>(false);
     const { sendVideoToProduction } = useBriefing();
     const [open, setOpen] = useState<boolean>();
     const { clearSelectedAvatar, selectedAvatar } = useBriefing();
     const { toast } = useToast();
 
     const handleSubmit = async () => {
+        setLoading(true);
         try {
-            sendVideoToProduction(briefing.id);
-            toast({
-                title: 'Seu vídeo foi enviado para a produção!',
-                description: "Em alguns instantes você receberá ele na aba 'Finalizados'",
-            });
+            const success = await sendVideoToProduction(briefing.id);
+
+            if (success) {
+                toast({
+                    title: 'Seu vídeo foi enviado para a produção!',
+                    description: "Em alguns instantes você receberá ele na aba 'Finalizados'",
+                });
+            } else {
+                toast({
+                    title: 'Ocorreu um erro ao gerar o seu vídeo!',
+                    description:
+                        'Tente novamente mais tarde, se o error persistir, entre em contato com o suporte.',
+                });
+            }
+            setLoading(false);
             setOpen(false);
         } catch (e) {
             if (e instanceof Error) console.error(e.message);
@@ -64,9 +76,11 @@ export default function BriefingApprovalDialog({
                         className="mt-4 rounded-lg bg-primary p-2 px-4 text-xs text-white disabled:bg-neutral-400"
                         disabled={!selectedAvatar}
                     >
-                        {!selectedAvatar
-                            ? 'Selecione o avatar antes de criar o vídeo'
-                            : 'Criar vídeo'}
+                        {loading
+                            ? 'Carregando...'
+                            : !selectedAvatar
+                              ? 'Selecione o avatar antes de criar o vídeo'
+                              : 'Criar vídeo'}
                     </button>
                 </div>
             </DialogContent>

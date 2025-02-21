@@ -1,7 +1,7 @@
 import pollingClient from './PollingClientSingleton';
-import { PollingData } from './PollingClient';
+import { IPollingClient, PollingData } from './PollingClient';
 
-export class PollingManager {
+export class PollingManager implements IPollingClient {
     private pollingClient = pollingClient;
 
     async connect(): Promise<void> {
@@ -12,11 +12,11 @@ export class PollingManager {
         await this.pollingClient.disconnect();
     }
 
-    async insertData(data: PollingData): Promise<void> {
+    async insertPollingData(data: PollingData): Promise<void> {
         await this.pollingClient.insertPollingData(data);
     }
 
-    async getData(data: PollingData): Promise<boolean> {
+    async getPollingData(data: PollingData): Promise<boolean> {
         return await this.pollingClient.getPollingData(data);
     }
 }

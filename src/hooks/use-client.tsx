@@ -51,16 +51,16 @@ const deleteUser = async (id: number) => {
 export const useClients = () => {
     const queryClient = useQueryClient();
 
-    const limits ={
+    const limits = {
         sm: 5,
         md: 10,
         lg: 15,
         xl: 20,
     };
 
-    const {page, setPage, limit} = usePagination(limits);
+    const { page, setPage, limit } = usePagination(limits);
 
-    const {data, isFetching, refetch} = useFetchData<IUser>("user", {page, limit}, "user");
+    const { data, isFetching, refetch } = useFetchData<IUser>('user', { page, limit }, 'user');
 
     const addMutation = useMutation({
         mutationFn: addUser,

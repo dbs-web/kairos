@@ -17,12 +17,18 @@ export default class AddVideoUrlUseCase {
         url: string;
         heygenStatus: HeyGenStatus;
     }) {
-        return this.videoService.updateByHeyGenId({
+        const video = await this.videoService.updateByHeyGenId({
             heygenVideoId,
             data: {
                 url,
                 heygenStatus,
             },
         });
+
+        if (!video) {
+            throw new Error('Video not found');
+        }
+
+        return video;
     }
 }

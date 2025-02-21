@@ -3,6 +3,7 @@ import { IBriefingService } from '../../services/BriefingService';
 import { IBriefing } from '@/domain/entities/briefing';
 import { Status } from '@/domain/entities/status';
 import { INews } from '@/domain/entities/news';
+import { UseCaseError } from '@/shared/errors';
 
 export default class CreateBriefingsUseCase {
     private briefingService: IBriefingService;
@@ -47,18 +48,25 @@ export default class CreateBriefingsUseCase {
         return await this.briefingService.createMany(briefingsToCreate);
     }
 
-    async fromPrompt({
-        title,
-        userId,
-    }: {
-        title: string;
-        userId: number;
-    }): Promise<IBriefing | undefined> {
-        return await this.briefingService.create({
+    /** Create briefing from prompt
+     * @param title Briefing title
+     * @param userId User ID
+     *
+     * @returns Created briefing
+     * @throws UseCaseError if failed to create briefing
+     */
+    async fromPrompt({ title, userId }: { title: string; userId: number }): Promise<IBriefing> {
+        const createdBriefing = await this.briefingService.create({
             title,
             date: new Date(),
             userId,
             status: Status.EM_PRODUCAO,
         });
+
+        if (!createdBriefing) {
+            throw new UseCaseError('Failed to create briefing');
+        }
+
+        return createdBriefing;
     }
 }

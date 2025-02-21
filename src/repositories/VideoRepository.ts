@@ -6,6 +6,7 @@ import IDatabaseClient, {
     UpdateArgs,
 } from '@/infrastructure/database/IDatabaseClient';
 import { IVideo } from '@/domain/entities/video';
+import { RepositoryError } from '@/shared/errors';
 
 export interface IVideoRepository extends IRepository<IVideo> {}
 
@@ -16,40 +17,60 @@ export default class VideoRepository implements IVideoRepository {
         this.db = db;
     }
 
-    async findUnique(args: FindUniqueArgs<IVideo>): Promise<IVideo> {
-        return await this.db.findUnique<IVideo>('video', args);
+    async findUnique(args: FindUniqueArgs<IVideo>): Promise<IVideo | undefined> {
+        try {
+            return await this.db.findUnique<IVideo>('video', args);
+        } catch (error) {
+            throw new RepositoryError('Error finding unique video', error as Error);
+        }
     }
 
     async find({ criteria, skip, take, orderBy = { id: 'desc' } }: FindPaginatedArgs) {
-        return await this.db.findMany<IVideo>('video', {
-            criteria,
-            skip,
-            take,
-            orderBy: orderBy,
-        });
+        try {
+            return await this.db.findMany<IVideo>('video', {
+                criteria,
+                skip,
+                take,
+                orderBy: orderBy,
+            });
+        } catch (error) {
+            throw new RepositoryError('Error finding videos', error as Error);
+        }
     }
 
     async count({ criteria }: CountPaginatedArgs) {
-        return this.db.count('video', {
-            criteria,
-        });
+        try {
+            return this.db.count('video', {
+                criteria,
+            });
+        } catch (error) {
+            throw new RepositoryError('Error counting videos', error as Error);
+        }
     }
 
-    async create(suggestionData: Omit<IVideo, 'id'>): Promise<IVideo> {
-        console.log(suggestionData);
-
-        const suggestion = await this.db.create<IVideo>('video', {
-            data: suggestionData,
-        });
-
-        return suggestion;
+    async create(videoData: Omit<IVideo, 'id'>): Promise<IVideo> {
+        try {
+            return await this.db.create<IVideo>('video', {
+                data: videoData,
+            });
+        } catch (error) {
+            throw new RepositoryError('Error creating video', error as Error);
+        }
     }
 
     async update(args: UpdateArgs<IVideo>): Promise<IVideo | undefined> {
-        return await this.db.update<IVideo>('video', args);
+        try {
+            return await this.db.update<IVideo>('video', args);
+        } catch (error) {
+            throw new RepositoryError('Error updating video', error as Error);
+        }
     }
 
     async delete(args: DeleteArgs<IVideo>): Promise<IVideo | undefined> {
-        return this.db.delete<IVideo>('video', args);
+        try {
+            return await this.db.delete<IVideo>('video', args);
+        } catch (error) {
+            throw new RepositoryError('Error deleting video', error as Error);
+        }
     }
 }

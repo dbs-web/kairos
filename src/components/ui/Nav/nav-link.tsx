@@ -10,10 +10,14 @@ interface NavLinkProps {
 export default function NavLink({ Icon, text, href, active = false }: NavLinkProps) {
     return (
         <li
-            className={`${active ? 'border bg-white text-primary shadow-md' : ''} flex flex-nowrap items-center justify-center gap-x-1 text-nowrap rounded-lg p-1 px-2 font-bold text-neutral-500 transition-all duration-300 hover:bg-neutral-100 md:gap-x-2 md:p-2`}
+            className={`${
+                active
+                    ? 'border bg-white text-primary shadow-md'
+                    : 'hover:bg-neutral-100 hover:text-primary'
+            } flex flex-nowrap items-center justify-center gap-x-2.5 text-nowrap rounded-lg p-1.5 px-3.5 font-semibold text-neutral-700 transition-all duration-300`}
         >
-            {Icon}
-            <a href={href} className="text-xs">
+            <span className="transition-transform duration-300 group-hover:scale-105">{Icon}</span>
+            <a href={href} className="text-base">
                 {text}
             </a>
         </li>

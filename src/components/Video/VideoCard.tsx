@@ -6,6 +6,7 @@ import TranscriptionDialog from './VideoTranscriptionDialog';
 
 // Entities
 import { IVideo } from '@/domain/entities/video';
+import { HeyGenStatus } from '@prisma/client';
 
 interface VideoCardProps {
     video: IVideo;
@@ -82,14 +83,14 @@ export default function VideoCard({ video }: VideoCardProps) {
                         <time>{new Date(video.creationDate).toLocaleDateString('pt-br')}</time>
                     </span>
                 )}
-                {video.heygenStatus === 'PROCESSING' && (
+                {video.heygenStatus === HeyGenStatus.PROCESSING && (
                     <p className="mt-4 text-xs text-neutral-700 md:text-sm">
                         Aguarde enquanto estamos produzindo seu vídeo, isto pode demorar alguns
                         minutos.
                     </p>
                 )}
 
-                {video.heygenStatus === 'FAILED' && (
+                {video.heygenStatus === HeyGenStatus.FAILED && (
                     <p className="mt-12 text-xs text-neutral-600 md:text-sm">
                         <strong className="text-red-500">
                             Ocorreu um erro no processamento do seu vídeo:
@@ -97,6 +98,10 @@ export default function VideoCard({ video }: VideoCardProps) {
                         <br></br>
                         {video.heygenErrorMsg}
                     </p>
+                )}
+
+                {video.heygenStatus === HeyGenStatus.SUCCESS && (
+                    <p className="mt-12 text-xs text-neutral-600 md:text-sm">{video.legenda}</p>
                 )}
             </div>
         </div>

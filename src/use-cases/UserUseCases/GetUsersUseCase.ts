@@ -11,11 +11,22 @@ export default class GetUsersUseCase {
         return this.userService.findAll();
     }
 
-    async byId(id: number): Promise<IUser | undefined> {
-        return this.userService.findById(id);
+    async byId(id: number): Promise<IUser> {
+        const user = await this.userService.findById(id);
+        if (!user) {
+            throw new Error('User not found');
+        }
+
+        return user;
     }
 
-    async byEmail(email: string): Promise<IUser | undefined> {
-        return this.userService.findByEmail(email);
+    async byEmail(email: string): Promise<IUser> {
+        const user = await this.userService.findByEmail(email);
+
+        if (!user) {
+            throw new Error('User not found');
+        }
+
+        return user;
     }
 }
