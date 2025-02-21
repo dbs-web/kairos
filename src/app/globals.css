@@ -125,3 +125,73 @@ textarea {
     max-width: 100%;
     field-sizing: content;
 }
+
+/* Calendar Custom Styles */
+.fc {
+    /* Calendar Container */
+    --fc-border-color: hsl(var(--primary) / 0.2);
+    --fc-today-bg-color: hsl(var(--primary) / 0.1);
+    --fc-neutral-bg-color: hsl(var(--background));
+    --fc-list-event-hover-bg-color: hsl(var(--primary) / 0.05);
+}
+
+.fc .fc-toolbar-title {
+    @apply text-lg font-semibold text-neutral-900;
+}
+
+.fc .fc-button {
+    @apply bg-white text-neutral-700 border-neutral-200 shadow-sm 
+    hover:bg-neutral-50 font-medium text-sm transition-colors;
+}
+
+.fc .fc-button-primary:not(:disabled).fc-button-active,
+.fc .fc-button-primary:not(:disabled):active {
+    @apply bg-neutral-100 border-neutral-200 text-neutral-900;
+}
+
+.fc .fc-daygrid-day-number {
+    @apply text-sm text-neutral-600 font-medium p-2;
+}
+
+.fc .fc-daygrid-event {
+    @apply text-xs py-1 px-2 font-medium;
+}
+
+.fc .fc-col-header-cell {
+    @apply border-neutral-200;
+}
+
+.fc .fc-scrollgrid {
+    @apply border-neutral-200;
+}
+
+/* Calendar Container */
+.fc {
+    @apply rounded-lg border border-neutral-200 overflow-hidden;
+}
+
+/* Header Styles */
+.fc-header-toolbar {
+    @apply px-4 py-4 border-b border-neutral-200 mb-0 !important;
+}
+
+/* Day Header */
+.fc-col-header {
+    @apply bg-neutral-50/50;
+}
+
+/* Events */
+.fc-event {
+    @apply bg-primary text-primary-foreground border-0 
+    shadow-sm cursor-pointer transition-opacity hover:opacity-90;
+}
+
+/* Today */
+.fc-day-today {
+    @apply bg-primary/5 !important;
+}
+
+/* Hover Effects */
+.fc-daygrid-day:hover {
+    @apply bg-neutral-50 transition-colors;
+}

@@ -40,9 +40,11 @@ export default function NewsCard({ news, isSelected, onSelect }: NewsCardProps) 
 
     return (
         <div
-            className={`/* Reduzido para */ relative cursor-pointer rounded-lg bg-white p-4 p-5 [transition:transform_300ms,box-shadow_300ms] sm:mx-4 ${
+            className={`h-full w-full cursor-pointer rounded-lg bg-white p-4 relative
+            [transition:transform_300ms,box-shadow_300ms]
+            ${
                 news.status === 'EM_ANALISE'
-                    ? 'hover:-translate-y-2 hover:shadow-[0px_4px_6px_-2px_rgba(16,24,40,0.03),0px_12px_16px_-4px_rgba(16,24,40,0.08)]'
+                    ? 'hover:shadow-[0px_4px_6px_-2px_rgba(16,24,40,0.03),0px_12px_16px_-4px_rgba(16,24,40,0.08)] hover:-translate-y-2'
                     : 'cursor-not-allowed'
             }`}
             onClick={handleSelect}
@@ -61,8 +63,8 @@ export default function NewsCard({ news, isSelected, onSelect }: NewsCardProps) 
                 )}
             </>
 
-            <div className="relative space-y-4">
-                <div className="relative h-48 w-full overflow-hidden rounded-xl">
+            <div className="relative flex flex-col h-full">
+                <div className="relative h-48 w-full overflow-hidden rounded-xl shrink-0 mb-4">
                     {imageError || !news.thumbnail ? (
                         <div className="flex h-full w-full items-center justify-center bg-neutral-300 text-neutral-500">
                             <MdImageNotSupported className="text-4xl" />
@@ -77,8 +79,8 @@ export default function NewsCard({ news, isSelected, onSelect }: NewsCardProps) 
                     )}
                 </div>
 
-                <div className="space-y-4">
-                    <div className="space-y-1">
+                <div className="flex flex-col flex-grow">
+                    <div className="space-y-2">
                         <h3 className="line-clamp-2 text-lg font-semibold text-neutral-900 md:text-xl">
                             {news.title}
                         </h3>
@@ -87,11 +89,11 @@ export default function NewsCard({ news, isSelected, onSelect }: NewsCardProps) 
                         </time>
                     </div>
 
-                    <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-neutral-600">
+                    <p className="line-clamp-3 text-sm leading-relaxed text-neutral-600 mt-4 flex-grow">
                         {news.summary}
                     </p>
 
-                    <div className="flex items-center justify-between pt-2">
+                    <div className="flex items-center justify-between mt-4">
                         <button
                             onClick={handleOpenNews}
                             className="group flex items-center gap-x-1.5 text-xs font-medium text-neutral-700 transition-colors hover:text-primary"

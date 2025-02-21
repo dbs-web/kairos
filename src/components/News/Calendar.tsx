@@ -30,7 +30,7 @@ export default function Calendar() {
     }, []);
 
     return (
-        <div className="basis-1/2 rounded-lg bg-white px-8 py-4 shadow-lg">
+        <div className="basis-1/2 rounded-xl bg-white p-6 shadow-sm">
             <CalendarHover {...activeEvent} position={hoverPosition} />
             <FullCalendar
                 ref={calendarRef}
@@ -43,6 +43,16 @@ export default function Calendar() {
                 eventClick={setActiveEvent}
                 eventMouseEnter={setActiveEvent}
                 eventMouseLeave={clearActiveEvent}
+                headerToolbar={{
+                    start: 'title',
+                    center: '',
+                    end: 'prev,next'
+                }}
+                dayHeaderClassNames="text-neutral-600 uppercase text-xs font-medium py-2"
+                dayCellClassNames="hover:bg-neutral-50 transition-colors"
+                eventClassNames="!bg-primary !border-0 !rounded-md shadow-sm"
+                titleFormat={{ year: 'numeric', month: 'long' }}
+                height="auto"
             />
         </div>
     );
@@ -52,15 +62,17 @@ function CalendarHover({ title, date, position }: Event & { position: { x: numbe
     if (!title) return null;
     return (
         <div
-            className="pointer-events-none absolute z-[100] h-auto w-72 rounded-lg bg-white p-4 shadow-lg transition-opacity duration-300"
+            className="pointer-events-none absolute z-[100] w-72 rounded-xl bg-white p-4 
+            shadow-lg transition-all duration-200 border border-neutral-100"
             style={{
                 top: position.y + 20,
                 left: position.x + 10,
                 opacity: title ? 1 : 0,
+                transform: `translateY(${title ? '0' : '-4px'})`,
             }}
         >
-            <span className="block font-bold">{title}</span>
-            <time className="block text-sm text-gray-500">{date}</time>
+            <span className="block font-semibold text-neutral-900">{title}</span>
+            <time className="mt-1 block text-sm text-neutral-500">{date}</time>
         </div>
     );
 }

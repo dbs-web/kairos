@@ -46,18 +46,16 @@ export default function NewsGrid() {
     };
     return (
         <div className="relative h-full w-full">
-            <div className="flex w-full flex-wrap items-center justify-start gap-y-8 !pt-0 pb-24 md:p-8 md:pl-0">
+            {/* Added px-6 for consistent horizontal padding */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-6 !pt-0 pb-20 px-6">
                 {news.map((news: INews) => (
-                    <div
-                        className="basis-1/1 h-full w-full lg:basis-1/2 2xl:basis-1/3"
+                    // Removed extra div wrapper to allow card to grow
+                    <NewsCard
                         key={news.id}
-                    >
-                        <NewsCard
-                            news={news}
-                            isSelected={selectedNews.includes(news.id)}
-                            onSelect={toggleSelectNews}
-                        />
-                    </div>
+                        news={news}
+                        isSelected={selectedNews.includes(news.id)}
+                        onSelect={toggleSelectNews}
+                    />
                 ))}
             </div>
             <div className="flex w-full flex-col items-center justify-center">
