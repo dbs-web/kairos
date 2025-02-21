@@ -3,61 +3,56 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import ptLocale from '@fullcalendar/core/locales/pt-br';
 import { useCalendar } from '@/hooks/use-calendar';
 import { useEffect, useRef, useState } from 'react';
-import { EventClickArg, EventHoveringArg } from '@fullcalendar/core';
+import { EventClickArg } from '@fullcalendar/core/index.js';
 
-interface CalendarEvent {
-    title: string;
-    date: string;
-    start: Date;
-}
+type Event = {
+    title?: string | undefined;
+    date?: string | null | undefined;
+};
 
 export default function Calendar() {
-    const calendarRef = useRef<HTMLDivElement>(null);
+    const calendarRef = useRef(null);
+
     const { events, isLoading, activeEvent, setActiveEvent, clearActiveEvent } = useCalendar();
-    const [hoverEvent, setHoverEvent] = useState<CalendarEvent | null>(null);
     const [hoverPosition, setHoverPosition] = useState<{ x: number; y: number }>({
         x: 0,
         y: 0,
     });
 
-    const handleMouseEnter = (info: EventHoveringArg) => {
-        if (!info.event) return;
+    const handleMouseMove = (e: MouseEvent) => {
+        setHoverPosition({ x: Math.min(e.clientX, 1500), y: e.clientY });
+    };
 
+    const handleMouseEnter = (info: EventClickArg) => {
         const rect = info.el.getBoundingClientRect();
-        const calendarRect = calendarRef.current?.getBoundingClientRect();
-
-        if (calendarRect) {
-            setHoverPosition({
-                x: rect.left - calendarRect.left,
-                y: rect.top - calendarRect.top + rect.height + 4,
-            });
-
-            setHoverEvent({
-                title: info.event.title || '',
-                date: info.event.start?.toLocaleDateString('pt-BR') || '',
-                start: info.event.start || new Date(),
-            });
-        }
+        setHoverPosition({
+            x: rect.left,
+            y: rect.bottom,
+        });
+        setActiveEvent(info);
     };
 
-    const handleMouseLeave = () => {
-        setHoverEvent(null);
-    };
+    useEffect(() => {
+        window.addEventListener('mousemove', handleMouseMove);
+        return () => {
+            window.removeEventListener('mousemove', handleMouseMove);
+        };
+    }, []);
 
     return (
-        <div
-            ref={calendarRef}
-            className="relative basis-1/2 overflow-hidden rounded-xl bg-white p-6 shadow-sm"
-        >
+        <div className="basis-1/2 rounded-xl bg-white p-6 shadow-sm">
+            <CalendarHover {...activeEvent} position={hoverPosition} />
             <FullCalendar
+                ref={calendarRef}
                 locale={ptLocale}
                 plugins={[dayGridPlugin]}
+                //@ts-expect-error events are just placeholders ATM
                 events={events}
                 fixedWeekCount={false}
                 initialView="dayGridMonth"
                 eventClick={setActiveEvent}
                 eventMouseEnter={handleMouseEnter}
-                eventMouseLeave={handleMouseLeave}
+                eventMouseLeave={clearActiveEvent}
                 headerToolbar={{
                     start: 'title',
                     center: '',
@@ -73,40 +68,24 @@ export default function Calendar() {
                     next: 'chevron-right',
                 }}
                 buttonClassNames={{
-                    prev: '!bg-primary !text-white hover:!bg-primary/90 [&>.fc-icon]:!text-white',
-                    next: '!bg-primary !text-white hover:!bg-primary/90 [&>.fc-icon]:!text-white',
+                    prev: '!bg-primary !text-white hover:!bg-primary/90',
+                    next: '!bg-primary !text-white hover:!bg-primary/90',
                 }}
             />
-            {hoverEvent && (
-                <CalendarHover
-                    title={hoverEvent.title}
-                    date={hoverEvent.date}
-                    position={hoverPosition}
-                />
-            )}
         </div>
     );
 }
 
-function CalendarHover({
-    title,
-    date,
-    position,
-}: {
-    title: string;
-    date: string;
-    position: { x: number; y: number };
-}) {
+function CalendarHover({ title, date, position }: Event & { position: { x: number; y: number } }) {
     if (!title) return null;
-
     return (
         <div
-            className="pointer-events-none absolute z-[100] w-72 rounded-lg border border-neutral-100 bg-white p-3 shadow-lg transition-all duration-75"
+            className="pointer-events-none absolute z-[100] w-72 rounded-lg border border-neutral-100 bg-white p-3 shadow-lg transition-all duration-200"
             style={{
-                top: `${position.y}px`,
-                left: `${position.x}px`,
-                opacity: 1,
-                transform: 'translateY(0)',
+                top: position.y + 8, // Reduced offset
+                left: position.x,
+                opacity: title ? 1 : 0,
+                transform: `translateY(${title ? '0' : '-4px'})`,
             }}
         >
             <span className="block font-semibold text-neutral-900">{title}</span>
