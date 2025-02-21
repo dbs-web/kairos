@@ -140,21 +140,29 @@ textarea {
 }
 
 .fc .fc-button {
-    @apply bg-white text-neutral-700 border-neutral-200 shadow-sm 
-    hover:bg-neutral-50 font-medium text-sm transition-colors;
+    @apply !bg-primary !text-white hover:!bg-primary/90;
+}
+
+.fc .fc-button .fc-icon {
+    @apply !text-white;
+}
+
+.fc .fc-prev-button,
+.fc .fc-next-button {
+    @apply !border-0 !shadow-none;
 }
 
 .fc .fc-button-primary:not(:disabled).fc-button-active,
 .fc .fc-button-primary:not(:disabled):active {
-    @apply bg-neutral-100 border-neutral-200 text-neutral-900;
+    @apply border-neutral-200 bg-neutral-100 text-neutral-900;
 }
 
 .fc .fc-daygrid-day-number {
-    @apply text-sm text-neutral-600 font-medium p-2;
+    @apply p-2 text-sm font-medium text-neutral-600;
 }
 
 .fc .fc-daygrid-event {
-    @apply text-xs py-1 px-2 font-medium;
+    @apply px-2 py-1 text-xs font-medium;
 }
 
 .fc .fc-col-header-cell {
@@ -167,12 +175,12 @@ textarea {
 
 /* Calendar Container */
 .fc {
-    @apply rounded-lg border border-neutral-200 overflow-hidden;
+    @apply overflow-hidden rounded-lg border border-neutral-200;
 }
 
 /* Header Styles */
 .fc-header-toolbar {
-    @apply px-4 py-4 border-b border-neutral-200 mb-0 !important;
+    @apply mb-0 border-b border-neutral-200 px-4 py-4 !important;
 }
 
 /* Day Header */
@@ -182,8 +190,7 @@ textarea {
 
 /* Events */
 .fc-event {
-    @apply bg-primary text-primary-foreground border-0 
-    shadow-sm cursor-pointer transition-opacity hover:opacity-90;
+    @apply cursor-pointer border-0 bg-primary text-primary-foreground shadow-sm transition-opacity hover:opacity-90;
 }
 
 /* Today */

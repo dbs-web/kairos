@@ -72,25 +72,32 @@ export default function CustomPrompt() {
     };
 
     return (
-        <div className="flex h-[450px] flex-col gap-y-8 rounded-lg border bg-white p-5 shadow-lg">
-            <h2 className="text-2xl font-medium text-neutral-700">Criação de Vídeo</h2>
+        <div className="flex h-[450px] flex-col rounded-xl bg-white p-6 shadow-sm">
+            <h2 className="text-xl font-semibold text-neutral-900">Criação de Vídeo</h2>
+
             {!isSubmitting ? (
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-y-4">
+                    <form
+                        onSubmit={form.handleSubmit(onSubmit)}
+                        className="mt-6 flex flex-col gap-y-5"
+                    >
                         <FormField
                             control={form.control}
                             name="title"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel htmlFor="title">Título</FormLabel>
+                                    <FormLabel className="text-sm font-medium text-neutral-700">
+                                        Título
+                                    </FormLabel>
                                     <FormControl>
                                         <Input
                                             {...field}
                                             disabled={isSubmitting}
                                             placeholder="Título do seu vídeo"
+                                            className="mt-1.5 border-neutral-200 placeholder:text-neutral-400 focus:border-primary focus:ring-1 focus:ring-primary/20"
                                         />
                                     </FormControl>
-                                    <FormMessage />
+                                    <FormMessage className="text-xs" />
                                 </FormItem>
                             )}
                         />
@@ -100,27 +107,35 @@ export default function CustomPrompt() {
                             name="prompt"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel htmlFor="prompt">Instruções</FormLabel>
+                                    <FormLabel className="text-sm font-medium text-neutral-700">
+                                        Instruções
+                                    </FormLabel>
                                     <FormControl>
                                         <Textarea
                                             {...field}
-                                            className="h-40"
+                                            className="mt-1.5 min-h-[160px] resize-none border-neutral-200 placeholder:text-neutral-400 focus:border-primary focus:ring-1 focus:ring-primary/20"
                                             placeholder="Sobre o que deseja que o vídeo aborde?"
                                         />
                                     </FormControl>
-                                    <FormMessage />
+                                    <FormMessage className="text-xs" />
                                 </FormItem>
                             )}
                         />
 
-                        <Button type="submit" className="w-full">
+                        <Button
+                            type="submit"
+                            className="mt-2 h-10 w-full rounded-lg bg-primary text-white transition-colors duration-200 hover:bg-primary/90"
+                        >
                             Criar Vídeo
                         </Button>
                     </form>
                 </Form>
             ) : (
-                <div className="grid h-full w-full animate-pulse place-items-center bg-neutral-50">
-                    <ImSpinner8 className="animate-spin text-4xl text-primary" />
+                <div className="grid flex-1 place-items-center">
+                    <div className="flex flex-col items-center gap-3">
+                        <ImSpinner8 className="animate-spin text-3xl text-primary" />
+                        <span className="text-sm text-neutral-600">Gerando seu vídeo...</span>
+                    </div>
                 </div>
             )}
         </div>

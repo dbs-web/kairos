@@ -25,6 +25,5 @@ export default function ClientTools() {
                 <ClientRegisterDialog />
             </div>
         </div>
-
     );
 }

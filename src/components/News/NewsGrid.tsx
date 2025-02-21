@@ -47,7 +47,7 @@ export default function NewsGrid() {
     return (
         <div className="relative h-full w-full">
             {/* Added px-6 for consistent horizontal padding */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-6 !pt-0 pb-20 px-6">
+            <div className="grid grid-cols-1 gap-6 px-6 !pt-0 pb-20 lg:grid-cols-2 2xl:grid-cols-3">
                 {news.map((news: INews) => (
                     // Removed extra div wrapper to allow card to grow
                     <NewsCard
