@@ -2,6 +2,7 @@ import { FindPaginatedArgs } from '@/repositories/Repository';
 import { IUser } from '@/domain/entities/user';
 import { IUserRepository } from '@/repositories/UserRepository';
 import { FindPaginatedServiceArgs, IPaginatedDataService } from './PaginatedDataService';
+import { ServiceError } from '@/shared/errors';
 
 interface UpdateUserArgs {
     id: number;
@@ -14,11 +15,11 @@ interface DeleteUserArgs {
 
 export interface IUserService extends IPaginatedDataService<IUser> {
     findAll(): Promise<IUser[]>;
-    findById(id: number): Promise<IUser | undefined>;
-    findByEmail(email: string): Promise<IUser | undefined>;
-    create(suggestionData: Omit<IUser, 'id'>): Promise<IUser | undefined>;
-    update(args: UpdateUserArgs): Promise<IUser | undefined>;
-    delete(args: DeleteUserArgs): Promise<IUser | undefined>;
+    findById(id: number): Promise<IUser>;
+    findByEmail(email: string): Promise<IUser>;
+    create(suggestionData: Omit<IUser, 'id'>): Promise<IUser>;
+    update(args: UpdateUserArgs): Promise<IUser>;
+    delete(args: DeleteUserArgs): Promise<IUser>;
 }
 
 export default class UserService implements IUserService {
@@ -32,16 +33,28 @@ export default class UserService implements IUserService {
         return await this.repository.find({ criteria: {} });
     }
 
-    async findById(id: number): Promise<IUser | undefined> {
-        return await this.repository.findUnique({
+    async findById(id: number): Promise<IUser> {
+        const user = await this.repository.findUnique({
             criteria: {
                 id,
             },
         });
+
+        if (!user) {
+            throw new ServiceError('User with the provided id was not found');
+        }
+
+        return user;
     }
 
-    async findByEmail(email: string): Promise<IUser | undefined> {
-        return await this.repository.findUnique({ criteria: { email } });
+    async findByEmail(email: string): Promise<IUser> {
+        const user = await this.repository.findUnique({ criteria: { email } });
+
+        if (!user) {
+            throw new ServiceError('User with the provided id was not found');
+        }
+
+        return user;
     }
 
     async findWithQueryAndPagination({
@@ -68,20 +81,32 @@ export default class UserService implements IUserService {
         ]);
     }
 
-    async create(suggestionData: Omit<IUser, 'id'>): Promise<IUser | undefined> {
+    async create(suggestionData: Omit<IUser, 'id'>): Promise<IUser> {
         return this.repository.create(suggestionData);
     }
 
-    async update({ id, data }: UpdateUserArgs): Promise<IUser | undefined> {
-        return this.repository.update({
+    async update({ id, data }: UpdateUserArgs): Promise<IUser> {
+        const user = await this.repository.update({
             criteria: { id },
             data,
         });
+
+        if (!user) {
+            throw new ServiceError('User with the provided id was not found');
+        }
+
+        return user;
     }
 
-    async delete({ id }: DeleteUserArgs): Promise<IUser | undefined> {
-        return this.repository.delete({
+    async delete({ id }: DeleteUserArgs): Promise<IUser> {
+        const user = await this.repository.delete({
             criteria: { id },
         });
+
+        if (!user) {
+            throw new ServiceError('User with the provided id was not found');
+        }
+
+        return user;
     }
 }

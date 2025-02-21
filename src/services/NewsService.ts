@@ -1,6 +1,7 @@
 import { INews } from '@/domain/entities/news';
 import { INewsRepository } from '../repositories/NewsRepository';
 import { FindPaginatedServiceArgs, IPaginatedDataService } from './PaginatedDataService';
+import { ServiceError } from '@/shared/errors';
 
 interface FindByIdArgs {
     id: number;
@@ -24,12 +25,12 @@ interface DeleteVideoArgs {
 }
 
 export interface INewsService extends IPaginatedDataService<INews> {
-    findById: (args: FindByIdArgs) => Promise<INews | undefined>;
+    findById: (args: FindByIdArgs) => Promise<INews>;
     findByIds: ({ ids }: { ids: number[] }) => Promise<INews[]>;
-    createMany: (suggestionsDataArr: Omit<INews, 'id'>[]) => Promise<INews[] | undefined>;
-    update: (args: UpdateVideoArgs) => Promise<INews | undefined>;
+    createMany: (suggestionsDataArr: Omit<INews, 'id'>[]) => Promise<INews[]>;
+    update: (args: UpdateVideoArgs) => Promise<INews>;
     deleteMany: ({ ids, userId }: { ids: number[]; userId: number }) => Promise<void>;
-    updateMany: ({ dataArr, userId }: UpdateManyVideoArgs) => Promise<(INews | undefined)[]>;
+    updateMany: ({ dataArr, userId }: UpdateManyVideoArgs) => Promise<INews[]>;
 }
 
 export default class NewsService implements INewsService {
@@ -40,11 +41,17 @@ export default class NewsService implements INewsService {
     }
 
     async findById({ id }: FindByIdArgs): Promise<INews> {
-        return await this.repository.findUnique({
+        const news = await this.repository.findUnique({
             criteria: {
                 id,
             },
         });
+
+        if (!news) {
+            throw new ServiceError('News with the provided id was not found');
+        }
+
+        return news;
     }
 
     async findByIds({ ids }: { ids: number[] }): Promise<INews[]> {
@@ -81,34 +88,50 @@ export default class NewsService implements INewsService {
         ]);
     }
 
-    async create(newsData: Omit<INews, 'id'>): Promise<INews | undefined> {
+    async create(newsData: Omit<INews, 'id'>): Promise<INews> {
         return this.repository.create(newsData);
     }
 
-    async createMany(newsDataArr: Omit<INews, 'id'>[]): Promise<INews[] | undefined> {
+    async createMany(newsDataArr: Omit<INews, 'id'>[]): Promise<INews[]> {
         return this.repository.createMany(newsDataArr);
     }
 
-    async update({ id, userId, data }: UpdateVideoArgs): Promise<INews | undefined> {
-        return this.repository.update({
+    async update({ id, userId, data }: UpdateVideoArgs): Promise<INews> {
+        const news = await this.repository.update({
             criteria: {
                 id,
                 userId,
             },
             data,
         });
+
+        if (!news) {
+            throw new ServiceError(
+                'News with the provided id and user_id was not found, failed to update.',
+            );
+        }
+
+        return news;
     }
 
-    async updateMany({ dataArr, userId }: UpdateManyVideoArgs): Promise<(INews | undefined)[]> {
+    async updateMany({ dataArr, userId }: UpdateManyVideoArgs): Promise<INews[]> {
         return await Promise.all(
             dataArr.map((news) => this.update({ id: news?.id, userId, data: news })),
         );
     }
 
-    async delete({ id, userId }: DeleteVideoArgs): Promise<INews | undefined> {
-        return this.repository.delete({
+    async delete({ id, userId }: DeleteVideoArgs): Promise<INews> {
+        const news = await this.repository.delete({
             criteria: { id, userId },
         });
+
+        if (!news) {
+            throw new ServiceError(
+                'News with the provided id and user_id was not found, failed to archive',
+            );
+        }
+
+        return news;
     }
 
     async deleteMany({ ids, userId }: { ids: number[]; userId: number }) {

@@ -16,7 +16,7 @@ export default class ApiLogRepository implements IApiLogRepository {
         this.db = db;
     }
 
-    async findUnique(args: FindUniqueArgs<IApiLog>): Promise<IApiLog> {
+    async findUnique(args: FindUniqueArgs<IApiLog>): Promise<IApiLog | undefined> {
         return await this.db.findUnique<IApiLog>('apiLog', args);
     }
 

@@ -9,7 +9,7 @@ import { INews } from '@/domain/entities/news';
 import { Status } from '@/domain/entities/status';
 
 export interface INewsRepository extends IRepository<INews> {
-    createMany: (newssDataArr: Omit<INews, 'id'>[]) => Promise<INews[] | undefined>;
+    createMany: (newssDataArr: Omit<INews, 'id'>[]) => Promise<INews[]>;
 }
 
 export default class NewsRepository implements INewsRepository {
@@ -44,7 +44,7 @@ export default class NewsRepository implements INewsRepository {
         return news;
     }
 
-    async createMany(newsArr: Omit<INews, 'id'>[]): Promise<INews[] | undefined> {
+    async createMany(newsArr: Omit<INews, 'id'>[]): Promise<INews[]> {
         return this.db.createMany<INews>('news', newsArr);
     }
 

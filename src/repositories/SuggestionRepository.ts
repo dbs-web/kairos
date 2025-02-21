@@ -16,9 +16,7 @@ interface FindManySuggestionsByIdArgs {
 
 export interface ISuggestionRepository extends IRepository<ISuggestion> {
     updateMany: (args: UpdateManyArgs<ISuggestion>) => Promise<ISuggestion[]>;
-    createMany: (
-        suggestionsDataArr: Omit<ISuggestion, 'id'>[],
-    ) => Promise<ISuggestion[] | undefined>;
+    createMany: (suggestionsDataArr: Omit<ISuggestion, 'id'>[]) => Promise<ISuggestion[]>;
     findManyBiIds: ({ ids, userId }: FindManySuggestionsByIdArgs) => Promise<ISuggestion[]>;
 }
 
@@ -65,9 +63,7 @@ export default class SuggestionRepository implements ISuggestionRepository {
         return suggestion;
     }
 
-    async createMany(
-        suggestionsDataArr: Omit<ISuggestion, 'id'>[],
-    ): Promise<ISuggestion[] | undefined> {
+    async createMany(suggestionsDataArr: Omit<ISuggestion, 'id'>[]): Promise<ISuggestion[]> {
         return await this.db.createMany<ISuggestion>('suggestion', suggestionsDataArr);
     }
 

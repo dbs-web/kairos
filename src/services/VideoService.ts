@@ -1,6 +1,7 @@
 import { IVideo } from '@/domain/entities/video';
 import { IVideoRepository } from '@/repositories/VideoRepository';
 import { FindPaginatedServiceArgs, IPaginatedDataService } from './PaginatedDataService';
+import { ServiceError } from '@/shared/errors';
 
 interface FindByIdArgs {
     id: number;
@@ -23,18 +24,18 @@ interface DeleteVideoArgs {
 }
 
 export interface IVideoService extends IPaginatedDataService<IVideo> {
-    create(videoData: Omit<IVideo, 'id'>): Promise<IVideo | undefined>;
-    findById({ id, userId }: FindByIdArgs): Promise<IVideo | undefined>;
-    findByHeyGenId({ heygenVideoId }: FindByHeygenVideoId): Promise<IVideo | undefined>;
-    update(args: UpdateVideoArgs): Promise<IVideo | undefined>;
+    create(videoData: Omit<IVideo, 'id'>): Promise<IVideo>;
+    findById({ id, userId }: FindByIdArgs): Promise<IVideo>;
+    findByHeyGenId({ heygenVideoId }: FindByHeygenVideoId): Promise<IVideo>;
+    update(args: UpdateVideoArgs): Promise<IVideo>;
     updateByHeyGenId({
         heygenVideoId,
         data,
     }: {
         heygenVideoId: string;
         data: Partial<IVideo>;
-    }): Promise<IVideo | undefined>;
-    delete(args: DeleteVideoArgs): Promise<IVideo | undefined>;
+    }): Promise<IVideo>;
+    delete(args: DeleteVideoArgs): Promise<IVideo>;
 }
 
 export default class VideoService implements IVideoService {
@@ -45,17 +46,29 @@ export default class VideoService implements IVideoService {
     }
 
     async findById({ id, userId }: FindByIdArgs): Promise<IVideo> {
-        return await this.repository.findUnique({
+        const video = await this.repository.findUnique({
             criteria: { id, userId },
         });
+
+        if (!video) {
+            throw new ServiceError('Video with the provided id was not found');
+        }
+
+        return video;
     }
 
-    async findByHeyGenId({ heygenVideoId }: FindByHeygenVideoId): Promise<IVideo | undefined> {
-        return await this.repository.findUnique({
+    async findByHeyGenId({ heygenVideoId }: FindByHeygenVideoId): Promise<IVideo> {
+        const video = await this.repository.findUnique({
             criteria: {
                 heygenVideoId,
             },
         });
+
+        if (!video) {
+            throw new ServiceError('Video with the provided HeygenID was not found');
+        }
+
+        return video;
     }
 
     async findWithQueryAndPagination({
@@ -74,18 +87,26 @@ export default class VideoService implements IVideoService {
         ]);
     }
 
-    async create(suggestionData: Omit<IVideo, 'id'>): Promise<IVideo | undefined> {
+    async create(suggestionData: Omit<IVideo, 'id'>): Promise<IVideo> {
         return this.repository.create(suggestionData);
     }
 
-    async update({ id, userId, data }: UpdateVideoArgs): Promise<IVideo | undefined> {
-        return this.repository.update({
+    async update({ id, userId, data }: UpdateVideoArgs): Promise<IVideo> {
+        const video = await this.repository.update({
             criteria: {
                 id,
                 userId,
             },
             data,
         });
+
+        if (!video) {
+            throw new ServiceError(
+                'Video with the provided id and user_id was not found, update failed.',
+            );
+        }
+
+        return video;
     }
 
     async updateByHeyGenId({
@@ -94,21 +115,33 @@ export default class VideoService implements IVideoService {
     }: {
         heygenVideoId: string;
         data: Partial<IVideo>;
-    }): Promise<IVideo | undefined> {
-        return this.repository.update({
+    }): Promise<IVideo> {
+        const video = await this.repository.update({
             criteria: {
                 heygenVideoId,
             },
             data,
         });
+
+        if (!video) {
+            throw new ServiceError('Video with the provided HeygenVideoID was not found');
+        }
+
+        return video;
     }
 
-    async delete({ id, userId }: DeleteVideoArgs): Promise<IVideo | undefined> {
-        return this.repository.delete({
+    async delete({ id, userId }: DeleteVideoArgs): Promise<IVideo> {
+        const video = await this.repository.delete({
             criteria: {
                 id,
                 userId,
             },
         });
+
+        if (!video) {
+            throw new ServiceError('Video with the provided id and user_id was not found');
+        }
+
+        return video;
     }
 }

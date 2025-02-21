@@ -2,6 +2,7 @@ import { IBriefing } from '@/domain/entities/briefing';
 
 import { IBriefingRepository } from '../repositories/BriefingRepository';
 import { FindPaginatedServiceArgs, IPaginatedDataService } from './PaginatedDataService';
+import { ServiceError } from '@/shared/errors';
 
 interface FindByIdArgs {
     id: number;
@@ -35,12 +36,12 @@ interface FindByRelatedSuggestionIdArgs {
 }
 
 export interface IBriefingService extends IPaginatedDataService<IBriefing> {
-    findById: (args: FindByIdArgs) => Promise<IBriefing | undefined>;
-    create: (data: Omit<IBriefing, 'id'>) => Promise<IBriefing | undefined>;
+    findById: (args: FindByIdArgs) => Promise<IBriefing>;
+    create: (data: Omit<IBriefing, 'id'>) => Promise<IBriefing>;
     createMany: (dataArr: Omit<IBriefing, 'id'>[]) => Promise<IBriefing[]>;
     deleteMany: ({ ids, userId }: { ids: number[]; userId: number }) => Promise<void>;
-    update: (args: UpdateBriefingArgs) => Promise<IBriefing | undefined>;
-    delete: (args: DeleteBriefingArgs) => Promise<IBriefing | undefined>;
+    update: (args: UpdateBriefingArgs) => Promise<IBriefing>;
+    delete: (args: DeleteBriefingArgs) => Promise<IBriefing>;
 }
 
 export default class BriefingService implements IBriefingService {
@@ -51,36 +52,51 @@ export default class BriefingService implements IBriefingService {
     }
 
     async findById({ id, userId }: FindByIdArgs): Promise<IBriefing> {
-        return await this.repository.findUnique({
+        const briefing = await this.repository.findUnique({
             criteria: {
                 id,
                 userId,
             },
         });
+
+        if (!briefing) {
+            throw new ServiceError('Briefing with the provided id was not found!');
+        }
+
+        return briefing;
     }
 
-    async findByNewsId({
-        newsId,
-        userId,
-    }: {
-        newsId: number;
-        userId: number;
-    }): Promise<IBriefing | undefined> {
-        return await this.repository.findUnique({
+    async findByNewsId({ newsId, userId }: { newsId: number; userId: number }): Promise<IBriefing> {
+        const briefing = await this.repository.findUnique({
             criteria: {
                 userId,
                 newsId,
             },
         });
+
+        if (!briefing) {
+            throw new ServiceError('Briefing with the provided newsID was not found!');
+        }
+
+        return briefing;
     }
 
-    async findByRelatedSuggestionId({ suggestionId, userId }: FindByRelatedSuggestionIdArgs) {
-        return await this.repository.find({
+    async findByRelatedSuggestionId({
+        suggestionId,
+        userId,
+    }: FindByRelatedSuggestionIdArgs): Promise<IBriefing> {
+        const briefing = await this.repository.find({
             criteria: {
                 suggestionId,
                 userId,
             },
         });
+
+        if (!briefing?.length || briefing.length === 0) {
+            throw new ServiceError('Briefing with the provided suggestionID was not found!');
+        }
+
+        return briefing[0];
     }
 
     async findWithQueryAndPagination({
@@ -107,7 +123,7 @@ export default class BriefingService implements IBriefingService {
         ]);
     }
 
-    async create(data: Omit<IBriefing, 'id'>): Promise<IBriefing | undefined> {
+    async create(data: Omit<IBriefing, 'id'>): Promise<IBriefing> {
         return this.repository.create(data);
     }
 
@@ -115,18 +131,34 @@ export default class BriefingService implements IBriefingService {
         return this.repository.createMany(dataArr);
     }
 
-    async update({ id, userId, data }: UpdateBriefingArgs): Promise<IBriefing | undefined> {
-        return this.repository.update({
+    async update({ id, userId, data }: UpdateBriefingArgs): Promise<IBriefing> {
+        const briefing = await this.repository.update({
             criteria: {
                 id,
                 userId,
             },
             data,
         });
+
+        if (!briefing) {
+            throw new ServiceError(
+                'Briefing with the provided id and user_id was not found, failed to update.',
+            );
+        }
+
+        return briefing;
     }
 
-    async delete({ id, userId }: DeleteBriefingArgs): Promise<IBriefing | undefined> {
-        return this.repository.delete({ criteria: { id, userId } });
+    async delete({ id, userId }: DeleteBriefingArgs): Promise<IBriefing> {
+        const briefing = await this.repository.delete({ criteria: { id, userId } });
+
+        if (!briefing) {
+            throw new ServiceError(
+                'Briefing with provided id and user_id was not found, failed to archive',
+            );
+        }
+
+        return briefing;
     }
 
     async deleteMany({ ids, userId }: DeleteManyBriefingArgs) {
