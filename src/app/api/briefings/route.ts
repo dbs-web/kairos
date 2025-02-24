@@ -44,9 +44,9 @@ async function getBriefingsHandler(request: Request, user: Session, pagination: 
             body: { searchParams: searchParams.toString() },
             message: 'Briefings retrieved successfully',
             data: { data: briefings, pagination: { totalPages: Math.ceil(totalCount / limit) } },
+            log: false,
         });
     } catch (error) {
-        console.log(`${error instanceof Error ? error.message : error}`);
         return createApiResponseUseCase.INTERNAL_SERVER_ERROR({
             route,
             body: { searchParams: searchParams.toString() },
@@ -102,6 +102,7 @@ export const POST = withAuthorization([UserRoles.USER, UserRoles.ADMIN], async (
             body: body,
             message: 'Briefing created successfully',
             data: createdBriefing,
+            log: false,
         });
     } catch (error) {
         return createApiResponseUseCase.INTERNAL_SERVER_ERROR({

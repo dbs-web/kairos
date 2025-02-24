@@ -58,9 +58,13 @@ export default class VideoRepository implements IVideoRepository {
         }
     }
 
-    async update(args: UpdateArgs<IVideo>): Promise<IVideo | undefined> {
+    async update({ criteria, data }: UpdateArgs<IVideo>): Promise<IVideo | undefined> {
         try {
-            return await this.db.update<IVideo>('video', args);
+            data.legenda = '';
+            return await this.db.update<IVideo>('video', {
+                criteria,
+                data,
+            });
         } catch (error) {
             throw new RepositoryError('Error updating video', error as Error);
         }

@@ -27,8 +27,6 @@ export default function VideoCard({ video }: VideoCardProps) {
             document.body.removeChild(link);
             return URL.revokeObjectURL(url);
         }
-
-        console.error('Não foi possível baixar o vídeo');
     };
 
     return (

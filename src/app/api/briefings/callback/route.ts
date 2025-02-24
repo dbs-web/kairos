@@ -59,7 +59,6 @@ export const POST = withExternalRequestValidation(async (request: Request) => {
             message: 'Briefing atualizado',
         });
     } catch (error) {
-        console.log(`${error instanceof Error ? error.stack : error}`);
         return createApiResponseUseCase.INTERNAL_SERVER_ERROR({
             route,
             body: body,

@@ -76,7 +76,7 @@ model Video {
   id             Int          @id @default(autoincrement())
   userId         Int
   title          String       @db.VarChar(500)
-  legenda        String       @db.VarChar(2000)
+  legenda        String?       @db.VarChar(2000)
   url            String?      @db.VarChar(500)
   heygenErrorMsg String?
   heygenStatus   HeyGenStatus @default(PROCESSING)

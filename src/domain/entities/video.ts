@@ -3,7 +3,7 @@ export interface IVideo {
     userId: number;
     title: string;
     transcription?: string;
-    legenda: string;
+    legenda?: string;
     url?: string;
     width: number;
     height: number;

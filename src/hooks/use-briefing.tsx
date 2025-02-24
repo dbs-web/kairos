@@ -64,7 +64,6 @@ export const BriefingProvider = ({ children }: { children: React.ReactNode }) =>
             }
         } catch (e) {
             setError('Erro ao buscar avatares');
-            if (e instanceof Error) console.error(e.message);
         }
     };
 
