@@ -7,6 +7,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useNews } from '@/hooks/use-news';
 import { useSearchData } from '@/hooks/use-search-data';
 import Pagination from '../ui/pagination';
+import NewsSkeleton from './NewsSkeleton';
 
 const statuses = [
     {
@@ -28,8 +29,16 @@ const statuses = [
 ];
 
 export default function NewsGrid() {
-    const { news, selectedNews, toggleSelectNews, sendToProduction, page, setPage, totalPages } =
-        useNews();
+    const {
+        news,
+        isLoading,
+        selectedNews,
+        toggleSelectNews,
+        sendToProduction,
+        page,
+        setPage,
+        totalPages,
+    } = useNews();
     const { toast } = useToast();
     const { setStatuses } = useSearchData();
     useEffect(() => {
@@ -48,16 +57,23 @@ export default function NewsGrid() {
         <div className="relative h-full w-full">
             {/* Added px-6 for consistent horizontal padding */}
             <div className="grid grid-cols-1 gap-6 px-6 !pt-0 pb-20 lg:grid-cols-2 2xl:grid-cols-3">
-                {news.map((news: INews) => (
-                    // Removed extra div wrapper to allow card to grow
-                    <NewsCard
-                        key={news.id}
-                        news={news}
-                        isSelected={selectedNews.includes(news.id)}
-                        onSelect={toggleSelectNews}
-                    />
-                ))}
+                {!isLoading &&
+                    news.map((news: INews) => (
+                        // Removed extra div wrapper to allow card to grow
+                        <NewsCard
+                            key={news.id}
+                            news={news}
+                            isSelected={selectedNews.includes(news.id)}
+                            onSelect={toggleSelectNews}
+                        />
+                    ))}
+
+                {isLoading &&
+                    Array.from({ length: 4 }).map((_, index) => (
+                        <NewsSkeleton key={`news-skeleton-${index}`} />
+                    ))}
             </div>
+
             <div className="flex w-full flex-col items-center justify-center">
                 <Pagination page={page} totalPages={totalPages} setPage={setPage} />
 
