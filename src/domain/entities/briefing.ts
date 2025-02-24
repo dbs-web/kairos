@@ -9,7 +9,7 @@ export interface IBriefing {
     date?: Date;
     status: Status;
     userId: number;
-    sources?: Source | null;
+    sources?: string | null;
 }
 
 export interface IAvatar {
@@ -17,14 +17,4 @@ export interface IAvatar {
     avatar_name: string;
     preview_image_url: string;
     preview_video_url: string;
-}
-
-export interface Source {
-    content: string;
-    citations: Citation[];
-}
-
-export interface Citation {
-    url: string;
-    title: string;
 }

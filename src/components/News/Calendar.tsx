@@ -82,7 +82,7 @@ function CalendarHover({ title, date, position }: Event & { position: { x: numbe
         <div
             className="pointer-events-none absolute z-[100] w-72 rounded-lg border border-neutral-100 bg-white p-3 shadow-lg transition-all duration-200"
             style={{
-                top: position.y + 8, // Reduced offset
+                top: position.y - 200,
                 left: position.x,
                 opacity: title ? 1 : 0,
                 transform: `translateY(${title ? '0' : '-4px'})`,

@@ -14,17 +14,6 @@ interface CallbackBody {
 
 const route = '/api/briefings/callback';
 
-async function getTitle(url: string): Promise<{ url: string; title: string }> {
-    try {
-        const response = await fetch(url);
-        const html = await response.text();
-        const match = html.match(/<title>(.*?)<\/title>/);
-        return { url, title: match ? match[1] : '' };
-    } catch (e) {
-        return { url, title: '' };
-    }
-}
-
 export const POST = withExternalRequestValidation(async (request: Request) => {
     const body = await request.json();
 
@@ -55,16 +44,7 @@ export const POST = withExternalRequestValidation(async (request: Request) => {
         };
 
         if (sources) {
-            const parsedSources = JSON.parse(sources);
-            const urls = parsedSources?.citations || [];
-
-            const sourcesWithTitles = await Promise.all(urls.map(getTitle));
-
-            const content = parsedSources?.content || [];
-            updateData.sources = {
-                content,
-                citations: sourcesWithTitles,
-            };
+            updateData.sources = sources;
         }
 
         await updateBriefingUseCase.dangerousUpdate({
@@ -79,6 +59,7 @@ export const POST = withExternalRequestValidation(async (request: Request) => {
             message: 'Briefing atualizado',
         });
     } catch (error) {
+        console.log(`${error instanceof Error ? error.stack : error}`);
         return createApiResponseUseCase.INTERNAL_SERVER_ERROR({
             route,
             body: body,

@@ -46,7 +46,7 @@ model Briefing {
   status       Status
   userId       Int
   newsId       Int?
-  sources      Json?
+  sources      String?     @db.VarChar(5000)
   news         News?       @relation(fields: [newsId], references: [id])
   suggestion   Suggestion? @relation(fields: [suggestionId], references: [id])
   user         User        @relation(fields: [userId], references: [id])

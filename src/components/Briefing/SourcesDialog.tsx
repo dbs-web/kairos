@@ -7,40 +7,18 @@ import {
     DialogTrigger,
 } from '@/components/ui/dialog';
 
-import { Source } from '@/domain/entities/briefing';
 import MarkdownText from './MarkdownText';
 
 interface SourcesDialogProps {
     title: string;
-    sources: Source;
+    sources: string;
 }
 
 export default function SourcesDialog({ title, sources }: SourcesDialogProps) {
     const [open, setOpen] = useState<boolean>();
-    const [markDownText, setMarkdownText] = useState<string>('');
     const handleDialogClose = () => {
         setOpen(!open);
     };
-
-    const handleMarkdownText = () => {
-        if (sources?.citations?.length > 0) {
-            const urls = sources.citations.map(
-                (citation) => `[${citation.title}](${citation.url})\n`,
-            );
-
-            let text = sources.content;
-
-            text += '\n\n## Fontes:\n\n';
-
-            urls.forEach((url) => (text += url + '\n'));
-
-            setMarkdownText(text);
-        }
-    };
-
-    useEffect(() => {
-        handleMarkdownText();
-    }, []);
 
     return (
         <Dialog open={open} onOpenChange={handleDialogClose}>
@@ -52,7 +30,7 @@ export default function SourcesDialog({ title, sources }: SourcesDialogProps) {
                     <DialogHeader>
                         <DialogTitle>{title}</DialogTitle>
                     </DialogHeader>
-                    <MarkdownText text={markDownText} className="w-full" />
+                    <MarkdownText text={sources} className="w-full" />
                 </div>
             </DialogContent>
         </Dialog>
