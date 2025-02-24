@@ -13,7 +13,7 @@ import { getUsersUseCase } from '@/use-cases/UserUseCases';
 import { createVideoUseCase } from '@/use-cases/VideoUseCases';
 import { withAuthorization } from '@/adapters/withAuthorization';
 import { generateVideoUseCase } from '@/use-cases/HeyGen';
-import { createApiResponseUseCase } from '@/use-cases/ApiLogUseCases';
+import { checkContentUseCase } from '@/use-cases/DifyUseCases';
 
 export const POST = withAuthorization(
     [UserRoles.USER, UserRoles.ADMIN],

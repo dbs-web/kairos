@@ -11,6 +11,7 @@ import {
 import { IBriefing } from '@/domain/entities/briefing';
 import { useBriefing } from '@/hooks/use-briefing';
 import { useToast } from '@/hooks/use-toast';
+import { SecurityPolicyViolantionError } from '@/shared/errors';
 
 interface EditBriefingDialogProps {
     briefing: IBriefing;
@@ -24,22 +25,24 @@ export default function EditBriefingDialog({
     className,
 }: EditBriefingDialogProps) {
     const [text, setText] = useState<string>(briefing.text ?? '');
-    const [isSaving, setIsSaving] = useState(false);
-    const { updateBriefing } = useBriefing();
+    const { updateBriefing, refetch } = useBriefing();
     const [open, setOpen] = useState<boolean>();
     const { toast } = useToast();
 
     const handleSubmit = async () => {
-        setIsSaving(true);
+        setOpen(false);
+        toast({title : "Aguarde...", description: "Nós estamos verificando se o seu texto segue as nossas diretrizes de uso."})
+        
         try {
             await updateBriefing(briefing.id, text, briefing.status);
             toast({
                 title: 'Seu briefing foi editado com sucesso!',
             });
-            setIsSaving(false);
-            setOpen(false);
         } catch (e) {
-            if (e instanceof Error) console.error(e.message);
+            toast({
+                title : "Seu texto foi rejeitado.",
+                description: "Verifique se ele segue as normas e políticas de uso do nosso app."
+            })
         }
     };
 
@@ -62,9 +65,9 @@ export default function EditBriefingDialog({
                 <button
                     onClick={handleSubmit}
                     className="mt-4 w-full rounded-lg bg-primary p-2 text-white"
-                    disabled={isSaving}
+
                 >
-                    {isSaving ? 'Salvando...' : 'Salvar'}
+                    {'Salvar'}
                 </button>
             </DialogContent>
         </Dialog>

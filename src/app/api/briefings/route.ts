@@ -11,7 +11,7 @@ import {
     getPaginatedBriefingsUseCase,
     updateBriefingUseCase,
 } from '@/use-cases/BriefingUseCases';
-import { customBriefingRequestUseCase } from '@/use-cases/DifyUseCases';
+import { checkContentUseCase, customBriefingRequestUseCase } from '@/use-cases/DifyUseCases';
 
 // Adapters
 import { Session, withAuthorization } from '@/adapters/withAuthorization';
@@ -129,6 +129,9 @@ export const PUT = withAuthorization([UserRoles.USER], async (request, user) => 
     }
 
     try {
+        // Checks whether the text complies with policy standards
+        await checkContentUseCase.execute(text)
+
         const updatedBriefing = await updateBriefingUseCase.execute({
             id,
             userId: user.id,
