@@ -20,7 +20,7 @@ export default function Calendar() {
     });
 
     const handleMouseMove = (e: MouseEvent) => {
-        setHoverPosition({ x: Math.min(e.clientX, 1500), y: e.clientY });
+        setHoverPosition({ x: e.clientX, y: e.clientY });
     };
 
     const handleMouseEnter = (info: EventClickArg) => {
@@ -40,7 +40,7 @@ export default function Calendar() {
     }, []);
 
     return (
-        <div className="basis-1/2 rounded-xl bg-white p-6 shadow-sm">
+        <div className="basis-1/2 rounded-xl bg-white p-6 shadow-sm min-h-96">
             <CalendarHover {...activeEvent} position={hoverPosition} />
             <FullCalendar
                 ref={calendarRef}
@@ -82,8 +82,8 @@ function CalendarHover({ title, date, position }: Event & { position: { x: numbe
         <div
             className="pointer-events-none absolute z-[100] w-72 rounded-lg border border-neutral-100 bg-white p-3 shadow-lg transition-all duration-200"
             style={{
-                top: position.y - 200,
-                left: position.x,
+                top: position.y - 280,
+                left: position.x - 50,
                 opacity: title ? 1 : 0,
                 transform: `translateY(${title ? '0' : '-4px'})`,
             }}
