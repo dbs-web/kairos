@@ -13,18 +13,21 @@ import {
 import TextFallBack from './TextFallBack';
 
 // Icons
-import { CiCircleCheck, CiRedo } from 'react-icons/ci';
+import { CiCircleCheck } from 'react-icons/ci';
 import { BiDotsHorizontalRounded } from 'react-icons/bi';
+import { FiEdit2 } from 'react-icons/fi';
 
 import EditBriefingDialog from './EditBriefingDialog';
 import MarkdownText from './MarkdownText';
 import { useBriefing } from '@/hooks/use-briefing';
-import BriefingApprovalDialog from './BriefingApprovalDialog';
 import { Status } from '@/domain/entities/status';
 
 import SourcesDialog from './SourcesDialog';
 import { useToast } from '@/hooks/use-toast';
 import RedoBriefingDialog from './RedoBriefingDialog';
+import AvatarSelectionDialog from '../AvatarSelection/AvatarSelectionDialog';
+import { VideoCreationProvider } from '@/hooks/use-video-creation';
+import { createVideoBriefing } from '@/services/client/video/createVideoBriefing';
 
 interface BriefingCardProps {
     briefing: IBriefing;
@@ -87,16 +90,23 @@ export default function BriefingCard({ briefing }: BriefingCardProps) {
             )}
 
             <div className="mt-4 flex w-full items-center justify-between gap-x-2">
-                <BriefingApprovalDialog briefing={briefing} className="basis-1/3">
-                    <div className="flex min-w-32 items-center justify-center gap-x-1 rounded-lg bg-secondary py-2 text-white transition duration-300 hover:shadow-md">
-                        <CiCircleCheck className="text-xl" />
-                        Aprovar
-                    </div>
-                </BriefingApprovalDialog>
+                <VideoCreationProvider createVideo={createVideoBriefing}>
+                    <AvatarSelectionDialog
+                        className="basis-1/3"
+                        payload={{ briefingId: briefing.id }}
+                    >
+                        <div className="ms-auto flex items-center justify-center gap-x-1 rounded-lg bg-secondary py-2 text-xs text-white transition duration-300 hover:shadow-md xl:text-base">
+                            <CiCircleCheck className="text-xl" />
+                            Aprovar
+                        </div>
+                    </AvatarSelectionDialog>
+                </VideoCreationProvider>
+
                 <RedoBriefingDialog briefing={briefing} />
+
                 <EditBriefingDialog briefing={briefing} className="basis-1/3">
-                    <div className="ms-auto flex min-w-32 items-center justify-center gap-x-1 rounded-lg bg-secondary py-2 text-white transition duration-300 hover:shadow-md">
-                        <CiCircleCheck className="text-xl" />
+                    <div className="flex items-center justify-center gap-x-1 rounded-lg bg-secondary py-2 text-xs text-white transition duration-300 hover:shadow-md xl:text-base">
+                        <FiEdit2 />
                         Editar
                     </div>
                 </EditBriefingDialog>

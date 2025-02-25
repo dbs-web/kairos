@@ -40,7 +40,7 @@ export default function Calendar() {
     }, []);
 
     return (
-        <div className="basis-1/2 rounded-xl bg-white p-6 shadow-sm min-h-96">
+        <div className="min-h-96 basis-1/2 rounded-xl bg-white p-6 shadow-sm">
             <CalendarHover {...activeEvent} position={hoverPosition} />
             <FullCalendar
                 ref={calendarRef}
@@ -63,14 +63,6 @@ export default function Calendar() {
                 eventClassNames="!bg-primary !border-0 !rounded-md shadow-sm"
                 titleFormat={{ year: 'numeric', month: 'long' }}
                 height="auto"
-                buttonIcons={{
-                    prev: 'chevron-left',
-                    next: 'chevron-right',
-                }}
-                buttonClassNames={{
-                    prev: '!bg-primary !text-white hover:!bg-primary/90',
-                    next: '!bg-primary !text-white hover:!bg-primary/90',
-                }}
             />
         </div>
     );

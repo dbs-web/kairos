@@ -3,7 +3,7 @@ import NewsGrid from '@/components/News/NewsGrid';
 import { NewsProvider } from '@/hooks/use-news';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Calendar from '@/components/News/Calendar';
-import CustomPrompt from '@/components/News/CustomPrompt';
+import CustomPrompt from '@/components/CustomPrompt/CustomPrompt';
 
 const queryClient = new QueryClient();
 

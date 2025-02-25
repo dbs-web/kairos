@@ -34,9 +34,9 @@ export default function RedoBriefingDialog({ briefing }: RedoBriefingProps) {
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger className="flex basis-1/3 cursor-pointer items-center justify-center gap-x-1 rounded-lg bg-secondary py-2 text-white transition duration-300 hover:shadow-md">
-                <CiRedo className="text-xl" />
-                Refazer conteúdo
+            <DialogTrigger className="flex basis-1/3 items-center justify-center gap-x-1 rounded-lg bg-secondary py-2 text-xs text-white transition duration-300 hover:shadow-md xl:text-base">
+                <CiRedo className="text-lg xl:text-xl" />
+                Refazer
             </DialogTrigger>
             <DialogContent className="max-w-[90vw] !rounded md:max-w-[70vw] xl:w-[700px]">
                 <div className="relative flex flex-col items-center gap-y-8">

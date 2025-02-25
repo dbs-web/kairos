@@ -99,7 +99,9 @@ export default function VideoCard({ video }: VideoCardProps) {
                 )}
 
                 {video.heygenStatus === HeyGenStatus.SUCCESS && (
-                    <p className="mt-12 text-xs text-neutral-600 md:text-sm">{video.legenda}</p>
+                    <p className="mt-12 whitespace-pre-line text-xs text-neutral-600 md:text-sm">
+                        {video.legenda}
+                    </p>
                 )}
             </div>
         </div>

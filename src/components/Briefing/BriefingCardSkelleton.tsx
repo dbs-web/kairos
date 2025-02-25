@@ -12,6 +12,7 @@ import TextFallBack from './TextFallBack';
 // Icons
 import { CiCircleCheck, CiRedo } from 'react-icons/ci';
 import { BiDotsHorizontalRounded } from 'react-icons/bi';
+import { FiEdit2 } from 'react-icons/fi';
 
 export default function BriefingCardSkelleton() {
     return (
@@ -42,17 +43,17 @@ export default function BriefingCardSkelleton() {
             <TextFallBack />
 
             <div className="mt-4 flex w-full items-center justify-between gap-x-2">
-                <div className="flex min-w-32 basis-1/3 items-center justify-center gap-x-1 rounded-lg bg-secondary py-2 text-white transition duration-300 hover:shadow-md">
+                <div className="flex basis-1/3 items-center justify-center gap-x-1 rounded-lg bg-secondary py-2 text-white transition duration-300 hover:shadow-md">
                     <CiCircleCheck className="text-xl" />
-                    <div className="h-3 w-16 animate-pulse rounded bg-neutral-300/40"></div>
+                    <div className="h-3 w-12 animate-pulse rounded bg-neutral-300/40 xl:w-16"></div>
                 </div>
                 <div className="flex basis-1/3 cursor-pointer items-center justify-center gap-x-1 rounded-lg bg-secondary py-2 text-white transition duration-300 hover:shadow-md">
-                    <CiRedo className="text-xl" />
-                    <div className="h-3 w-16 animate-pulse rounded bg-neutral-300/40"></div>
+                    <CiRedo className="text-lg xl:text-xl" />
+                    <div className="h-3 w-12 animate-pulse rounded bg-neutral-300/40 xl:w-16"></div>
                 </div>
-                <div className="ms-auto flex min-w-32 basis-1/3 items-center justify-center gap-x-1 rounded-lg bg-secondary py-2 text-white transition duration-300 hover:shadow-md">
-                    <CiCircleCheck className="text-xl" />
-                    <div className="h-3 w-16 animate-pulse rounded bg-neutral-300/40"></div>
+                <div className="ms-auto flex basis-1/3 items-center justify-center gap-x-1 rounded-lg bg-secondary py-2 text-white transition duration-300 hover:shadow-md">
+                    <FiEdit2 />
+                    <div className="h-3 w-12 animate-pulse rounded bg-neutral-300/40 xl:w-16"></div>
                 </div>
             </div>
         </div>
