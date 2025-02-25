@@ -1,7 +1,10 @@
 'use client';
 import { useState } from 'react';
+
+// UI
 import LoadingSubmission from './LoadingSubmission';
 import AvatarSelectionDialog from '@/components/AvatarSelection/AvatarSelectionDialog';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 export default function CreateWithoutAIForm() {
     const [title, setTitle] = useState<string>('');
@@ -36,13 +39,33 @@ export default function CreateWithoutAIForm() {
                     required
                 />
             </div>
-
-            <AvatarSelectionDialog
-                className="rounded-lg bg-primary p-2 text-white"
-                payload={{ title, text }}
-            >
-                Selecionar Avatar
-            </AvatarSelectionDialog>
+            {title.length > 5 && text.length > 10 ? (
+                <AvatarSelectionDialog
+                    className="rounded-lg bg-primary p-2 text-white"
+                    payload={{ title, text }}
+                >
+                    Selecionar Avatar
+                </AvatarSelectionDialog>
+            ) : (
+                <TooltipProvider>
+                    <Tooltip>
+                        <TooltipTrigger className="w-full">
+                            <button
+                                className="w-full cursor-not-allowed rounded-lg bg-neutral-600 p-2 text-white"
+                                disabled
+                            >
+                                Selecionar Avatar
+                            </button>
+                        </TooltipTrigger>
+                        <TooltipContent className="border-2 bg-white text-sm text-neutral-900 shadow-xl">
+                            <p>
+                                Adicione um título válido e um texto de pelo menos 10 caracteres
+                                para produzir seu vídeo.
+                            </p>
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
+            )}
         </form>
     );
 }
