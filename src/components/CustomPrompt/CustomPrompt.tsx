@@ -14,22 +14,25 @@ export default function CustomPrompt() {
             <Tabs defaultValue="withAI" className="w-full">
                 <TabsList className="mb-4 grid w-full grid-cols-2 gap-2 bg-transparent p-0">
                     <TabsTrigger
-                        className="flex items-center justify-center gap-2 rounded-lg border py-3 data-[state=active]:border-primary data-[state=active]:bg-primary/10 data-[state=active]:text-primary"
+                        className="rounded-lg border py-3 data-[state=active]:border-primary data-[state=active]:bg-primary/10 data-[state=active]:text-primary"
                         value="withAI"
                     >
-                        <MdSmartToy className="text-xl" />
-                        <span>Com IA</span>
+                        <div className='flex items-center justify-center gap-2'>
+                            <MdSmartToy className="text-xl" />
+                            <span>Com IA</span>
+                        </div>
                     </TabsTrigger>
                     <TabsTrigger
-                        className="flex items-center justify-center gap-2 rounded-lg border py-3 data-[state=active]:border-primary data-[state=active]:bg-primary/10 data-[state=active]:text-primary"
+                        className="rounded-lg border py-3 data-[state=active]:border-primary data-[state=active]:bg-primary/10 data-[state=active]:text-primary"
                         value="withoutAI"
                     >
-                        <MdTextFields className="text-xl" />
-                        <span>Texto Próprio</span>
+                        <div className='flex items-center justify-center gap-2'>
+                            <MdTextFields className="text-xl" />
+                            <span>Texto Próprio</span>
+                        </div>
                     </TabsTrigger>
                 </TabsList>
 
-                {/* Área de descrição baseada na aba selecionada */}
                 <div className="mb-4 rounded-lg bg-neutral-50 p-3 text-sm text-neutral-600">
                     <TabsContent value="withAI" className="m-0 p-0">
                         <p>
