@@ -1,4 +1,4 @@
-import { IUser } from '@/domain/entities/user';
+import { IUser, UserRoles } from '@/domain/entities/user';
 import { IUserService } from '@/services/UserService';
 
 export default class GetUsersUseCase {
@@ -28,5 +28,9 @@ export default class GetUsersUseCase {
         }
 
         return user;
+    }
+
+    async byRole(role: UserRoles) : Promise<IUser[]>{
+        return await this.userService.findManyByRole(role)
     }
 }

@@ -22,6 +22,7 @@ model User {
   news                News[]
   suggestions         Suggestion[]
   videos              Video[]
+  @@index([role])
 }
 
 model Suggestion {
@@ -87,7 +88,7 @@ model Video {
   transcription  String       @default("") @db.VarChar(2000)
   user           User         @relation(fields: [userId], references: [id])
 
-  @@index([userId], map: "Video_userId_fkey")
+  @@index([userId], map: "Video_userId_fkey")  
 }
 
 model ApiLog {
