@@ -4,6 +4,7 @@ import ptLocale from '@fullcalendar/core/locales/pt-br';
 import { useCalendar } from '@/hooks/use-calendar';
 import { useEffect, useRef, useState } from 'react';
 import { EventClickArg } from '@fullcalendar/core/index.js';
+import { MdExpandMore, MdExpandLess, MdCalendarMonth } from 'react-icons/md';
 
 type Event = {
     title?: string | undefined;
@@ -12,6 +13,7 @@ type Event = {
 
 export default function Calendar() {
     const calendarRef = useRef(null);
+    const [isExpanded, setIsExpanded] = useState(false);
 
     const { events, isLoading, activeEvent, setActiveEvent, clearActiveEvent } = useCalendar();
     const [hoverPosition, setHoverPosition] = useState<{ x: number; y: number }>({
@@ -40,30 +42,51 @@ export default function Calendar() {
     }, []);
 
     return (
-        <div className="min-h-96 basis-1/2 rounded-xl bg-white p-6 shadow-sm">
-            <CalendarHover {...activeEvent} position={hoverPosition} />
-            <FullCalendar
-                ref={calendarRef}
-                locale={ptLocale}
-                plugins={[dayGridPlugin]}
-                // @ts-expect-error events are just placeholders ATM
-                events={events}
-                fixedWeekCount={false}
-                initialView="dayGridMonth"
-                eventClick={setActiveEvent}
-                eventMouseEnter={handleMouseEnter}
-                eventMouseLeave={clearActiveEvent}
-                headerToolbar={{
-                    start: 'title',
-                    center: '',
-                    end: 'prev,next',
-                }}
-                dayHeaderClassNames="text-neutral-600 uppercase text-xs font-medium py-2"
-                dayCellClassNames="hover:bg-neutral-50 transition-colors"
-                eventClassNames="!bg-primary !border-0 !rounded-md shadow-sm"
-                titleFormat={{ year: 'numeric', month: 'long' }}
-                height="auto"
-            />
+        <div className="h-full rounded-xl bg-white p-6 shadow-sm">
+            <div className="mb-4 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                    <MdCalendarMonth className="text-xl text-primary" />
+                    <h2 className="text-xl font-semibold text-neutral-900">Calendário</h2>
+                </div>
+                <button
+                    onClick={() => setIsExpanded(!isExpanded)}
+                    className="rounded-full p-1 text-neutral-500 transition-colors hover:bg-neutral-100"
+                >
+                    {isExpanded ? (
+                        <MdExpandLess className="text-xl" />
+                    ) : (
+                        <MdExpandMore className="text-xl" />
+                    )}
+                </button>
+            </div>
+
+            <div
+                className={`overflow-hidden transition-all duration-300 ${isExpanded ? 'max-h-[600px]' : 'max-h-[300px]'}`}
+            >
+                <CalendarHover {...activeEvent} position={hoverPosition} />
+                <FullCalendar
+                    ref={calendarRef}
+                    locale={ptLocale}
+                    plugins={[dayGridPlugin]}
+                    // @ts-expect-error events are just placeholders ATM
+                    events={events}
+                    fixedWeekCount={false}
+                    initialView="dayGridMonth"
+                    eventClick={setActiveEvent}
+                    eventMouseEnter={handleMouseEnter}
+                    eventMouseLeave={clearActiveEvent}
+                    headerToolbar={{
+                        start: 'title',
+                        center: '',
+                        end: 'prev,next',
+                    }}
+                    dayHeaderClassNames="text-neutral-600 uppercase text-xs font-medium py-2"
+                    dayCellClassNames="hover:bg-neutral-50 transition-colors"
+                    eventClassNames="!bg-primary !border-0 !rounded-md shadow-sm"
+                    titleFormat={{ year: 'numeric', month: 'long' }}
+                    height={isExpanded ? 'auto' : 250}
+                />
+            </div>
         </div>
     );
 }

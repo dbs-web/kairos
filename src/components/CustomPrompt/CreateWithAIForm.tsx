@@ -8,6 +8,7 @@ import LoadingSubmission from './LoadingSubmission';
 import { useState } from 'react';
 
 // UI
+import { MdPlayCircleFilled } from 'react-icons/md';
 import { Button } from '@/components/ui/button';
 import {
     Form,
@@ -119,8 +120,9 @@ export default function CreateWithAIForm() {
 
                 <Button
                     type="submit"
-                    className="mt-2 h-10 w-full rounded-lg bg-primary text-white transition-colors duration-200 hover:bg-primary/90"
+                    className="mt-2 flex h-10 w-full items-center justify-center gap-2 rounded-lg bg-primary text-white transition-colors duration-200 hover:bg-primary/90"
                 >
+                    <MdPlayCircleFilled className="text-xl" />
                     Criar Vídeo
                 </Button>
             </form>
