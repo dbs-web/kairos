@@ -30,7 +30,7 @@ export default class GetUsersUseCase {
         return user;
     }
 
-    async byRole(role: UserRoles) : Promise<IUser[]>{
-        return await this.userService.findManyByRole(role)
+    async byRole(role: UserRoles): Promise<IUser[]> {
+        return await this.userService.findManyByRole(role);
     }
 }

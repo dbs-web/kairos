@@ -17,7 +17,7 @@ export default function CustomPrompt() {
                         className="rounded-lg border py-3 data-[state=active]:border-primary data-[state=active]:bg-primary/10 data-[state=active]:text-primary"
                         value="withAI"
                     >
-                        <div className='flex items-center justify-center gap-2'>
+                        <div className="flex items-center justify-center gap-2">
                             <MdSmartToy className="text-xl" />
                             <span>Com IA</span>
                         </div>
@@ -26,7 +26,7 @@ export default function CustomPrompt() {
                         className="rounded-lg border py-3 data-[state=active]:border-primary data-[state=active]:bg-primary/10 data-[state=active]:text-primary"
                         value="withoutAI"
                     >
-                        <div className='flex items-center justify-center gap-2'>
+                        <div className="flex items-center justify-center gap-2">
                             <MdTextFields className="text-xl" />
                             <span>Texto Próprio</span>
                         </div>

@@ -8,7 +8,7 @@ export default {
         './src/app/**/*.{js,ts,jsx,tsx,mdx}',
     ],
     theme: {
-        safelist : ["max-h-[600px]", "max-h-[300px]"],
+        safelist: ['max-h-[600px]', 'max-h-[300px]'],
         extend: {
             colors: {
                 background: 'hsl(var(--background))',

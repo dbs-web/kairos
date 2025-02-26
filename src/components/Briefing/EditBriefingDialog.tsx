@@ -1,72 +1,114 @@
-'use client';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import {
     Dialog,
     DialogContent,
     DialogDescription,
     DialogHeader,
     DialogTitle,
+    DialogFooter,
     DialogTrigger,
 } from '@/components/ui/dialog';
 import { IBriefing } from '@/domain/entities/briefing';
 import { useBriefing } from '@/hooks/use-briefing';
 import { useToast } from '@/hooks/use-toast';
+import { Button } from '../ui/button';
+import { Textarea } from '../ui/textarea';
+import { FiEdit2 } from 'react-icons/fi';
 
 interface EditBriefingDialogProps {
     briefing: IBriefing;
-    className?: string;
     children: React.ReactNode;
 }
 
-export default function EditBriefingDialog({
-    children,
-    briefing,
-    className,
-}: EditBriefingDialogProps) {
+export default function EditBriefingDialog({ children, briefing }: EditBriefingDialogProps) {
     const [text, setText] = useState<string>(briefing.text ?? '');
     const [isSaving, setIsSaving] = useState(false);
     const { updateBriefing } = useBriefing();
-    const [open, setOpen] = useState<boolean>();
+    const [open, setOpen] = useState<boolean>(false);
     const { toast } = useToast();
 
     const handleSubmit = async () => {
+        if (!text.trim()) {
+            toast({
+                title: 'O conteúdo do briefing não pode estar vazio',
+                variant: 'destructive',
+            });
+            return;
+        }
+
         setIsSaving(true);
         try {
             await updateBriefing(briefing.id, text, briefing.status);
             toast({
-                title: 'Seu briefing foi editado com sucesso!',
+                title: 'Briefing editado com sucesso!',
+                description: 'As alterações foram salvas.',
             });
-            setIsSaving(false);
             setOpen(false);
         } catch (e) {
-            if (e instanceof Error) console.error(e.message);
+            toast({
+                title: 'Erro ao editar o briefing',
+                description: e instanceof Error ? e.message : 'Ocorreu um erro inesperado',
+                variant: 'destructive',
+            });
+        } finally {
+            setIsSaving(false);
         }
     };
 
+    // Clonar o children e modificar suas props para abrir o diálogo
+    const clonedButton = React.cloneElement(children as React.ReactElement<any>, {
+        onClick: () => setOpen(true),
+    });
+
     return (
-        <Dialog open={open} onOpenChange={() => setOpen(!open)}>
-            <DialogTrigger className={className}>{children}</DialogTrigger>
-            <DialogContent>
-                <DialogHeader>
-                    <DialogTitle>{briefing.title}</DialogTitle>
-                    <DialogDescription>
-                        Aqui você pode editar o briefing para seu vídeo.
-                    </DialogDescription>
-                </DialogHeader>
-                <textarea
-                    rows={15}
-                    value={text}
-                    onChange={(e) => setText(e.target.value)}
-                    className="rounded-lg border bg-transparent p-2"
-                />
-                <button
-                    onClick={handleSubmit}
-                    className="mt-4 w-full rounded-lg bg-primary p-2 text-white"
-                    disabled={isSaving}
-                >
-                    {isSaving ? 'Salvando...' : 'Salvar'}
-                </button>
-            </DialogContent>
-        </Dialog>
+        <>
+            {/* Renderizar apenas o botão clonado, sem DialogTrigger */}
+            {clonedButton}
+
+            {/* Dialog separado do trigger para evitar problemas */}
+            <Dialog open={open} onOpenChange={setOpen}>
+                <DialogContent className="max-h-[90vh] sm:max-w-[650px]">
+                    <DialogHeader>
+                        <DialogTitle className="text-xl">{briefing.title}</DialogTitle>
+                        <DialogDescription>
+                            Edite o conteúdo do briefing para seu vídeo.
+                        </DialogDescription>
+                    </DialogHeader>
+
+                    <div className="max-h-[60vh] overflow-y-auto py-4">
+                        <Textarea
+                            className="min-h-[300px] resize-none font-mono text-sm focus-visible:ring-primary"
+                            value={text}
+                            onChange={(e) => setText(e.target.value)}
+                            placeholder="Conteúdo do briefing..."
+                        />
+                    </div>
+
+                    <DialogFooter>
+                        <Button
+                            variant="outline"
+                            onClick={() => setOpen(false)}
+                            disabled={isSaving}
+                        >
+                            Cancelar
+                        </Button>
+                        <Button
+                            onClick={handleSubmit}
+                            disabled={isSaving || !text.trim()}
+                            className="gap-2"
+                        >
+                            {isSaving ? (
+                                'Salvando...'
+                            ) : (
+                                <>
+                                    <FiEdit2 />
+                                    Salvar Alterações
+                                </>
+                            )}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+        </>
     );
 }

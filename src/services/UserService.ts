@@ -17,7 +17,7 @@ export interface IUserService extends IPaginatedDataService<IUser> {
     findAll(): Promise<IUser[]>;
     findById(id: number): Promise<IUser>;
     findByEmail(email: string): Promise<IUser>;
-    findManyByRole(role: UserRoles): Promise<IUser[]>
+    findManyByRole(role: UserRoles): Promise<IUser[]>;
     create(suggestionData: Omit<IUser, 'id'>): Promise<IUser>;
     update(args: UpdateUserArgs): Promise<IUser>;
     delete(args: DeleteUserArgs): Promise<IUser>;
@@ -50,10 +50,10 @@ export default class UserService implements IUserService {
 
     async findManyByRole(role: UserRoles): Promise<IUser[]> {
         const users = await this.repository.find({
-            criteria: {role}
-        })
+            criteria: { role },
+        });
 
-        return users
+        return users;
     }
 
     async findByEmail(email: string): Promise<IUser> {

@@ -60,7 +60,9 @@ export default function AvatarSelectionDialog({
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <button className={className}>{children}</button>
+                <span role="button" tabIndex={0} className={className}>
+                    {children}
+                </span>
             </DialogTrigger>
             <DialogContent className="max-w-[90vw] overflow-hidden !rounded p-2 sm:px-4 xl:max-w-7xl">
                 <DialogHeader>

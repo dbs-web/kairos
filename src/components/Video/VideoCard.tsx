@@ -100,7 +100,7 @@ export default function VideoCard({ video }: VideoCardProps) {
                 )}
 
                 {video.heygenStatus === HeyGenStatus.SUCCESS && (
-                    <ScrollArea className='max-h-96'>
+                    <ScrollArea className="max-h-96">
                         <p className="mt-12 whitespace-pre-line text-xs text-neutral-600 md:text-sm">
                             {video.legenda}
                         </p>
