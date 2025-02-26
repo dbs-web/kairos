@@ -7,6 +7,7 @@ import TranscriptionDialog from './VideoTranscriptionDialog';
 // Entities
 import { IVideo } from '@/domain/entities/video';
 import { HeyGenStatus } from '@prisma/client';
+import { ScrollArea } from '../ui/scroll-area';
 
 interface VideoCardProps {
     video: IVideo;
@@ -99,9 +100,11 @@ export default function VideoCard({ video }: VideoCardProps) {
                 )}
 
                 {video.heygenStatus === HeyGenStatus.SUCCESS && (
-                    <p className="mt-12 whitespace-pre-line text-xs text-neutral-600 md:text-sm">
-                        {video.legenda}
-                    </p>
+                    <ScrollArea className='max-h-96'>
+                        <p className="mt-12 whitespace-pre-line text-xs text-neutral-600 md:text-sm">
+                            {video.legenda}
+                        </p>
+                    </ScrollArea>
                 )}
             </div>
         </div>
