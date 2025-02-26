@@ -13,7 +13,6 @@ type Event = {
 
 export default function Calendar() {
     const calendarRef = useRef(null);
-    const [isExpanded, setIsExpanded] = useState(false);
 
     const { events, isLoading, activeEvent, setActiveEvent, clearActiveEvent } = useCalendar();
     const [hoverPosition, setHoverPosition] = useState<{ x: number; y: number }>({
@@ -42,26 +41,16 @@ export default function Calendar() {
     }, []);
 
     return (
-        <div className="h-full rounded-xl bg-white p-6 shadow-sm">
-            <div className="mb-4 flex items-center justify-between">
+        <div className="rounded-xl bg-white p-6 shadow-sm">
+            <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                     <MdCalendarMonth className="text-xl text-primary" />
                     <h2 className="text-xl font-semibold text-neutral-900">Calendário</h2>
                 </div>
-                <button
-                    onClick={() => setIsExpanded(!isExpanded)}
-                    className="rounded-full p-1 text-neutral-500 transition-colors hover:bg-neutral-100"
-                >
-                    {isExpanded ? (
-                        <MdExpandLess className="text-xl" />
-                    ) : (
-                        <MdExpandMore className="text-xl" />
-                    )}
-                </button>
             </div>
 
             <div
-                className={`overflow-hidden transition-all duration-300 ${isExpanded ? 'max-h-[600px]' : 'max-h-[300px]'}`}
+                className={`overflow-hidden transition-all duration-300 max-h-[600px] mt-6`}
             >
                 <CalendarHover {...activeEvent} position={hoverPosition} />
                 <FullCalendar
@@ -84,7 +73,7 @@ export default function Calendar() {
                     dayCellClassNames="hover:bg-neutral-50 transition-colors"
                     eventClassNames="!bg-primary !border-0 !rounded-md shadow-sm"
                     titleFormat={{ year: 'numeric', month: 'long' }}
-                    height={isExpanded ? 'auto' : 250}
+                    height={450}
                 />
             </div>
         </div>
