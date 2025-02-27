@@ -11,15 +11,9 @@ export default function BriefingGrid() {
 
     return (
         <div className="container mx-auto px-6 py-8">
-            <div className="mb-6 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                    {/* Espaço para adicionar filtros ou outras ações globais, se necessário */}
-                </div>
-            </div>
-
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 2xl:grid-cols-3">
                 {isLoading &&
-                    Array.from({ length: 6 }).map((_, index) => (
+                    Array.from({ length: 3 }).map((_, index) => (
                         <BriefingCardSkelleton key={`skelleton-${index}`} />
                     ))}
 
