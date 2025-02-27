@@ -13,7 +13,7 @@ import { Pagination, withPagination } from '@/adapters/withPagination';
 import { getUsersUseCase } from '@/use-cases/UserUseCases';
 import { generateVideoUseCase } from '@/use-cases/HeyGen';
 
-const route = '/api/videos';
+const route = "/api/videos"
 
 async function getVideosHandler(request: Request, user: Session, pagination: Pagination) {
     const { page, skip, limit } = pagination;
@@ -41,27 +41,28 @@ export const GET = withAuthorization([UserRoles.USER], async (request, user) => 
     return withPagination((req, pagination) => getVideosHandler(req, user, pagination))(request);
 });
 
-export const POST = withAuthorization([UserRoles.USER], async (request, { id: userId }) => {
-    const body = await request.json();
+
+export const POST = withAuthorization([UserRoles.USER], async (request, {id : userId}) => {
+    const body = await request.json()
     try {
-        const { avatar, title, text, width, height } = body;
+        const {avatar, title, text, width, height} = body;
 
-        if (!avatar || !title || !text || !width || !height) {
+        if(!avatar || !title || !text || !width || !height){
             return createApiResponseUseCase.BAD_REQUEST({
                 route,
-                message: 'You should provide avatar,title, text, width and height',
-                body,
-            });
+                message: "You should provide avatar,title, text, width and height",
+                body
+            })
         }
-
-        const { voiceId } = await getUsersUseCase.byId(userId);
-        if (!voiceId) {
+        
+        const {voiceId} = await getUsersUseCase.byId(userId)
+        if(!voiceId){
             return createApiResponseUseCase.BAD_REQUEST({
                 route,
-                message: 'User voiceID is not set',
+                message: "User voiceID is not set",
                 body,
-                error: `Set the user's voice id before generating videos.`,
-            });
+                error: `Set the user's voice id before generating videos.` 
+            })
         }
 
         const heygenVideoId = await generateVideoUseCase.execute({
@@ -69,30 +70,31 @@ export const POST = withAuthorization([UserRoles.USER], async (request, { id: us
             text,
             voiceId,
             width,
-            height,
-        });
+            height
+        })
 
         await createVideoUseCase.execute({
-            userId,
+            userId, 
             title,
-            legenda: '',
+            legenda: "",
             transcription: text,
             heygenVideoId,
             width,
-            height,
-        });
+            height
+        })
 
         return createApiResponseUseCase.SUCCESS({
             route,
-            message: 'Video criado com sucesso!',
-            body,
-        });
-    } catch (error) {
+            message: "Video criado com sucesso!",
+            body
+        })
+
+    }catch(error){
         return createApiResponseUseCase.INTERNAL_SERVER_ERROR({
             route,
-            message: 'Error while creating new video',
+            message: "Error while creating new video",
             body,
-            error: `${error instanceof Error ? error.message : error}`,
-        });
+            error: `${error instanceof Error ? error.message : error}` 
+        })
     }
-});
+})
