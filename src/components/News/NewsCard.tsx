@@ -40,17 +40,17 @@ export default function NewsCard({ news, isSelected, onSelect }: NewsCardProps) 
 
     return (
         <div
-            className={`relative h-full w-full cursor-pointer rounded-lg bg-white p-4 [transition:transform_300ms,box-shadow_300ms] ${
+            className={`relative h-full w-full cursor-pointer rounded-lg bg-card p-4 transition-all duration-300 ${
                 news.status === 'EM_ANALISE'
-                    ? 'hover:-translate-y-2 hover:shadow-[0px_4px_6px_-2px_rgba(16,24,40,0.03),0px_12px_16px_-4px_rgba(16,24,40,0.08)]'
-                    : 'cursor-not-allowed'
-            }`}
+                    ? 'hover:-translate-y-2 hover:shadow-lg hover:shadow-primary/10 card-glow'
+                    : 'cursor-not-allowed opacity-75'
+            } ${isSelected ? 'card-glow selected' : ''}`}
             onClick={handleSelect}
         >
             <>
                 <div
                     className={`absolute inset-0 rounded-lg transition-all duration-100 ${
-                        isSelected ? 'border-2 border-primary' : 'border border-neutral-200'
+                        isSelected ? 'border-2 border-primary' : 'border border-border'
                     }`}
                 />
                 {isSelected && (
@@ -62,10 +62,9 @@ export default function NewsCard({ news, isSelected, onSelect }: NewsCardProps) 
             </>
 
             <div className="relative flex h-full flex-col">
-                {/* Changed rounded-xl to rounded-lg to match card corners */}
                 <div className="relative mb-4 h-48 w-full shrink-0 overflow-hidden rounded-lg">
                     {imageError || !news.thumbnail ? (
-                        <div className="flex h-full w-full items-center justify-center bg-neutral-300 text-neutral-500">
+                        <div className="flex h-full w-full items-center justify-center bg-muted text-muted-foreground">
                             <MdImageNotSupported className="text-4xl" />
                         </div>
                     ) : (
@@ -80,28 +79,28 @@ export default function NewsCard({ news, isSelected, onSelect }: NewsCardProps) 
 
                 <div className="flex flex-grow flex-col">
                     <div className="space-y-2">
-                        <h3 className="line-clamp-2 text-lg font-semibold text-neutral-900 md:text-xl">
+                        <h3 className="line-clamp-2 text-lg font-semibold text-foreground md:text-xl">
                             {news.title}
                         </h3>
-                        <time className="block text-xs font-medium text-neutral-500">
+                        <time className="block text-xs font-medium text-muted-foreground">
                             {new Date(news.date).toLocaleDateString('pt-br')}
                         </time>
                     </div>
 
-                    <p className="mt-4 line-clamp-3 flex-grow text-sm leading-relaxed text-neutral-600">
+                    <p className="mt-4 line-clamp-3 flex-grow text-sm leading-relaxed text-foreground/80">
                         {news.summary}
                     </p>
 
                     <div className="mt-4 flex items-center justify-between">
                         <button
                             onClick={handleOpenNews}
-                            className="group flex items-center gap-x-1.5 text-xs font-medium text-neutral-700 transition-colors hover:text-primary"
+                            className="group flex items-center gap-x-1.5 text-xs font-medium text-foreground/70 transition-colors hover:text-primary"
                         >
                             <MdOpenInNew className="text-sm transition-transform group-hover:rotate-12" />
                             Ver Notícia
                         </button>
 
-                        <span className="rounded-lg bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
+                        <span className="rounded-lg bg-primary/20 px-2.5 py-1 text-xs font-medium text-primary">
                             {siteName}
                         </span>
                     </div>

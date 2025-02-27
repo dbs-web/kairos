@@ -9,6 +9,7 @@ import { useSearchData } from '@/hooks/use-search-data';
 import Pagination from '../ui/pagination';
 import NewsSkeleton from './NewsSkeleton';
 import CustomPrompt from '../CustomPrompt/CustomPrompt';
+import { MdSend, MdMovie, MdVideocam, MdOutlineArrowUpward } from 'react-icons/md';
 
 import Calendar from './Calendar';
 
@@ -97,15 +98,31 @@ export default function NewsGrid() {
                 </div>
             </div>
 
-            {/* Botão flutuante para enviar para produção */}
+            {/* Botão flutuante aprimorado para enviar para produção */}
             {selectedNews.length > 0 && (
-                <div className="fixed bottom-4 left-0 right-0 flex justify-center">
-                    <button
-                        className="rounded bg-primary px-4 py-2 text-white transition-all duration-300 hover:scale-105 hover:bg-primary/90"
-                        onClick={handleSubmit}
-                    >
-                        Enviar para Produção
-                    </button>
+                <div className="fixed bottom-4 left-0 right-0 z-50 flex items-center justify-center">
+                    <div className="relative">
+                        {/* Animation dots - arrow pointing DOWN */}
+                        <div className="absolute -top-6 left-1/2 -translate-x-1/2">
+                            <MdOutlineArrowUpward className="animate-bounce-arrow text-primary text-2xl" />
+                        </div>
+                        
+                        {/* Main button container */}
+                        <div className="rounded-full bg-card px-4 py-3 shadow-lg shadow-primary/20 border border-primary/30">
+                            <button
+                                onClick={handleSubmit}
+                                className="group flex items-center gap-2 rounded-full bg-gradient-to-r from-[#0085A3] to-primary px-6 py-3 text-card-foreground font-medium transition-all duration-300 hover:shadow-lg hover:shadow-primary/30 hover:scale-105"
+                            >
+                                <MdSend className="text-lg transition-transform group-hover:translate-x-1" />
+                                <span>Enviar para Produção</span>
+                            </button>
+                        </div>
+                        
+                        {/* Number of selected items badge */}
+                        <div className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-secondary text-xs font-bold text-white">
+                            {selectedNews.length}
+                        </div>
+                    </div>
                 </div>
             )}
         </div>

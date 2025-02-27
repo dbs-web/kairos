@@ -5,7 +5,7 @@ export default function LoadingSubmission() {
         <div className="grid flex-1 place-items-center">
             <div className="flex flex-col items-center gap-3">
                 <ImSpinner8 className="animate-spin text-3xl text-primary" />
-                <span className="text-sm text-neutral-600">Gerando seu vídeo...</span>
+                <span className="text-sm text-muted-foreground">Gerando seu vídeo...</span>
             </div>
         </div>
     );

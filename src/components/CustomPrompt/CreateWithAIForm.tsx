@@ -82,7 +82,7 @@ export default function CreateWithAIForm() {
                     name="title"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel className="text-sm font-medium text-neutral-700">
+                            <FormLabel className="text-sm font-medium text-foreground">
                                 Título
                             </FormLabel>
                             <FormControl>
@@ -90,7 +90,7 @@ export default function CreateWithAIForm() {
                                     {...field}
                                     disabled={isSubmitting}
                                     placeholder="Título do seu vídeo"
-                                    className="mt-1.5 border-neutral-200 placeholder:text-neutral-400 focus:border-primary focus:ring-1 focus:ring-primary/20"
+                                    className="mt-1.5 border-border bg-card text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-primary/20"
                                 />
                             </FormControl>
                             <FormMessage className="text-xs" />
@@ -103,13 +103,13 @@ export default function CreateWithAIForm() {
                     name="prompt"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel className="text-sm font-medium text-neutral-700">
+                            <FormLabel className="text-sm font-medium text-foreground">
                                 Instruções
                             </FormLabel>
                             <FormControl>
                                 <Textarea
                                     {...field}
-                                    className="mt-1.5 min-h-[160px] resize-none border-neutral-200 placeholder:text-neutral-400 focus:border-primary focus:ring-1 focus:ring-primary/20"
+                                    className="mt-1.5 min-h-[160px] resize-none border-border bg-card text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-primary/20"
                                     placeholder="Sobre o que deseja que o vídeo aborde?"
                                 />
                             </FormControl>
@@ -120,10 +120,10 @@ export default function CreateWithAIForm() {
 
                 <Button
                     type="submit"
-                    className="mt-2 flex h-10 w-full items-center justify-center gap-2 rounded-lg bg-primary text-white transition-colors duration-200 hover:bg-primary/90"
+                    className="create-video-button mt-2 flex h-10 w-full items-center justify-center gap-2 rounded-lg"
                 >
-                    <MdPlayCircleFilled className="text-xl" />
-                    Criar Vídeo
+                    <MdPlayCircleFilled className="text-xl text-white" />
+                    <span className="text-white">Criar Vídeo</span>
                 </Button>
             </form>
         </Form>

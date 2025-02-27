@@ -28,10 +28,10 @@ export default function LoginForm() {
     return (
         <form
             onSubmit={formSubmit}
-            className={`flex w-full max-w-[400px] flex-col items-center justify-center gap-y-8 rounded-md px-6 py-12 shadow-[0_0px_40px_-5px_rgba(0,0,0,0.3)]`}
+            className={`flex w-full max-w-[400px] flex-col items-center justify-center gap-y-8 rounded-md bg-card px-6 py-12 shadow-[0_0px_40px_-5px_rgba(0,0,0,0.5)] border border-border`}
         >
             <Image
-                src="/kairos-logo-title.webp"
+                src="/kairos-logo-simbol-color.webp"
                 alt="Logo Kairós"
                 width={240}
                 height={44}
@@ -51,7 +51,7 @@ export default function LoginForm() {
                         placeholder="example@email.com"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className={'w-full rounded-md border bg-neutral-100 p-3 shadow-md'}
+                        className={'w-full rounded-md border border-border bg-card p-3 text-foreground placeholder:text-muted-foreground shadow-md'}
                         required
                     />
                     <input
@@ -59,17 +59,17 @@ export default function LoginForm() {
                         placeholder="Senha"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        className={'w-full rounded-md border bg-neutral-100 p-3 shadow-md'}
+                        className={'w-full rounded-md border border-border bg-card p-3 text-foreground placeholder:text-muted-foreground shadow-md'}
                         required
                     />
                 </fieldset>
             )}
 
-            <a href="/redefinir-senha" className="text-[#0080ff] underline">
+            <a href="/redefinir-senha" className="text-primary hover:text-primary/80 underline">
                 Esqueceu sua senha?
             </a>
 
-            <button className="mt-6 w-full max-w-[400px] rounded-lg bg-primary py-3 text-xl font-bold text-white transition duration-300 ease-in-out hover:bg-secondary">
+            <button className="create-video-button mt-6 w-full max-w-[400px] rounded-lg py-3 text-xl font-bold text-white transition duration-300 ease-in-out hover:brightness-110">
                 Log In
             </button>
         </form>

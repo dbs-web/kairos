@@ -33,14 +33,14 @@ export default function AvatarList() {
                               className="basis-1/1 lg:basis-1/3 xl:basis-1/5"
                               key={`carousel-skeleton-${index}`}
                           >
-                              <div className="h-[120px] w-32 animate-pulse place-self-center rounded-xl bg-neutral-400" />
-                              <div className="mt-4 h-4 w-32 animate-pulse place-self-center rounded-xl bg-neutral-300"></div>
-                              <div className="mt-4 h-3 w-40 animate-pulse place-self-center rounded-xl bg-neutral-300"></div>
+                              <div className="h-[120px] w-32 animate-pulse place-self-center rounded-xl bg-muted" />
+                              <div className="mt-4 h-4 w-32 animate-pulse place-self-center rounded-xl bg-muted/70"></div>
+                              <div className="mt-4 h-3 w-40 animate-pulse place-self-center rounded-xl bg-muted/50"></div>
                           </CarouselItem>
                       ))}
             </CarouselContent>
-            <CarouselPrevious />
-            <CarouselNext />
+            <CarouselPrevious className="bg-card border-border text-foreground hover:bg-muted/30" />
+            <CarouselNext className="bg-card border-border text-foreground hover:bg-muted/30" />
         </Carousel>
     );
 }

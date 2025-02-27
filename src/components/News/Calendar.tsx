@@ -52,11 +52,11 @@ export default function Calendar() {
     }, []);
 
     return (
-        <div className="relative rounded-xl bg-white p-6 shadow-sm" ref={containerRef}>
+        <div className="relative rounded-xl bg-card p-6 shadow-md" ref={containerRef}>
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                     <MdCalendarMonth className="text-xl text-primary" />
-                    <h2 className="text-xl font-semibold text-neutral-900">Calendário</h2>
+                    <h2 className="text-xl font-semibold text-foreground">Calendário</h2>
                 </div>
             </div>
 
@@ -78,9 +78,9 @@ export default function Calendar() {
                         center: '',
                         end: 'prev,next',
                     }}
-                    dayHeaderClassNames="text-neutral-600 uppercase text-xs font-medium py-2"
-                    dayCellClassNames="hover:bg-neutral-50 transition-colors"
-                    eventClassNames="!bg-primary !border-0 !rounded-md shadow-sm"
+                    dayHeaderClassNames="text-foreground/70 uppercase text-xs font-medium py-2"
+                    dayCellClassNames="hover:bg-muted/30 transition-colors"
+                    eventClassNames="!bg-primary !border-0 !rounded-md shadow-md"
                     titleFormat={{ year: 'numeric', month: 'long' }}
                     height={480}
                 />
@@ -93,7 +93,7 @@ function CalendarHover({ title, date, position }: Event & { position: { x: numbe
     if (!title) return null;
     return (
         <div
-            className="pointer-events-none absolute z-[100] w-72 rounded-lg border border-neutral-100 bg-white p-3 shadow-lg transition-all duration-200"
+            className="pointer-events-none absolute z-[100] w-72 rounded-lg border border-border bg-card p-3 shadow-lg transition-all duration-200"
             style={{
                 top: position.y - 50,
                 left: Math.min(position.x - 50, 180),
@@ -101,8 +101,8 @@ function CalendarHover({ title, date, position }: Event & { position: { x: numbe
                 transform: `translateY(${title ? '0' : '-4px'})`,
             }}
         >
-            <span className="block font-semibold text-neutral-900">{title}</span>
-            <time className="mt-1 block text-sm text-neutral-500">{date}</time>
+            <span className="block font-semibold text-foreground">{title}</span>
+            <time className="mt-1 block text-sm text-muted-foreground">{date}</time>
         </div>
     );
 }

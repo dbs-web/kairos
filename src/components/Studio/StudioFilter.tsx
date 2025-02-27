@@ -20,14 +20,14 @@ export default function StudioFilter() {
             {statuses?.length > 0 && (
                 <div>
                     <Select onValueChange={setSelectedStatus} value={selectedStatus}>
-                        <SelectTrigger className="gap-x-1.5 rounded-lg border-none bg-muted/25 !text-[#475467a0] outline-none focus:border-transparent focus:ring-0 active:ring-0">
-                            <VscSettings className="!text-xs md:text-lg" />
+                        <SelectTrigger className="gap-x-1.5 rounded-lg border-none bg-muted/50 !text-foreground/70 outline-none focus:border-transparent focus:ring-0 active:ring-0">
+                            <VscSettings className="!text-xs text-foreground/70 md:text-lg" />
                             <SelectValue placeholder="Filtrar" />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="bg-card border-border">
                             {statuses?.map((status, index) => (
                                 <SelectItem
-                                    className="cursor-pointer"
+                                    className="cursor-pointer text-foreground"
                                     value={status.value}
                                     key={`status-${index}`}
                                 >
@@ -36,9 +36,9 @@ export default function StudioFilter() {
                             ))}
                             {selectedStatus && (
                                 <>
-                                    <SelectSeparator />
+                                    <SelectSeparator className="bg-border" />
                                     <button
-                                        className="w-full px-2 py-1 text-start text-sm hover:bg-muted/10"
+                                        className="w-full px-2 py-1 text-start text-sm text-foreground hover:bg-muted/50"
                                         onClick={(e) => {
                                             e.stopPropagation();
                                             setSelectedStatus('');
@@ -52,11 +52,11 @@ export default function StudioFilter() {
                     </Select>
                 </div>
             )}
-            <div className="ms-auto flex w-full max-w-xs items-center justify-start gap-x-1.5 rounded-lg bg-muted/25 p-2 py-2 text-[#475467] md:px-4">
-                <BiSearch className="min-w-3 text-sm text-[#475467a0]" />
+            <div className="ms-auto flex w-full max-w-xs items-center justify-start gap-x-1.5 rounded-lg bg-muted/50 p-2 py-2 text-foreground/70 md:px-4">
+                <BiSearch className="min-w-3 text-sm text-foreground/50" />
                 <input
                     type="text"
-                    className="md:text-md border-none bg-transparent text-xs outline-none focus:border-transparent focus:ring-0 active:ring-0"
+                    className="md:text-md border-none bg-transparent text-xs text-foreground placeholder:text-foreground/50 outline-none focus:border-transparent focus:ring-0 active:ring-0"
                     placeholder="Buscar..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}

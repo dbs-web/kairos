@@ -29,9 +29,9 @@ export default function Nav({ links }: NavProps) {
     const { data: session } = useSession();
 
     return (
-        <nav className="flex h-16 w-screen items-center justify-between gap-x-8 border-b px-6 lg:px-12">
+        <nav className="flex h-16 w-screen items-center justify-between gap-x-8 border-b border-border bg-card px-6 lg:px-12">
             <Image
-                src={'/kairos-logo-title.webp'}
+                src={'/kairos-logo-simbol-color.webp'}
                 width={160}
                 height={40}
                 alt="Kairós logo"
@@ -44,14 +44,14 @@ export default function Nav({ links }: NavProps) {
             <div className="md:hidden">
                 <Sheet>
                     <SheetTrigger asChild>
-                        <button className="rounded-lg bg-white p-2 shadow">
-                            <RxHamburgerMenu className="bg-white" />
+                        <button className="rounded-lg bg-muted p-2 text-foreground">
+                            <RxHamburgerMenu />
                         </button>
                     </SheetTrigger>
-                    <SheetContent>
+                    <SheetContent className="bg-card border-border">
                         <SheetHeader>
-                            <SheetTitle>Links</SheetTitle>
-                            <SheetDescription>
+                            <SheetTitle className="text-foreground">Links</SheetTitle>
+                            <SheetDescription className="text-foreground/70">
                                 {links?.length > 0 &&
                                     links.map((link, index) => (
                                         <NavLink {...link} key={`mobile-link-${index}`} />

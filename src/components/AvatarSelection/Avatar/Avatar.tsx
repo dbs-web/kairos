@@ -37,18 +37,18 @@ export function Avatar({ avatar }: AvatarProps) {
 
     return (
         <div
-            className="flex flex-col items-center justify-center gap-y-2 place-self-center rounded-xl bg-white p-4 shadow-md"
+            className="flex flex-col items-center justify-center gap-y-2 place-self-center rounded-xl bg-card p-4 shadow-md border border-border"
             style={{
-                border: selectedAvatar?.avatar_id == avatar.avatar_id ? 'solid 2px #ff6933' : '',
+                border: selectedAvatar?.avatar_id == avatar.avatar_id ? 'solid 2px #00B2CC' : '',
                 boxShadow:
                     selectedAvatar?.avatar_id == avatar.avatar_id
-                        ? '0px 0px 12px 4px #ff693380'
+                        ? '0px 0px 12px 4px #00B2CC80'
                         : '',
             }}
         >
             <div className="relative h-[120px] w-[120px] overflow-hidden rounded-xl">
                 {loading ? (
-                    <div className="h-30 w-30 animate-pulse bg-gray-200">CARREGANDO</div>
+                    <div className="h-30 w-30 animate-pulse bg-muted flex items-center justify-center text-muted-foreground text-xs">CARREGANDO</div>
                 ) : (
                     <NextImage
                         src={avatar.preview_image_url}
@@ -58,17 +58,19 @@ export function Avatar({ avatar }: AvatarProps) {
                     />
                 )}
             </div>
-            <span>{avatar.avatar_name}</span>
-            <span className="text-sm text-gray-500">
-                Vídeo: <strong className="text-black">{imageFormat}</strong>
+            <span className="text-foreground">{avatar.avatar_name}</span>
+            <span className="text-sm text-muted-foreground">
+                Vídeo: <strong className="text-foreground">{imageFormat}</strong>
             </span>
 
             <button
                 onClick={() => selectAvatar(avatar.avatar_id, width, height)}
                 className="mt-6 rounded-lg bg-primary px-4 py-1 text-white transition-all duration-300 hover:shadow-lg"
                 style={{
-                    backgroundColor:
-                        selectedAvatar?.avatar_id === avatar.avatar_id ? '#ff6933' : '',
+                    background:
+                        selectedAvatar?.avatar_id === avatar.avatar_id 
+                        ? 'linear-gradient(to right, hsl(191, 65%, 53%), #0085A3)'
+                        : '',
                 }}
             >
                 {selectedAvatar?.avatar_id === avatar.avatar_id ? 'Selecionado' : 'Escolher Avatar'}
