@@ -3,11 +3,15 @@ import { FiDownload } from 'react-icons/fi';
 import { PiSpinnerThin } from 'react-icons/pi';
 import { BiErrorCircle } from 'react-icons/bi';
 import TranscriptionDialog from './VideoTranscriptionDialog';
+import { CiRedo } from 'react-icons/ci';
 
 // Entities
 import { IVideo } from '@/domain/entities/video';
 import { HeyGenStatus } from '@prisma/client';
 import { ScrollArea } from '../ui/scroll-area';
+import VideoRedoDialog from './VideoRedoDialog';
+import { redoVideo } from '@/services/client/video/redoVideo';
+import { VideoCreationProvider } from '@/hooks/use-video-creation';
 
 interface VideoCardProps {
     video: IVideo;
@@ -73,15 +77,27 @@ export default function VideoCard({ video }: VideoCardProps) {
                     Download
                 </button>
             </div>
-            <div className="relative flex w-full flex-col items-start justify-start pe-12">
-                <TranscriptionDialog video={video} />
-                <h2 className="font-medium md:text-lg">{video.title}</h2>
-                {video?.creationDate && (
-                    <span className="text-xs font-medium text-neutral-500 md:text-sm">
-                        DATA:{' '}
-                        <time>{new Date(video.creationDate).toLocaleDateString('pt-br')}</time>
-                    </span>
-                )}
+            <div className="relative flex w-full flex-col items-start justify-start pe-4">
+                <div className="flex w-full items-center justify-between">
+                    <div className="space-y-2">
+                        <h2 className="font-medium md:text-lg">{video.title}</h2>
+                        {video?.creationDate && (
+                            <span className="text-xs font-medium text-neutral-500 md:text-sm">
+                                DATA:{' '}
+                                <time>
+                                    {new Date(video.creationDate).toLocaleDateString('pt-br')}
+                                </time>
+                            </span>
+                        )}
+                    </div>
+                    <div className="flex items-center gap-x-2">
+                        <VideoCreationProvider createVideo={redoVideo}>
+                            <VideoRedoDialog video={video} />
+                        </VideoCreationProvider>
+                        <TranscriptionDialog video={video} />
+                    </div>
+                </div>
+
                 {video.heygenStatus === HeyGenStatus.PROCESSING && (
                     <p className="mt-4 text-xs text-neutral-700 md:text-sm">
                         Aguarde enquanto estamos produzindo seu vídeo, isto pode demorar alguns
