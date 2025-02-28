@@ -17,6 +17,7 @@ import { CiRedo } from 'react-icons/ci';
 import AvatarList from '../AvatarSelection/Avatar/AvatarList';
 import { useVideoCreation } from '@/hooks/use-video-creation';
 import { useToast } from '@/hooks/use-toast';
+import FormSteps from './FormSteps';
 
 interface VideoRedoDialogProps {
     video: IVideo;
@@ -31,10 +32,6 @@ export default function VideoRedoDialog({ video }: VideoRedoDialogProps) {
     const { toast } = useToast();
 
     const handleRedo = async () => {
-        if (!selectedAvatar) {
-            toast({ title: 'Selecione um avatar!' });
-            return;
-        }
         setLoading(true);
         const success = await sendVideo({ videoId: video.id, transcription });
         setLoading(false);
@@ -73,7 +70,14 @@ export default function VideoRedoDialog({ video }: VideoRedoDialogProps) {
                 <DialogHeader>
                     <DialogTitle className="mt-4">{video.title}</DialogTitle>
                     <DialogDescription>
-                        Aqui você pode ler a transcrição do seu vídeo
+                        <span>
+                            {step === 1 && 'Modifique a transcrição de seu vídeo'}
+
+                            {step === 2 &&
+                                'Selecione seu avatar para que seu vídeo possa ser refeito.'}
+                        </span>
+
+                        <FormSteps step={step} />
                     </DialogDescription>
                 </DialogHeader>
                 <>
@@ -82,7 +86,7 @@ export default function VideoRedoDialog({ video }: VideoRedoDialogProps) {
                             rows={15}
                             value={transcription}
                             onChange={(e) => setTranscription(e.target.value)}
-                            className="rounded-lg border bg-transparent p-2"
+                            className="min-h-32 rounded-lg border bg-transparent p-2"
                         />
                     )}
 
@@ -91,27 +95,38 @@ export default function VideoRedoDialog({ video }: VideoRedoDialogProps) {
 
                 <DialogFooter>
                     {step == 1 && (
-                        <Button className="mx-auto w-72" type="submit" onClick={() => setStep(2)}>
+                        <Button
+                            className="mx-auto w-72"
+                            type="submit"
+                            onClick={() => setStep(2)}
+                            disabled={transcription.length < 10}
+                        >
                             Escolha o Avatar
                         </Button>
                     )}
                     {step == 2 && (
-                        <div className="flex w-full items-center justify-center gap-x-4">
+                        <div className="mx-auto flex w-1/2 min-w-[400px] items-center justify-center gap-x-4">
                             <Button
-                                className="mx-auto w-72 bg-secondary"
+                                className="w-48 bg-secondary"
                                 type="submit"
                                 onClick={() => setStep(1)}
+                                disabled={loading}
                             >
                                 Voltar
                             </Button>
 
                             <Button
-                                className="mx-auto w-72"
+                                className="w-72 data-[loading=true]:animate-pulse"
                                 type="submit"
                                 onClick={handleRedo}
-                                disabled={!selectedAvatar}
+                                disabled={!selectedAvatar || loading}
+                                data-loading={loading}
                             >
-                                Refazer Vídeo
+                                {loading
+                                    ? 'Carregando...'
+                                    : selectedAvatar
+                                      ? 'Enviar'
+                                      : 'Selecione um Avatar'}
                             </Button>
                         </div>
                     )}
