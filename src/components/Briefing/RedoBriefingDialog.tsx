@@ -58,11 +58,13 @@ export default function RedoBriefingDialog({ briefing, children }: RedoBriefingP
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild>{children}</DialogTrigger>
-            <DialogContent className="sm:max-w-[550px]">
+            <DialogTrigger asChild>
+                <span className="inline-block w-full">{children}</span>
+            </DialogTrigger>
+            <DialogContent className="border-border bg-card text-foreground sm:max-w-[550px]">
                 <DialogHeader>
-                    <DialogTitle className="text-xl">{briefing.title}</DialogTitle>
-                    <DialogDescription>
+                    <DialogTitle className="text-xl text-foreground">{briefing.title}</DialogTitle>
+                    <DialogDescription className="text-muted-foreground">
                         Digite as instruções para refazer o briefing. Seja específico sobre as
                         mudanças desejadas.
                     </DialogDescription>
@@ -70,7 +72,7 @@ export default function RedoBriefingDialog({ briefing, children }: RedoBriefingP
 
                 <div className="py-4">
                     <Textarea
-                        className="min-h-[200px] resize-none focus-visible:ring-primary"
+                        className="min-h-[200px] resize-none border-border bg-muted/10 text-foreground focus-visible:ring-primary"
                         placeholder="Descreva as alterações necessárias para o briefing..."
                         value={instruction}
                         onChange={(e) => setInstruction(e.target.value)}
@@ -82,13 +84,14 @@ export default function RedoBriefingDialog({ briefing, children }: RedoBriefingP
                         variant="outline"
                         onClick={() => setOpen(false)}
                         disabled={isSubmitting}
+                        className="border-border text-foreground hover:bg-muted"
                     >
                         Cancelar
                     </Button>
                     <Button
                         onClick={handleRedoBriefing}
                         disabled={isSubmitting || !instruction.trim()}
-                        className="gap-2"
+                        className="gap-2 bg-gradient-to-r from-[#0085A3] to-primary text-primary-foreground transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-primary/30"
                     >
                         {isSubmitting ? (
                             'Enviando...'

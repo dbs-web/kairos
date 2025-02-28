@@ -39,8 +39,8 @@ export default function AvatarList() {
                           </CarouselItem>
                       ))}
             </CarouselContent>
-            <CarouselPrevious className="bg-card border-border text-foreground hover:bg-muted/30" />
-            <CarouselNext className="bg-card border-border text-foreground hover:bg-muted/30" />
+            <CarouselPrevious className="border-border bg-card text-foreground hover:bg-muted/30" />
+            <CarouselNext className="border-border bg-card text-foreground hover:bg-muted/30" />
         </Carousel>
     );
 }

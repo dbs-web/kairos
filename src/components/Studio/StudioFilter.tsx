@@ -24,7 +24,7 @@ export default function StudioFilter() {
                             <VscSettings className="!text-xs text-foreground/70 md:text-lg" />
                             <SelectValue placeholder="Filtrar" />
                         </SelectTrigger>
-                        <SelectContent className="bg-card border-border">
+                        <SelectContent className="border-border bg-card">
                             {statuses?.map((status, index) => (
                                 <SelectItem
                                     className="cursor-pointer text-foreground"
@@ -56,7 +56,7 @@ export default function StudioFilter() {
                 <BiSearch className="min-w-3 text-sm text-foreground/50" />
                 <input
                     type="text"
-                    className="md:text-md border-none bg-transparent text-xs text-foreground placeholder:text-foreground/50 outline-none focus:border-transparent focus:ring-0 active:ring-0"
+                    className="md:text-md border-none bg-transparent text-xs text-foreground outline-none placeholder:text-foreground/50 focus:border-transparent focus:ring-0 active:ring-0"
                     placeholder="Buscar..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}

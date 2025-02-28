@@ -39,23 +39,23 @@
         --sidebar-border: 220 13% 91%;
         --sidebar-ring: 217.2 91.2% 59.8%;
     }
-    
+
     /* Make dark theme the default */
     :root {
         /* Dark Theme Base Colors */
         --background: 220 25% 10%;
-        --foreground: 210 20% 98%; 
+        --foreground: 210 20% 98%;
         --card: 220 30% 13%;
         --card-foreground: 210 20% 98%;
         --popover: 220 30% 13%;
         --popover-foreground: 210 20% 98%;
-        
+
         /* Primary & Secondary Colors - Based on Kairos Brand */
-        --primary: 191 100% 50%;  
+        --primary: 191 100% 50%;
         --primary-foreground: 210 20% 98%;
         --secondary: 16 79% 60%;
         --secondary-foreground: 210 40% 98%;
-        
+
         /* UI Element Colors */
         --muted: 220 15% 20%;
         --muted-foreground: 220 10% 70%;
@@ -63,19 +63,19 @@
         --accent-foreground: 210 20% 98%;
         --destructive: 0 70% 50%;
         --destructive-foreground: 210 20% 98%;
-        
+
         /* Border & Input Colors */
         --border: 220 15% 20%;
         --input: 220 15% 20%;
         --ring: 191 100% 50%;
-        
+
         /* Chart Colors - More vibrant on dark backgrounds */
         --chart-1: 191 100% 50%;
-        --chart-2: 220 70% 60%; 
+        --chart-2: 220 70% 60%;
         --chart-3: 16 79% 60%;
         --chart-4: 150 70% 50%;
         --chart-5: 270 70% 60%;
-        
+
         /* Sidebar - Dark Theme */
         --sidebar-background: 220 30% 13%;
         --sidebar-foreground: 210 20% 98%;
@@ -86,7 +86,7 @@
         --sidebar-border: 220 20% 16%;
         --sidebar-ring: 191 100% 50%;
     }
-    
+
     /* Keep light theme class for potential future toggle */
     .light {
         --background: 214 24% 96%;
@@ -270,19 +270,23 @@ textarea {
     content: '';
     position: absolute;
     z-index: -1;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: conic-gradient(
-        from 0deg at 50% 50%,
-        rgba(92, 225, 230, 0) 0%,
-        rgba(92, 225, 230, 0.1) 25%, 
-        rgba(0, 133, 163, 0.4) 50%,
-        rgba(92, 225, 230, 0.1) 75%,
-        rgba(92, 225, 230, 0) 100%
+    top: -100%;
+    left: -100%;
+    width: 300%;
+    height: 300%;
+    background: linear-gradient(
+        135deg,
+        transparent 0%,
+        transparent 35%,
+        rgba(92, 225, 230, 0.05) 40%,
+        rgba(92, 225, 230, 0.1) 45%,
+        rgba(0, 133, 163, 0.3) 50%,
+        rgba(92, 225, 230, 0.1) 55%,
+        rgba(92, 225, 230, 0.05) 60%,
+        transparent 65%,
+        transparent 100%
     );
-    animation: rotate 4s linear infinite;
+    animation: diagonal-sweep 2s linear infinite;
     opacity: 0;
     transition: opacity 0.5s ease;
 }
@@ -292,9 +296,12 @@ textarea {
     opacity: 1;
 }
 
-@keyframes rotate {
+@keyframes diagonal-sweep {
+    0% {
+        transform: translateX(-33.33%) translateY(-33.33%);
+    }
     100% {
-        transform: rotate(360deg);
+        transform: translateX(33.33%) translateY(33.33%);
     }
 }
 
@@ -305,7 +312,8 @@ textarea {
 
 /* Animation for the bounce effect */
 @keyframes bounce {
-    0%, 100% {
+    0%,
+    100% {
         transform: translateY(0) rotate(180deg);
     }
     50% {
@@ -320,21 +328,21 @@ textarea {
 /* Custom button gradient for all buttons */
 .btn-primary,
 .bg-primary,
-button[class*="bg-primary"],
-a[class*="bg-primary"],
+button[class*='bg-primary'],
+a[class*='bg-primary'],
 .fc .fc-button,
 .fc-event,
-[class*="btn-primary"] {
-    background: linear-gradient(to right, hsl(191, 65%, 53%), #0085A3) !important;
-    border-color: #0085A3 !important;
+[class*='btn-primary'] {
+    background: linear-gradient(to right, hsl(191, 65%, 53%), #0085a3) !important;
+    border-color: #0085a3 !important;
     color: hsl(var(--card)) !important;
 }
 
 /* Hover effect for gradient buttons */
 .btn-primary:hover,
 .bg-primary:hover,
-button[class*="bg-primary"]:hover,
-a[class*="bg-primary"]:hover,
+button[class*='bg-primary']:hover,
+a[class*='bg-primary']:hover,
 .fc .fc-button:hover {
     background: linear-gradient(to right, hsl(191, 75%, 58%), hsl(191, 100%, 38%)) !important;
     box-shadow: 0 0 15px rgba(0, 133, 163, 0.3);
@@ -369,46 +377,46 @@ a[class*="bg-primary"]:hover,
 }
 
 /* Ajustes para os componentes Tabs no Dark Mode */
-.tabs-dark-mode [data-state="inactive"] {
-  opacity: 0.7;
-  transition: opacity 0.2s ease;
+.tabs-dark-mode [data-state='inactive'] {
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
 }
 
-.tabs-dark-mode [data-state="inactive"]:hover {
-  opacity: 0.9;
+.tabs-dark-mode [data-state='inactive']:hover {
+    opacity: 0.9;
 }
 
-.tabs-dark-mode [data-state="active"] {
-  position: relative;
-  z-index: 1;
-  font-weight: 500;
+.tabs-dark-mode [data-state='active'] {
+    position: relative;
+    z-index: 1;
+    font-weight: 500;
 }
 
 /* Botão de criar vídeo no modo escuro */
 .create-video-button {
-  background: linear-gradient(to right, hsl(191, 65%, 53%), #0085A3);
-  color: white;
-  transition: all 0.2s ease;
+    background: linear-gradient(to right, hsl(191, 65%, 53%), #0085a3);
+    color: white;
+    transition: all 0.2s ease;
 }
 
 .create-video-button:hover {
-  filter: brightness(1.1);
-  box-shadow: 0 0 15px rgba(0, 133, 163, 0.3);
-  transform: translateY(-1px);
+    filter: brightness(1.1);
+    box-shadow: 0 0 15px rgba(0, 133, 163, 0.3);
+    transform: translateY(-1px);
 }
 
 /* Inputs no modo escuro */
 .dark-input {
-  background-color: hsl(var(--card));
-  border-color: hsl(var(--border));
-  color: hsl(var(--foreground));
+    background-color: hsl(var(--card));
+    border-color: hsl(var(--border));
+    color: hsl(var(--foreground));
 }
 
 .dark-input::placeholder {
-  color: hsl(var(--muted-foreground));
+    color: hsl(var(--muted-foreground));
 }
 
 .dark-input:focus {
-  border-color: hsl(var(--primary));
-  box-shadow: 0 0 0 2px hsl(var(--primary) / 0.2);
+    border-color: hsl(var(--primary));
+    box-shadow: 0 0 0 2px hsl(var(--primary) / 0.2);
 }

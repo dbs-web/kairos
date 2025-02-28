@@ -18,15 +18,19 @@ export default function NavUserMenu({ name, email }: NavUserMenuProps) {
             <DropdownMenuTrigger className="grid h-12 w-12 items-center rounded-full border border-border bg-gradient-to-r from-[hsl(191,65%,53%)] to-[#0085A3] text-white shadow-md transition-all duration-300 hover:scale-105">
                 {name?.length > 0 ? name[0].toUpperCase() : ''}
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="bg-card border-border">
+            <DropdownMenuContent align="end" className="border-border bg-card">
                 <div className="p-2">
                     <span className="font-bold text-foreground">{email}</span>
                 </div>
                 <DropdownMenuSeparator className="bg-border" />
-                <DropdownMenuItem className="text-foreground hover:bg-muted/50 cursor-pointer">Perfil</DropdownMenuItem>
-                <DropdownMenuItem className="text-foreground hover:bg-muted/50 cursor-pointer">Uso</DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer text-foreground hover:bg-muted/50">
+                    Perfil
+                </DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer text-foreground hover:bg-muted/50">
+                    Uso
+                </DropdownMenuItem>
                 <DropdownMenuSeparator className="bg-border" />
-                <DropdownMenuItem className="text-foreground hover:bg-muted/50 cursor-pointer">
+                <DropdownMenuItem className="cursor-pointer text-foreground hover:bg-muted/50">
                     <Link href="/logout">Sair</Link>
                 </DropdownMenuItem>
             </DropdownMenuContent>

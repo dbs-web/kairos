@@ -104,22 +104,22 @@ export default function NewsGrid() {
                     <div className="relative">
                         {/* Animation dots - arrow pointing DOWN */}
                         <div className="absolute -top-6 left-1/2 -translate-x-1/2">
-                            <MdOutlineArrowUpward className="animate-bounce-arrow text-primary text-2xl" />
+                            <MdOutlineArrowUpward className="animate-bounce-arrow text-2xl text-primary" />
                         </div>
-                        
+
                         {/* Main button container */}
-                        <div className="rounded-full bg-card px-4 py-3 shadow-lg shadow-primary/20 border border-primary/30">
+                        <div className="rounded-full border border-primary/30 bg-card px-4 py-3 shadow-lg shadow-primary/20">
                             <button
                                 onClick={handleSubmit}
-                                className="group flex items-center gap-2 rounded-full bg-gradient-to-r from-[#0085A3] to-primary px-6 py-3 text-card-foreground font-medium transition-all duration-300 hover:shadow-lg hover:shadow-primary/30 hover:scale-105"
+                                className="group flex items-center gap-2 rounded-full bg-gradient-to-r from-[#0085A3] to-primary px-6 py-3 font-medium text-card-foreground transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-primary/30"
                             >
                                 <MdSend className="text-lg transition-transform group-hover:translate-x-1" />
                                 <span>Enviar para Produção</span>
                             </button>
                         </div>
-                        
+
                         {/* Number of selected items badge */}
-                        <div className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-secondary text-xs font-bold text-white">
+                        <div className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-secondary text-xs font-bold text-white">
                             {selectedNews.length}
                         </div>
                     </div>

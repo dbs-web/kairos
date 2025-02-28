@@ -16,7 +16,7 @@ export default function Pagination({ page, totalPages, setPage }: PaginationProp
     return (
         <div className="my-8 flex items-center justify-center space-x-4 text-foreground">
             <button
-                className="rounded bg-muted/50 px-3 py-2 hover:bg-muted transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-muted/50"
+                className="rounded bg-muted/50 px-3 py-2 transition-colors duration-200 hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-muted/50"
                 onClick={handlePreviousPage}
                 disabled={page === 1}
             >
@@ -26,7 +26,7 @@ export default function Pagination({ page, totalPages, setPage }: PaginationProp
                 Página {page} de {totalPages}
             </span>
             <button
-                className="rounded bg-muted/50 px-3 py-2 hover:bg-muted transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-muted/50"
+                className="rounded bg-muted/50 px-3 py-2 transition-colors duration-200 hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-muted/50"
                 onClick={handleNextPage}
                 disabled={page === totalPages}
             >

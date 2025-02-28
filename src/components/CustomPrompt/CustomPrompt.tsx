@@ -8,10 +8,10 @@ import { MdSmartToy, MdTextFields } from 'react-icons/md';
 
 export default function CustomPrompt() {
     return (
-        <div className="flex flex-col rounded-xl bg-card p-6 shadow-sm border border-border">
+        <div className="flex flex-col rounded-xl border border-border bg-card p-6 shadow-sm">
             <h2 className="mb-4 text-xl font-semibold text-foreground">Criação de Vídeo</h2>
 
-            <Tabs defaultValue="withAI" className="w-full tabs-dark-mode">
+            <Tabs defaultValue="withAI" className="tabs-dark-mode w-full">
                 <TabsList className="mb-4 grid w-full grid-cols-2 gap-2 bg-transparent p-0">
                     <TabsTrigger
                         className="rounded-lg border border-border py-3 text-foreground hover:bg-muted/50 data-[state=active]:border-primary data-[state=active]:bg-gradient-to-r data-[state=active]:from-[hsl(191,65%,53%)] data-[state=active]:to-[#0085A3] data-[state=active]:text-white"

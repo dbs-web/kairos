@@ -10,6 +10,9 @@ import { useSearchData } from '@/hooks/use-search-data';
 import SuggestionCard from './SuggestionCard';
 import Skeleton from './SuggestionSkeleton';
 import Pagination from '../ui/pagination';
+import Calendar from '../News/Calendar';
+import CustomPrompt from '../CustomPrompt/CustomPrompt';
+import { MdSend, MdOutlineArrowUpward, MdOutlineArchive } from 'react-icons/md';
 
 // Entities
 import { ISuggestion } from '@/domain/entities/suggestion';
@@ -39,7 +42,7 @@ export default function SuggestionsGrid() {
 
     useEffect(() => {
         setStatuses(enumStatuses);
-    }, [suggestions]);
+    }, []);
 
     const handleSendToProduction = async () => {
         try {
@@ -76,45 +79,81 @@ export default function SuggestionsGrid() {
     };
 
     return (
-        <div
-            className="flex h-full w-full flex-col items-center justify-between pb-[90px] transition-all duration-300"
-            data-selection={selectedSuggestions?.length > 0}
-        >
-            <div className="grid w-full grid-cols-1 grid-rows-3 gap-4 !pt-0 md:grid-cols-2 xl:max-h-[650px] xl:grid-cols-3 2xl:grid-cols-4">
-                {isLoading
-                    ? Array.from({ length: 4 }).map((_, index) => (
-                          <Skeleton key={`skeleton-${index}`} />
-                      ))
-                    : suggestions.map((suggestion: ISuggestion) => (
-                          <SuggestionCard
-                              suggestion={suggestion}
-                              key={suggestion.id}
-                              isSelected={selectedSuggestions.includes(suggestion.id)}
-                              onSelect={toggleSelectSuggestion}
-                          />
-                      ))}
-            </div>
+        <div className="relative h-full w-full">
+            {/* Layout principal - grid de 4 colunas */}
+            <div className="grid grid-cols-1 gap-6 px-6 lg:grid-cols-12">
+                {/* Coluna principal - sugestões */}
+                <div className="lg:col-span-9">
+                    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
+                        {!isLoading &&
+                            suggestions.map((suggestion: ISuggestion) => (
+                                <SuggestionCard
+                                    key={suggestion.id}
+                                    suggestion={suggestion}
+                                    isSelected={selectedSuggestions.includes(suggestion.id)}
+                                    onSelect={toggleSelectSuggestion}
+                                />
+                            ))}
 
-            <div className="flex w-full flex-col items-center justify-center">
-                <Pagination page={page} totalPages={totalPages} setPage={setPage} />
+                        {isLoading &&
+                            Array.from({ length: 6 }).map((_, index) => (
+                                <Skeleton key={`suggestion-skeleton-${index}`} />
+                            ))}
+                    </div>
 
-                <div className="flex w-full items-center justify-center gap-x-4">
-                    <button
-                        className="rounded bg-green-500 px-4 py-2 text-white transition-all duration-300 hover:scale-105 hover:bg-green-600 disabled:cursor-not-allowed disabled:bg-neutral-300"
-                        onClick={handleSendToProduction}
-                        disabled={selectedSuggestions?.length == 0}
-                    >
-                        Enviar para Produção
-                    </button>
-                    <button
-                        className="rounded bg-red-500 px-4 py-2 text-white transition-all duration-300 hover:scale-105 hover:bg-red-600 disabled:cursor-not-allowed disabled:bg-neutral-300"
-                        onClick={handleArchive}
-                        disabled={selectedSuggestions?.length == 0}
-                    >
-                        Deletar
-                    </button>
+                    {/* Paginação abaixo das notícias */}
+                    <div className="mt-6 flex justify-center">
+                        <Pagination page={page} totalPages={totalPages} setPage={setPage} />
+                    </div>
+                </div>
+
+                {/* Coluna lateral direita - igual a NewsGrid */}
+                <div className="flex flex-col space-y-6 lg:col-span-3">
+                    {/* Criação de vídeo */}
+                    <CustomPrompt />
+
+                    {/* Calendário */}
+                    <Calendar />
                 </div>
             </div>
+
+            {/* Botão flutuante aprimorado para enviar para produção */}
+            {selectedSuggestions.length > 0 && (
+                <div className="fixed bottom-4 left-0 right-0 z-50 flex items-center justify-center">
+                    <div className="relative">
+                        {/* Animation dots - arrow pointing DOWN */}
+                        <div className="absolute -top-6 left-1/2 -translate-x-1/2">
+                            <MdOutlineArrowUpward className="animate-bounce-arrow text-2xl text-primary" />
+                        </div>
+
+                        {/* Main button container */}
+                        <div className="rounded-full border border-primary/30 bg-card px-4 py-3 shadow-lg shadow-primary/20">
+                            <div className="flex items-center gap-2">
+                                <button
+                                    onClick={handleSendToProduction}
+                                    className="group flex items-center gap-2 rounded-full bg-gradient-to-r from-[#0085A3] to-primary px-6 py-3 font-medium text-card-foreground transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-primary/30"
+                                >
+                                    <MdSend className="text-lg transition-transform group-hover:translate-x-1" />
+                                    <span>Enviar para Produção</span>
+                                </button>
+
+                                <button
+                                    onClick={handleArchive}
+                                    className="group flex items-center gap-2 rounded-full bg-gradient-to-r from-destructive/80 to-destructive px-6 py-3 font-medium text-card-foreground transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-destructive/30"
+                                >
+                                    <MdOutlineArchive className="text-lg transition-transform group-hover:translate-y-0.5" />
+                                    <span>Arquivar</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Number of selected items badge */}
+                        <div className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-secondary text-xs font-bold text-white">
+                            {selectedSuggestions.length}
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

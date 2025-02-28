@@ -13,27 +13,15 @@ interface StatusBadgeProps {
     status: Status;
 }
 
-const badgeColor = {
-    APROVADO: '#00aa00f0',
-    ARQUIVADO: '#aa0000f0',
-    EM_ANALISE: '#e5e5e5',
-    EM_PRODUCAO: '#0085a3f0',
-    PRODUZIDO: '#00aa00f0',
-};
-
 export default function StatusBadge({ status }: StatusBadgeProps) {
     return (
         <div
-            className={clsx('rounded p-2 text-xs font-medium', {
-                'text-white': status !== 'EM_ANALISE',
-
-                'text-[#333333]': status === 'EM_ANALISE',
-                'bg-[#e5e5e5]': status === 'EM_ANALISE',
-
-                'bg-[#00aa00f0]': status === 'APROVADO',
-                'bg-[#aa0000f0]': status === 'ARQUIVADO',
-                'bg-[#0085a3f0]': status === 'EM_PRODUCAO',
-                'bg-[#00aa00f1]': status === 'PRODUZIDO',
+            className={clsx('rounded-md px-2.5 py-1 text-xs font-medium', {
+                // Dark theme variants using CSS variables from globals.css
+                'bg-primary/20 text-primary': status === 'EM_ANALISE',
+                'bg-secondary/20 text-secondary': status === 'EM_PRODUCAO',
+                'bg-chart-4/20 text-chart-4': status === 'APROVADO' || status === 'PRODUZIDO',
+                'bg-destructive/20 text-destructive': status === 'ARQUIVADO',
             })}
         >
             {ItemStatusLabel[status]}

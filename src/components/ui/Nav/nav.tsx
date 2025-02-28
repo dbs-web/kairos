@@ -48,7 +48,7 @@ export default function Nav({ links }: NavProps) {
                             <RxHamburgerMenu />
                         </button>
                     </SheetTrigger>
-                    <SheetContent className="bg-card border-border">
+                    <SheetContent className="border-border bg-card">
                         <SheetHeader>
                             <SheetTitle className="text-foreground">Links</SheetTitle>
                             <SheetDescription className="text-foreground/70">

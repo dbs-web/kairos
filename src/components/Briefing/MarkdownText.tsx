@@ -9,27 +9,12 @@ export default function MarkdownText({ text, className }: { text: string; classN
         <ScrollArea
             className={cn(
                 className,
-                'h-80 rounded-lg border border-neutral-200 bg-muted/20 p-2 pr-4 shadow-sm',
+                'h-80 rounded-lg border border-border bg-muted/10 p-2 pr-4 shadow-sm',
             )}
         >
-            <style jsx global>{`
-                .scrollbar-styling ::-webkit-scrollbar {
-                    width: 8px;
-                }
-                .scrollbar-styling ::-webkit-scrollbar-track {
-                    background: rgba(0, 0, 0, 0.05);
-                }
-                .scrollbar-styling ::-webkit-scrollbar-thumb {
-                    background: rgba(0, 0, 0, 0.2);
-                    border-radius: 4px;
-                }
-                .scrollbar-styling ::-webkit-scrollbar-thumb:hover {
-                    background: rgba(0, 0, 0, 0.3);
-                }
-            `}</style>
             <ReactMarkdown
                 remarkPlugins={[remarkGfm]}
-                className={'prose min-w-full font-sans text-xs'}
+                className="prose prose-invert min-w-full font-sans text-xs text-foreground/90 prose-headings:text-foreground prose-a:text-primary hover:prose-a:text-primary/80 prose-code:bg-muted prose-code:text-foreground"
             >
                 {text}
             </ReactMarkdown>

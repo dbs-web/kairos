@@ -21,38 +21,32 @@ interface SourcesDialogProps {
 export default function SourcesDialog({ title, sources, children }: SourcesDialogProps) {
     const [open, setOpen] = useState<boolean>(false);
 
-    // Clonar o children e modificar suas props para abrir o diálogo
-    const clonedTrigger = React.cloneElement(
-        children as React.ReactElement<{ onClick?: () => void }>,
-        {
-            onClick: () => setOpen(true),
-        },
-    );
-
     return (
-        <>
-            {/* Renderizar apenas o trigger clonado, sem DialogTrigger */}
-            {clonedTrigger}
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+                <span className="inline-block">{children}</span>
+            </DialogTrigger>
+            <DialogContent className="max-h-[90vh] border-border bg-card text-foreground sm:max-w-[700px]">
+                <DialogHeader>
+                    <DialogTitle className="flex items-center gap-2 text-xl text-foreground">
+                        <MdOpenInNew className="text-primary" />
+                        Fontes: {title}
+                    </DialogTitle>
+                </DialogHeader>
 
-            {/* Dialog separado do trigger para evitar problemas */}
-            <Dialog open={open} onOpenChange={setOpen}>
-                <DialogContent className="max-h-[90vh] sm:max-w-[700px]">
-                    <DialogHeader>
-                        <DialogTitle className="flex items-center gap-2 text-xl">
-                            <MdOpenInNew className="text-primary" />
-                            Fontes: {title}
-                        </DialogTitle>
-                    </DialogHeader>
+                <div className="max-h-[60vh] py-4">
+                    <MarkdownText text={sources} className="w-full" />
+                </div>
 
-                    <div className="max-h-[60vh] py-4">
-                        <MarkdownText text={sources} className="w-full" />
-                    </div>
-
-                    <DialogFooter>
-                        <Button onClick={() => setOpen(false)}>Fechar</Button>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
-        </>
+                <DialogFooter>
+                    <Button
+                        onClick={() => setOpen(false)}
+                        className="bg-gradient-to-r from-[#0085A3] to-primary text-primary-foreground transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-primary/30"
+                    >
+                        Fechar
+                    </Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
     );
 }

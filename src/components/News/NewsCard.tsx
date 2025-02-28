@@ -42,7 +42,7 @@ export default function NewsCard({ news, isSelected, onSelect }: NewsCardProps) 
         <div
             className={`relative h-full w-full cursor-pointer rounded-lg bg-card p-4 transition-all duration-300 ${
                 news.status === 'EM_ANALISE'
-                    ? 'hover:-translate-y-2 hover:shadow-lg hover:shadow-primary/10 card-glow'
+                    ? 'card-glow hover:-translate-y-2 hover:shadow-lg hover:shadow-primary/10'
                     : 'cursor-not-allowed opacity-75'
             } ${isSelected ? 'card-glow selected' : ''}`}
             onClick={handleSelect}

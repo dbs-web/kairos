@@ -3,13 +3,9 @@ import { MdImageNotSupported } from 'react-icons/md';
 
 export default function NewsSkeleton() {
     return (
-        <div
-            className="relative h-full w-full cursor-pointer rounded-lg bg-card p-4 transition-all duration-300"
-        >
+        <div className="relative h-full w-full cursor-pointer rounded-lg bg-card p-4 transition-all duration-300">
             <>
-                <div
-                    className="absolute inset-0 rounded-lg border border-border transition-all duration-100"
-                />
+                <div className="absolute inset-0 rounded-lg border border-border transition-all duration-100" />
             </>
 
             <div className="relative flex h-full flex-col">

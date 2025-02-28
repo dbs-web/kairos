@@ -37,7 +37,7 @@ export function Avatar({ avatar }: AvatarProps) {
 
     return (
         <div
-            className="flex flex-col items-center justify-center gap-y-2 place-self-center rounded-xl bg-card p-4 shadow-md border border-border"
+            className="flex flex-col items-center justify-center gap-y-2 place-self-center rounded-xl border border-border bg-card p-4 shadow-md"
             style={{
                 border: selectedAvatar?.avatar_id == avatar.avatar_id ? 'solid 2px #00B2CC' : '',
                 boxShadow:
@@ -48,7 +48,9 @@ export function Avatar({ avatar }: AvatarProps) {
         >
             <div className="relative h-[120px] w-[120px] overflow-hidden rounded-xl">
                 {loading ? (
-                    <div className="h-30 w-30 animate-pulse bg-muted flex items-center justify-center text-muted-foreground text-xs">CARREGANDO</div>
+                    <div className="h-30 w-30 flex animate-pulse items-center justify-center bg-muted text-xs text-muted-foreground">
+                        CARREGANDO
+                    </div>
                 ) : (
                     <NextImage
                         src={avatar.preview_image_url}
@@ -68,9 +70,9 @@ export function Avatar({ avatar }: AvatarProps) {
                 className="mt-6 rounded-lg bg-primary px-4 py-1 text-white transition-all duration-300 hover:shadow-lg"
                 style={{
                     background:
-                        selectedAvatar?.avatar_id === avatar.avatar_id 
-                        ? 'linear-gradient(to right, hsl(191, 65%, 53%), #0085A3)'
-                        : '',
+                        selectedAvatar?.avatar_id === avatar.avatar_id
+                            ? 'linear-gradient(to right, hsl(191, 65%, 53%), #0085A3)'
+                            : '',
                 }}
             >
                 {selectedAvatar?.avatar_id === avatar.avatar_id ? 'Selecionado' : 'Escolher Avatar'}

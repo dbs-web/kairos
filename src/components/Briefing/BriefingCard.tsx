@@ -47,17 +47,20 @@ export default function BriefingCard({ briefing }: BriefingCardProps) {
     };
 
     return (
-        <div className="flex h-full flex-col rounded-xl bg-white shadow-sm">
+        <div className="relative flex h-full flex-col rounded-xl bg-card shadow-md transition-all duration-300 hover:-translate-y-1">
+            {/* Simplificado: removemos o card-glow que pode estar interferindo */}
+            <div className="absolute inset-0 rounded-xl border border-border transition-all duration-100" />
+
             {/* Cabeçalho do card */}
-            <div className="flex items-start justify-between border-b border-neutral-100 p-5">
+            <div className="flex items-start justify-between border-b border-border p-5">
                 <div className="flex max-w-[80%] flex-col">
-                    <h1 className="line-clamp-2 text-lg font-bold text-neutral-900">
+                    <h1 className="line-clamp-2 text-lg font-bold text-foreground">
                         {briefing.title}
                     </h1>
                     <div className="mt-2 flex items-center gap-x-3">
-                        <time className="text-sm text-neutral-500">
+                        <time className="text-sm text-muted-foreground">
                             Data:{' '}
-                            <strong className="text-neutral-700">
+                            <strong className="text-foreground/80">
                                 {briefing.date &&
                                     new Date(briefing.date).toLocaleDateString('pt-br')}
                             </strong>
@@ -65,10 +68,10 @@ export default function BriefingCard({ briefing }: BriefingCardProps) {
 
                         {briefing.sources && (
                             <SourcesDialog sources={briefing.sources} title={briefing.title}>
-                                <div className="group flex cursor-pointer items-center gap-x-1.5 text-xs font-medium text-neutral-700 transition-colors hover:text-primary">
+                                <button className="group flex cursor-pointer items-center gap-x-1.5 text-xs font-medium text-foreground/70 transition-colors hover:text-primary">
                                     <MdArticle className="text-sm transition-colors group-hover:text-primary" />
                                     Ver Fonte
-                                </div>
+                                </button>
                             </SourcesDialog>
                         )}
                     </div>
@@ -79,16 +82,16 @@ export default function BriefingCard({ briefing }: BriefingCardProps) {
                         <Button
                             variant="outline"
                             size="icon"
-                            className="h-8 w-8 border-neutral-200 text-neutral-600 hover:border-neutral-300 hover:text-neutral-800"
+                            className="h-8 w-8 border-border text-foreground/70 hover:border-primary/30 hover:text-foreground"
                         >
                             <BiDotsHorizontalRounded className="text-lg" />
                         </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Ações</DropdownMenuLabel>
-                        <DropdownMenuSeparator />
+                    <DropdownMenuContent align="end" className="border-border bg-card">
+                        <DropdownMenuLabel className="text-foreground">Ações</DropdownMenuLabel>
+                        <DropdownMenuSeparator className="bg-border" />
                         <DropdownMenuItem
-                            className="cursor-pointer text-neutral-700"
+                            className="cursor-pointer text-foreground hover:text-destructive focus:text-destructive"
                             onClick={handleArchive}
                         >
                             Arquivar
@@ -107,12 +110,13 @@ export default function BriefingCard({ briefing }: BriefingCardProps) {
                 )}
             </div>
 
-            {/* Botões de ação */}
-            <div className="grid grid-cols-3 gap-3 border-t border-neutral-100 p-5">
+            {/* Botões de ação - Simplificados e com z-index mais alto */}
+            <div className="relative z-10 grid grid-cols-3 gap-3 border-t border-border p-5">
                 <RedoBriefingDialog briefing={briefing}>
                     <Button
+                        type="button"
                         variant="outline"
-                        className="w-full border-neutral-200 text-neutral-800 hover:bg-neutral-50"
+                        className="w-full border-border text-foreground hover:border-border/80 hover:bg-muted"
                     >
                         <MdRefresh className="mr-2" />
                         Refazer
@@ -121,8 +125,9 @@ export default function BriefingCard({ briefing }: BriefingCardProps) {
 
                 <EditBriefingDialog briefing={briefing}>
                     <Button
+                        type="button"
                         variant="outline"
-                        className="w-full border-neutral-200 text-neutral-800 hover:bg-neutral-50"
+                        className="w-full border-border text-foreground hover:border-border/80 hover:bg-muted"
                     >
                         <FiEdit2 className="mr-2" />
                         Editar
@@ -131,7 +136,10 @@ export default function BriefingCard({ briefing }: BriefingCardProps) {
 
                 <VideoCreationProvider createVideo={createVideoBriefing}>
                     <AvatarSelectionDialog payload={{ briefingId: briefing.id }}>
-                        <Button className="w-full bg-primary text-white shadow-sm hover:bg-primary/90">
+                        <Button
+                            type="button"
+                            className="w-full bg-gradient-to-r from-[#0085A3] to-primary text-primary-foreground shadow-sm transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-primary/30"
+                        >
                             <CiCircleCheck className="mr-2 text-xl" />
                             Aprovar
                         </Button>
