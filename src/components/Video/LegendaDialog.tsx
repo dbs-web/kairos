@@ -1,4 +1,4 @@
-import React, { useState, ReactNode } from 'react';
+import React, { useState } from 'react';
 import {
     Dialog,
     DialogContent,
@@ -9,23 +9,23 @@ import {
     DialogTrigger,
 } from '@/components/ui/dialog';
 
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { IVideo } from '@/domain/entities/video';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '../ui/button';
-import { CgTranscript } from 'react-icons/cg';
+import { MdSubtitles } from 'react-icons/md';
 import { IoCopy } from 'react-icons/io5';
+import { IVideo } from '@/domain/entities/video';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
-interface TranscriptionDialogProps {
+interface LegendaDialogProps {
     video: IVideo;
-    children?: ReactNode;
 }
 
-export default function TranscriptionDialog({ video, children }: TranscriptionDialogProps) {
+export default function LegendaDialog({ video }: LegendaDialogProps) {
     const [open, setOpen] = useState<boolean>(false);
 
     const handleCopyText = () => {
-        if (video.transcription) {
-            navigator.clipboard.writeText(video.transcription);
+        if (video.legenda) {
+            navigator.clipboard.writeText(video.legenda);
         }
     };
 
@@ -41,7 +41,7 @@ export default function TranscriptionDialog({ video, children }: TranscriptionDi
                                     size="icon"
                                     className="h-8 w-8 border-border text-foreground/70 hover:border-primary/30 hover:text-foreground"
                                 >
-                                    <CgTranscript className="text-lg" />
+                                    <MdSubtitles className="text-lg" />
                                 </Button>
                             </TooltipTrigger>
                             <TooltipContent
@@ -49,27 +49,30 @@ export default function TranscriptionDialog({ video, children }: TranscriptionDi
                                 align="center"
                                 className="border-border bg-card text-foreground shadow-lg"
                             >
-                                <p className="font-medium text-primary">Ver transcrição do vídeo</p>
+                                <p className="font-medium text-primary">Ver legenda do vídeo</p>
                             </TooltipContent>
                         </Tooltip>
                     </TooltipProvider>
                 </span>
             </DialogTrigger>
-            <DialogContent className="max-h-[90vh] border-border bg-card text-foreground sm:max-w-[425px] lg:max-w-[650px]">
+            <DialogContent className="max-h-[90vh] border-border bg-card text-foreground sm:max-w-[700px]">
                 <DialogHeader>
                     <DialogTitle className="text-xl text-foreground">{video.title}</DialogTitle>
                     <DialogDescription className="text-muted-foreground">
-                        Aqui você pode ler a transcrição do seu vídeo
+                        Aqui você pode ler a legenda do seu vídeo
                     </DialogDescription>
                 </DialogHeader>
 
-                <div className="max-h-[60vh] overflow-y-auto py-4">
-                    <textarea
-                        rows={15}
-                        value={video.transcription || ''}
-                        className="w-full rounded-lg border border-border bg-muted/10 p-2 text-foreground focus-visible:ring-primary"
-                        readOnly
-                    />
+                <div className="max-h-[60vh] py-4">
+                    <div className="rounded-lg border border-border bg-muted/10 p-2">
+                        <ScrollArea className="max-h-[60vh]">
+                            <div className="pr-4">
+                                <p className="whitespace-pre-line p-2 text-sm text-foreground/90">
+                                    {video.legenda || 'Nenhuma legenda disponível para este vídeo.'}
+                                </p>
+                            </div>
+                        </ScrollArea>
+                    </div>
                 </div>
 
                 <DialogFooter className="flex flex-row items-center justify-between">

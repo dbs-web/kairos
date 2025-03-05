@@ -3,11 +3,12 @@ import { FiDownload } from 'react-icons/fi';
 import { PiSpinnerThin } from 'react-icons/pi';
 import { BiErrorCircle } from 'react-icons/bi';
 import TranscriptionDialog from './VideoTranscriptionDialog';
+import LegendaDialog from './LegendaDialog';
 
 // Entities
 import { IVideo } from '@/domain/entities/video';
 import { HeyGenStatus } from '@prisma/client';
-import { ScrollArea } from '../ui/scroll-area';
+import { Button } from '../ui/button';
 
 interface VideoCardProps {
     video: IVideo;
@@ -30,82 +31,69 @@ export default function VideoCard({ video }: VideoCardProps) {
         }
     };
 
+    // Determine if video is landscape or portrait
+    const isLandscape = video.width === 1920;
+    const aspectRatio = isLandscape ? 'aspect-video' : 'aspect-[9/16]';
+
     return (
-        <div className="flex flex-col gap-x-12 gap-y-6 rounded-xl bg-white p-3 shadow-md md:me-8 md:max-h-[65vh] md:flex-row md:p-6">
-            <div className="grid min-w-56 grid-cols-1 grid-rows-[1fr_32px] gap-y-4 md:grid-rows-[1fr_48px]">
+        <div className="flex h-full flex-col overflow-hidden rounded-xl border border-border bg-card shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
+            {/* Video Container */}
+            <div
+                className={`relative ${aspectRatio} flex w-full items-center justify-center bg-muted/50`}
+            >
                 {video.heygenStatus === 'SUCCESS' && (
-                    <video
-                        controls
-                        className="max-h-[50vh] w-full rounded-xl"
-                        style={{
-                            aspectRatio: video.width === 1920 ? '16/9' : '9/16',
-                        }}
-                    >
+                    <video controls className="h-full w-full object-contain">
                         <source src={video.url} type="video/mp4" />
                     </video>
                 )}
                 {video.heygenStatus === 'PROCESSING' && (
-                    <div
-                        className="grid animate-pulse items-center justify-center rounded-xl bg-neutral-300"
-                        style={{
-                            aspectRatio: video.width === 1920 ? '16/9' : '9/16',
-                        }}
-                    >
-                        <PiSpinnerThin className="animate-ping text-xl drop-shadow-sm" />
+                    <div className="flex h-full w-full animate-pulse flex-col items-center justify-center">
+                        <PiSpinnerThin className="mb-2 animate-spin text-3xl text-primary drop-shadow-sm" />
+                        <p className="text-xs text-foreground/70">Processando seu vídeo...</p>
                     </div>
                 )}
                 {video.heygenStatus === 'FAILED' && (
-                    <div
-                        className="grid items-center justify-center rounded-xl bg-neutral-900"
-                        style={{
-                            aspectRatio: video.width === 1920 ? '16/9' : '9/16',
-                        }}
-                    >
-                        <BiErrorCircle className="text-lg text-red-500 md:text-xl xl:text-3xl" />
+                    <div className="flex h-full w-full flex-col items-center justify-center">
+                        <BiErrorCircle className="mb-2 text-3xl text-destructive" />
+                        <p className="px-4 text-center text-xs text-destructive/90">
+                            Falha no processamento
+                        </p>
                     </div>
                 )}
-
-                <button
-                    onClick={handleDownload}
-                    className="flex items-center justify-center gap-x-2 rounded-xl bg-secondary !p-0 text-center text-sm text-white transition-all duration-300 hover:scale-105 hover:shadow-lg md:py-2"
-                >
-                    <FiDownload />
-                    Download
-                </button>
             </div>
-            <div className="relative flex w-full flex-col items-start justify-start pe-12">
-                <TranscriptionDialog video={video} />
-                <h2 className="font-medium md:text-lg">{video.title}</h2>
+
+            {/* Content Area */}
+            <div className="flex flex-grow flex-col p-3">
+                <h2 className="mb-1 line-clamp-2 font-medium text-foreground">{video.title}</h2>
                 {video?.creationDate && (
-                    <span className="text-xs font-medium text-neutral-500 md:text-sm">
-                        DATA:{' '}
-                        <time>{new Date(video.creationDate).toLocaleDateString('pt-br')}</time>
+                    <span className="mb-2 text-xs font-medium text-muted-foreground">
+                        {new Date(video.creationDate).toLocaleDateString('pt-br')}
                     </span>
-                )}
-                {video.heygenStatus === HeyGenStatus.PROCESSING && (
-                    <p className="mt-4 text-xs text-neutral-700 md:text-sm">
-                        Aguarde enquanto estamos produzindo seu vídeo, isto pode demorar alguns
-                        minutos.
-                    </p>
                 )}
 
                 {video.heygenStatus === HeyGenStatus.FAILED && (
-                    <p className="mt-12 text-xs text-neutral-600 md:text-sm">
-                        <strong className="text-red-500">
-                            Ocorreu um erro no processamento do seu vídeo:
-                        </strong>
-                        <br></br>
+                    <p className="mb-2 line-clamp-2 text-xs text-destructive">
                         {video.heygenErrorMsg}
                     </p>
                 )}
+            </div>
 
-                {video.heygenStatus === HeyGenStatus.SUCCESS && (
-                    <ScrollArea className="max-h-96">
-                        <p className="mt-12 whitespace-pre-line text-xs text-neutral-600 md:text-sm">
-                            {video.legenda}
-                        </p>
-                    </ScrollArea>
-                )}
+            {/* Action Buttons */}
+            <div className="mt-auto flex items-center justify-between border-t border-border px-3 py-2">
+                <div className="flex gap-2">
+                    <TranscriptionDialog video={video} />
+                    <LegendaDialog video={video} />
+                </div>
+
+                <Button
+                    onClick={handleDownload}
+                    disabled={video.heygenStatus !== 'SUCCESS' || !video.url}
+                    size="sm"
+                    className="flex items-center gap-1 bg-gradient-to-r from-[#0085A3] to-primary text-white transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-primary/30"
+                >
+                    <FiDownload className="text-sm text-white" />
+                    <span>Download</span>
+                </Button>
             </div>
         </div>
     );

@@ -49,7 +49,7 @@ export default function BriefingCard({ briefing }: BriefingCardProps) {
     return (
         <div className="relative flex h-full flex-col rounded-xl bg-card shadow-md transition-all duration-300 hover:-translate-y-1">
             {/* Simplificado: removemos o card-glow que pode estar interferindo */}
-            <div className="absolute inset-0 rounded-xl border border-border transition-all duration-100" />
+            <div className="pointer-events-none absolute inset-0 rounded-xl border border-border transition-all duration-100" />
 
             {/* Cabeçalho do card */}
             <div className="flex items-start justify-between border-b border-border p-5">
