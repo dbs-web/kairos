@@ -118,3 +118,9 @@ enum HeyGenStatus {
   SUCCESS
   FAILED
 }
+
+enum DifyStatus {
+  EM_PRODUCAO,
+  PRONTO,
+  ERROR
+}
