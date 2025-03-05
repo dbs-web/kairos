@@ -26,20 +26,27 @@ export default class DifyAdapter {
         }
     }
 
+    private getHeader = (token: string) => {
+        return {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + token,
+        };
+    };
+
     async sendContentCreationRequest({
         briefingId,
         query,
         difyAgentToken,
     }: SendContentCreationRequestArgs) {
-        return await fetch(this.contentCreationUrl, {
+        const res = await fetch(this.contentCreationUrl, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: this.getHeader(difyAgentToken),
             body: JSON.stringify({
-                token: difyAgentToken,
-                briefingId,
-                message: query,
+                inputs: {
+                    text: query,
+                    briefingId,
+                },
+                user: Math.random() * 10000000000, // Generate random number as we dont want dify keeps track of this conversation
             }),
         });
     }
@@ -60,12 +67,12 @@ export default class DifyAdapter {
     async generateNewSuggestions({ difyAgentToken }: { difyAgentToken: string }) {
         await fetch(this.contentCreationUrl, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: this.getHeader(difyAgentToken),
             body: JSON.stringify({
-                token: difyAgentToken,
-                message: 'Gere novos conteúdos para o usuário.',
+                inputs: {
+                    text: 'Gere novos conteúdos para o usuário.',
+                },
+                user: Math.random() * 10000000000, // Generate random number as we dont want dify keeps track of this conversation
             }),
         });
     }

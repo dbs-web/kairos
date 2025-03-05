@@ -2,6 +2,7 @@ import DifyAdapter from '@/adapters/DifyAdapter';
 import { IBriefing } from '@/domain/entities/briefing';
 import { INews } from '@/domain/entities/news';
 import { ISuggestion } from '@/domain/entities/suggestion';
+import { UseCaseError } from '@/shared/errors';
 
 export default class SendContentCreationRequestsUseCase {
     private difyAdapter: DifyAdapter;
@@ -19,21 +20,28 @@ export default class SendContentCreationRequestsUseCase {
         dataArr: INews[] | ISuggestion[];
         briefings: IBriefing[];
     }) {
-        const briefingMap = this.mapBriefingsToRefId({ briefings });
+        try {
+            const briefingMap = this.mapBriefingsToRefId({ briefings });
 
-        const sendContentCreationRequests = dataArr.map(async (data) => {
-            const briefing = briefingMap[data.id];
+            const sendContentCreationRequests = dataArr.map(async (data) => {
+                const briefing = briefingMap[data.id];
 
-            if (briefing) {
-                await this.difyAdapter.sendContentCreationRequest({
-                    briefingId: briefing.id,
-                    query: this.buildQuery({ data }),
-                    difyAgentToken,
-                });
-            }
-        });
+                if (briefing) {
+                    await this.difyAdapter.sendContentCreationRequest({
+                        briefingId: briefing.id,
+                        query: this.buildQuery({ data }),
+                        difyAgentToken,
+                    });
+                }
+            });
 
-        await Promise.all(sendContentCreationRequests);
+            await Promise.all(sendContentCreationRequests);
+        } catch (error) {
+            throw new UseCaseError(
+                'Error while fetching DiFy API on Content Creation Requests',
+                error as Error,
+            );
+        }
     }
 
     private buildQuery({ data }: { data: INews | ISuggestion }) {
