@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `briefing` ADD COLUMN `difyStatus` ENUM('EM_PRODUCAO', 'PRONTO', 'ERROR') NOT NULL DEFAULT 'EM_PRODUCAO';

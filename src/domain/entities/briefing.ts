@@ -8,7 +8,8 @@ export interface IBriefing {
     text?: string | null | undefined;
     date?: Date;
     status: Status;
-    difyStatus: DifyStatus; 
+    difyStatus: DifyStatus;
+    difyMessage?: string | null | undefined;
     userId: number;
     sources?: string | null;
 }
@@ -21,7 +22,7 @@ export interface IAvatar {
 }
 
 export enum DifyStatus {
-    EM_PRODUCAO,
-    PRONTO,
-    ERRO,
+    EM_PRODUCAO = 'EM_PRODUCAO',
+    PRONTO = 'PRONTO',
+    ERROR = 'ERROR',
 }

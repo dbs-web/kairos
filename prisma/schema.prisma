@@ -45,6 +45,8 @@ model Briefing {
   text         String?     @db.VarChar(5000)
   date         DateTime
   status       Status
+  difyStatus   DifyStatus  @default(EM_PRODUCAO)
+  difyMessage  String?     @db.VarChar(500)
   userId       Int
   newsId       Int?
   sources      String?     @db.VarChar(5000)
@@ -120,7 +122,7 @@ enum HeyGenStatus {
 }
 
 enum DifyStatus {
-  EM_PRODUCAO,
-  PRONTO,
+  EM_PRODUCAO
+  PRONTO
   ERROR
 }
