@@ -1,2 +1,2 @@
 -- AlterTable
-ALTER TABLE `briefing` ADD COLUMN `difyMessage` VARCHAR(500) NULL;
+ALTER TABLE `Briefing` ADD COLUMN `difyMessage` VARCHAR(500) NULL;
