@@ -68,15 +68,8 @@ export default function VideoRedoDialog({ video }: VideoRedoDialogProps) {
             </DialogTrigger>
             <DialogContent className="max-w-[90vw] overflow-hidden !rounded p-2 sm:px-4 xl:max-w-7xl">
                 <DialogHeader>
-                    <DialogTitle className="mt-4">{video.title}</DialogTitle>
-                    <DialogDescription>
-                        <span>
-                            {step === 1 && 'Modifique a transcrição de seu vídeo'}
-
-                            {step === 2 &&
-                                'Selecione seu avatar para que seu vídeo possa ser refeito.'}
-                        </span>
-
+                    <DialogTitle className="my-4 text-center">{video.title}</DialogTitle>
+                    <DialogDescription className='my-8'>
                         <FormSteps step={step} />
                     </DialogDescription>
                 </DialogHeader>
