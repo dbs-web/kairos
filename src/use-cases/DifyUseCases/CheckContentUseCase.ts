@@ -5,8 +5,16 @@ export default class CheckContentUseCase{
     constructor(private difyAdapter: DifyAdapter){}
     async execute(text : string){
         const res = await this.difyAdapter.securityCheck({text})
-        if(!res.status){
-            throw new UseCaseError("Text rejected by security bot.")
+        try {
+            const json = res?.data?.outputs?.saida.replaceAll("`", "").replace("json", "")
+            const data = JSON.parse(json)
+            
+            if(data.status?.toLowerCase() === "reprovado"){
+                throw new UseCaseError(data?.justificativa)
+            }
+
+        }catch(error){
+            throw new UseCaseError(`${error instanceof Error ? error.message : error}`)
         }
     }
 }

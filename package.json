@@ -7,14 +7,10 @@
         "build": "npx prisma db push && npx prisma generate && next build",
         "start": "next start",
         "lint": "next lint",
-<<<<<<< Updated upstream
         "pretty": "prettier --write \"./**/*.{js,jsx,mjs,cjs,ts,tsx,json,css}\"",
         "postinstall": "prisma generate",
         "seed": "ts-node --require tsconfig-paths/register prisma/seed.ts",
         "vercel-build": "prisma generate && prisma migrate deploy && next build"
-=======
-        "pretty": "prettier --write \"./**/*.{js,jsx,mjs,cjs,ts,tsx,json,css}\""
->>>>>>> Stashed changes
     },
     "dependencies": {
         "@auth/core": "^0.37.4",

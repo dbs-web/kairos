@@ -148,6 +148,7 @@ export const PUT = withAuthorization([UserRoles.USER], async (request, user) => 
             data: updatedBriefing,
         });
     } catch (error) {
+        
         return createApiResponseUseCase.INTERNAL_SERVER_ERROR({
             route,
             body: body,

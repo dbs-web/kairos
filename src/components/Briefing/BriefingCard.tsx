@@ -64,12 +64,7 @@ export default function BriefingCard({ briefing }: BriefingCardProps) {
                         </time>
 
                         {briefing.sources && (
-                            <SourcesDialog sources={briefing.sources} title={briefing.title}>
-                                <div className="group flex cursor-pointer items-center gap-x-1.5 text-xs font-medium text-neutral-700 transition-colors hover:text-primary">
-                                    <MdArticle className="text-sm transition-colors group-hover:text-primary" />
-                                    Ver Fonte
-                                </div>
-                            </SourcesDialog>
+                            <SourcesDialog sources={briefing.sources} title={briefing.title} />
                         )}
                     </div>
                 </div>

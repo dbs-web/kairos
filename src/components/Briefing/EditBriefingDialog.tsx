@@ -48,7 +48,7 @@ export default function EditBriefingDialog({
 
     return (
         <Dialog open={open} onOpenChange={() => setOpen(!open)}>
-            <DialogTrigger className={className}>{children}</DialogTrigger>
+            <DialogTrigger className={className} asChild>{children}</DialogTrigger>
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle>{briefing.title}</DialogTitle>

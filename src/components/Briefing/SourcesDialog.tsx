@@ -1,58 +1,42 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
     Dialog,
     DialogContent,
     DialogHeader,
     DialogTitle,
-    DialogFooter,
     DialogTrigger,
 } from '@/components/ui/dialog';
 
 import MarkdownText from './MarkdownText';
-import { Button } from '../ui/button';
-import { MdOpenInNew } from 'react-icons/md';
+import { MdArticle } from 'react-icons/md';
 
 interface SourcesDialogProps {
     title: string;
     sources: string;
-    children: React.ReactNode;
 }
 
-export default function SourcesDialog({ title, sources, children }: SourcesDialogProps) {
+export default function SourcesDialog({ title, sources }: SourcesDialogProps) {
     const [open, setOpen] = useState<boolean>(false);
-
-    // Clonar o children e modificar suas props para abrir o diálogo
-    const clonedTrigger = React.cloneElement(
-        children as React.ReactElement<{ onClick?: () => void }>,
-        {
-            onClick: () => setOpen(true),
-        },
-    );
+    const handleDialogClose = () => {
+        setOpen(!open);
+    };
 
     return (
-        <>
-            {/* Renderizar apenas o trigger clonado, sem DialogTrigger */}
-            {clonedTrigger}
-
-            {/* Dialog separado do trigger para evitar problemas */}
-            <Dialog open={open} onOpenChange={setOpen}>
-                <DialogContent className="max-h-[90vh] sm:max-w-[700px]">
+        <Dialog open={open} onOpenChange={handleDialogClose}>
+            <DialogTrigger className="">
+                <div className="group flex cursor-pointer items-center gap-x-1.5 text-xs font-medium text-neutral-700 transition-colors hover:text-primary">
+                    <MdArticle className="text-sm transition-colors group-hover:text-primary" />
+                    Ver Fonte
+                </div>
+            </DialogTrigger>
+            <DialogContent className="max-w-[90vw] !rounded xl:w-[700px]">
+                <div className="relative flex flex-col items-center gap-y-8">
                     <DialogHeader>
-                        <DialogTitle className="flex items-center gap-2 text-xl">
-                            <MdOpenInNew className="text-primary" />
-                            Fontes: {title}
-                        </DialogTitle>
+                        <DialogTitle>{title}</DialogTitle>
                     </DialogHeader>
-
-                    <div className="max-h-[60vh] py-4">
-                        <MarkdownText text={sources} className="w-full" />
-                    </div>
-
-                    <DialogFooter>
-                        <Button onClick={() => setOpen(false)}>Fechar</Button>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
-        </>
+                    <MarkdownText text={sources} className="w-full" />
+                </div>
+            </DialogContent>
+        </Dialog>
     );
 }
