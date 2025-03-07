@@ -1,15 +1,15 @@
 'use client';
 import { IAvatar } from '@/domain/entities/briefing';
+import { useVideoCreation } from '@/hooks/use-video-creation';
 import { default as NextImage } from 'next/image';
 import { useEffect, useState } from 'react';
-import { useBriefing } from '@/hooks/use-briefing';
 
 interface AvatarProps {
     avatar: IAvatar;
 }
 
 export function Avatar({ avatar }: AvatarProps) {
-    const { selectAvatar, selectedAvatar } = useBriefing();
+    const { selectAvatar, selectedAvatar } = useVideoCreation();
     const [imageFormat, setImageFormat] = useState<string | null>(null);
     const [width, setWidth] = useState<number>(1280);
     const [height, setHeight] = useState<number>(720);

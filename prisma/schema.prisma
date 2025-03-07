@@ -22,6 +22,7 @@ model User {
   news                News[]
   suggestions         Suggestion[]
   videos              Video[]
+  @@index([role])
 }
 
 model Suggestion {
@@ -44,6 +45,8 @@ model Briefing {
   text         String?     @db.VarChar(5000)
   date         DateTime
   status       Status
+  difyStatus   DifyStatus  @default(EM_PRODUCAO)
+  difyMessage  String?     @db.VarChar(500)
   userId       Int
   newsId       Int?
   sources      String?     @db.VarChar(5000)
@@ -87,7 +90,7 @@ model Video {
   transcription  String       @default("") @db.VarChar(2000)
   user           User         @relation(fields: [userId], references: [id])
 
-  @@index([userId], map: "Video_userId_fkey")
+  @@index([userId], map: "Video_userId_fkey")  
 }
 
 model ApiLog {
@@ -116,4 +119,10 @@ enum HeyGenStatus {
   PROCESSING
   SUCCESS
   FAILED
+}
+
+enum DifyStatus {
+  EM_PRODUCAO
+  PRONTO
+  ERROR
 }

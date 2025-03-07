@@ -1,12 +1,13 @@
 'use client';
-
-import { createContext, useContext, useState, useEffect } from 'react';
-import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
-
-// Types
-import { IBriefing, IAvatar } from '@/domain/entities/briefing';
+// Hooks
+import { createContext, useContext } from 'react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useFetchData } from './use-fetch-data';
 import { usePagination } from './use-pagination';
+import { useAvatars } from './use-avatars';
+
+// Entities
+import { IBriefing, IAvatar } from '@/domain/entities/briefing';
 
 interface BriefingContextProps {
     briefings: IBriefing[];
@@ -31,12 +32,16 @@ const BriefingContext = createContext<BriefingContextProps | undefined>(undefine
 
 export const BriefingProvider = ({ children }: { children: React.ReactNode }) => {
     const queryClient = useQueryClient();
-
-    const [avatars, setAvatars] = useState<IAvatar[]>([]);
-    const [selectedAvatar, setSelectedAvatar] = useState<IAvatar | null>(null);
-    const [width, setWidth] = useState<number>(1280);
-    const [height, setHeight] = useState<number>(720);
-    const [error, setError] = useState<string>('');
+    const {
+        avatars,
+        error,
+        selectedAvatar,
+        width,
+        height,
+        setError,
+        selectAvatar,
+        clearSelectedAvatar,
+    } = useAvatars();
 
     const limits = {
         sm: 1,
@@ -52,39 +57,6 @@ export const BriefingProvider = ({ children }: { children: React.ReactNode }) =>
         { page, limit, pollingEnabled: true },
         'briefing',
     );
-
-    const fetchAvatars = async () => {
-        try {
-            const response = await fetch('/api/heygen/check-group');
-            const data = await response.json();
-            if (data?.data?.avatar_list) {
-                setAvatars(data.data.avatar_list);
-            } else {
-                setError('Ocorreu um erro ao encontrar seus avatares');
-            }
-        } catch (e) {
-            setError('Erro ao buscar avatares');
-        }
-    };
-
-    useEffect(() => {
-        fetchAvatars();
-    }, []);
-
-    const selectAvatar = (avatar_id: string, width: number, height: number) => {
-        const avatar = avatars.find((a) => a.avatar_id === avatar_id);
-        if (avatar) {
-            setSelectedAvatar(avatar);
-            setWidth(width);
-            setHeight(height);
-        } else {
-            setError('Avatar não encontrado');
-        }
-    };
-
-    const clearSelectedAvatar = () => {
-        setSelectedAvatar(null);
-    };
 
     const updateMutation = useMutation({
         mutationFn: async ({

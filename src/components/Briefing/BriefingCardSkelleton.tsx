@@ -10,50 +10,42 @@ import {
 import TextFallBack from './TextFallBack';
 
 // Icons
-import { CiCircleCheck, CiRedo } from 'react-icons/ci';
 import { BiDotsHorizontalRounded } from 'react-icons/bi';
+import { Skeleton } from '../ui/skeleton';
+import { Button } from '../ui/button';
 
 export default function BriefingCardSkelleton() {
     return (
-        <div className="grid grid-cols-1 grid-rows-[96px_1fr_48px] rounded-xl bg-white p-4 pt-6 lg:me-4">
-            <div className="flex w-full items-start justify-between">
-                <div className="flex h-full max-w-[80%] flex-col items-start justify-start">
-                    <div className="h-4 w-48 animate-pulse rounded bg-neutral-300"></div>
-                    <div className="mt-2 h-3 w-32 animate-pulse rounded bg-neutral-300"></div>
+        <div className="flex h-full flex-col rounded-xl bg-white shadow-sm">
+            {/* Cabeçalho do card */}
+            <div className="flex items-start justify-between border-b border-neutral-100 p-5">
+                <div className="flex max-w-[80%] flex-col">
+                    <Skeleton className="mb-2 h-6 w-3/4 rounded-md" />
+                    <div className="mt-2 flex items-center gap-x-3">
+                        <Skeleton className="h-4 w-40 rounded-md" />
+                        <Skeleton className="h-4 w-24 rounded-md" />
+                    </div>
                 </div>
-                <div className="flex items-center gap-x-2">
-                    <DropdownMenu>
-                        <DropdownMenuTrigger disabled>
-                            <div className="cursor-pointer rounded-lg bg-neutral-200 p-1 transition-all duration-300 hover:scale-105">
-                                <BiDotsHorizontalRounded className="text-lg text-neutral-500" />
-                            </div>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent>
-                            <DropdownMenuLabel>Ações</DropdownMenuLabel>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem className="cursor-pointer text-neutral-700">
-                                Arquivar
-                            </DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                </div>
+                <Button
+                    variant="outline"
+                    size="icon"
+                    className="h-8 w-8 cursor-default border-neutral-200 opacity-50"
+                    disabled
+                >
+                    <BiDotsHorizontalRounded className="text-lg text-neutral-400" />
+                </Button>
             </div>
 
-            <TextFallBack />
+            {/* Conteúdo do briefing */}
+            <div className="flex-grow px-5 py-4">
+                <TextFallBack />
+            </div>
 
-            <div className="mt-4 flex w-full items-center justify-between gap-x-2">
-                <div className="flex min-w-32 basis-1/3 items-center justify-center gap-x-1 rounded-lg bg-secondary py-2 text-white transition duration-300 hover:shadow-md">
-                    <CiCircleCheck className="text-xl" />
-                    <div className="h-3 w-16 animate-pulse rounded bg-neutral-300/40"></div>
-                </div>
-                <div className="flex basis-1/3 cursor-pointer items-center justify-center gap-x-1 rounded-lg bg-secondary py-2 text-white transition duration-300 hover:shadow-md">
-                    <CiRedo className="text-xl" />
-                    <div className="h-3 w-16 animate-pulse rounded bg-neutral-300/40"></div>
-                </div>
-                <div className="ms-auto flex min-w-32 basis-1/3 items-center justify-center gap-x-1 rounded-lg bg-secondary py-2 text-white transition duration-300 hover:shadow-md">
-                    <CiCircleCheck className="text-xl" />
-                    <div className="h-3 w-16 animate-pulse rounded bg-neutral-300/40"></div>
-                </div>
+            {/* Botões de ação */}
+            <div className="grid grid-cols-3 gap-3 border-t border-neutral-100 p-5">
+                <Skeleton className="h-10 w-full rounded-md bg-neutral-200" />
+                <Skeleton className="h-10 w-full rounded-md bg-neutral-200" />
+                <Skeleton className="h-10 w-full rounded-md bg-primary/20" />
             </div>
         </div>
     );

@@ -53,7 +53,6 @@ export const POST = withAuthorization([UserRoles.USER], async (request, user) =>
             status: 200,
         });
     } catch (error) {
-        console.error(error);
         return NextResponse.json({
             error: 'An error occurred while processing suggestions.',
             status: 500,

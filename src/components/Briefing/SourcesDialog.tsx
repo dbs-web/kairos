@@ -1,38 +1,58 @@
-import { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
     Dialog,
     DialogContent,
     DialogHeader,
     DialogTitle,
+    DialogFooter,
     DialogTrigger,
 } from '@/components/ui/dialog';
 
 import MarkdownText from './MarkdownText';
+import { Button } from '../ui/button';
+import { MdOpenInNew } from 'react-icons/md';
 
 interface SourcesDialogProps {
     title: string;
     sources: string;
+    children: React.ReactNode;
 }
 
-export default function SourcesDialog({ title, sources }: SourcesDialogProps) {
-    const [open, setOpen] = useState<boolean>();
-    const handleDialogClose = () => {
-        setOpen(!open);
-    };
+export default function SourcesDialog({ title, sources, children }: SourcesDialogProps) {
+    const [open, setOpen] = useState<boolean>(false);
+
+    // Clonar o children e modificar suas props para abrir o diálogo
+    const clonedTrigger = React.cloneElement(
+        children as React.ReactElement<{ onClick?: () => void }>,
+        {
+            onClick: () => setOpen(true),
+        },
+    );
 
     return (
-        <Dialog open={open} onOpenChange={handleDialogClose}>
-            <DialogTrigger className="rounded-lg bg-neutral-200 px-2 py-0.5 text-neutral-500">
-                Ver Fonte
-            </DialogTrigger>
-            <DialogContent className="max-w-[90vw] !rounded xl:w-[700px]">
-                <div className="relative flex flex-col items-center gap-y-8">
+        <>
+            {/* Renderizar apenas o trigger clonado, sem DialogTrigger */}
+            {clonedTrigger}
+
+            {/* Dialog separado do trigger para evitar problemas */}
+            <Dialog open={open} onOpenChange={setOpen}>
+                <DialogContent className="max-h-[90vh] sm:max-w-[700px]">
                     <DialogHeader>
-                        <DialogTitle>{title}</DialogTitle>
+                        <DialogTitle className="flex items-center gap-2 text-xl">
+                            <MdOpenInNew className="text-primary" />
+                            Fontes: {title}
+                        </DialogTitle>
                     </DialogHeader>
-                    <MarkdownText text={sources} className="w-full" />
-                </div>
-            </DialogContent>
-        </Dialog>
+
+                    <div className="max-h-[60vh] py-4">
+                        <MarkdownText text={sources} className="w-full" />
+                    </div>
+
+                    <DialogFooter>
+                        <Button onClick={() => setOpen(false)}>Fechar</Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+        </>
     );
 }

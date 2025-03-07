@@ -1,10 +1,7 @@
-import { authOptions } from '@/lib/auth';
-import { getServerSession } from 'next-auth';
 import { NextResponse } from 'next/server';
 
 // Entities
 import { Status } from '@/domain/entities/status';
-import { HeyGenStatus } from '@/domain/entities/video';
 import { UserRoles } from '@/domain/entities/user';
 
 // Use Cases
@@ -13,7 +10,6 @@ import { getUsersUseCase } from '@/use-cases/UserUseCases';
 import { createVideoUseCase } from '@/use-cases/VideoUseCases';
 import { withAuthorization } from '@/adapters/withAuthorization';
 import { generateVideoUseCase } from '@/use-cases/HeyGen';
-import { checkContentUseCase } from '@/use-cases/DifyUseCases';
 
 export const POST = withAuthorization(
     [UserRoles.USER, UserRoles.ADMIN],
