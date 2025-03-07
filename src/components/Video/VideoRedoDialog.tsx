@@ -69,7 +69,7 @@ export default function VideoRedoDialog({ video }: VideoRedoDialogProps) {
             <DialogContent className="max-w-[90vw] overflow-hidden !rounded p-2 sm:px-4 xl:max-w-7xl">
                 <DialogHeader>
                     <DialogTitle className="my-4 text-center">{video.title}</DialogTitle>
-                    <DialogDescription className='my-8'>
+                    <DialogDescription className="my-8">
                         <FormSteps step={step} />
                     </DialogDescription>
                 </DialogHeader>

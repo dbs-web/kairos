@@ -43,7 +43,7 @@ export class AdapterError extends ApplicationError {
 
 export class SecurityPolicyViolantionError extends Error {
     constructor() {
-        super("Text does not follow usage policies.");
+        super('Text does not follow usage policies.');
         this.name = this.constructor.name;
         Error.captureStackTrace(this, this.constructor);
     }

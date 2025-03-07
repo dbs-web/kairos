@@ -64,7 +64,7 @@ export default class CreateBriefingsUseCase {
             date: new Date(),
             userId,
             status: Status.EM_PRODUCAO,
-            difyStatus: DifyStatus.EM_PRODUCAO
+            difyStatus: DifyStatus.EM_PRODUCAO,
         });
 
         if (!createdBriefing) {

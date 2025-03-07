@@ -4,7 +4,7 @@ export const redoVideo = async (
     payload: { videoId: number; transcription: string },
     avatar: IAvatar,
     dimensions: { width: number; height: number },
-): Promise<boolean> => {
+): Promise<{ok: boolean, message: string}> => {
     const response = await fetch('/api/videos/redo', {
         method: 'POST',
         headers: {
@@ -19,5 +19,6 @@ export const redoVideo = async (
         }),
     });
 
-    return response.ok;
+    const data = await response.json()
+    return {ok: response.ok, message: data.message};
 };

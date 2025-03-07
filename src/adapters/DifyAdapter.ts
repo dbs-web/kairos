@@ -5,8 +5,8 @@ export interface SendContentCreationRequestArgs {
 }
 
 export interface SecurityResponse {
-    status: boolean,
-    justificativa: string
+    status: boolean;
+    justificativa: string;
 }
 
 export default class DifyAdapter {
@@ -32,14 +32,14 @@ export default class DifyAdapter {
             throw new Error('SUBTITLE_AGENT_TOKEN is not set');
         }
 
-        this.securityCheckToken = process.env.SECURITY_CHECK_TOKEN ?? "";
-        if (!this.securityCheckToken){
-            throw new Error("SECURITY_CHECK_TOKEN is not set")
+        this.securityCheckToken = process.env.SECURITY_CHECK_TOKEN ?? '';
+        if (!this.securityCheckToken) {
+            throw new Error('SECURITY_CHECK_TOKEN is not set');
         }
 
-        this.securityCheckUrl = process.env.SECURITY_CHECK_URL ?? "";
-        if(!this.securityCheckUrl){
-            throw new Error("securityCheckUrl is not set")
+        this.securityCheckUrl = process.env.SECURITY_CHECK_URL ?? '';
+        if (!this.securityCheckUrl) {
+            throw new Error('securityCheckUrl is not set');
         }
     }
 
@@ -94,18 +94,18 @@ export default class DifyAdapter {
         });
     }
 
-    async securityCheck({text} : {text: string}){
+    async securityCheck({ text }: { text: string }) {
         const res = await fetch(this.securityCheckUrl, {
-            method: "POST",
+            method: 'POST',
             headers: this.getHeader(this.securityCheckToken),
-              body: JSON.stringify({
+            body: JSON.stringify({
                 inputs: {
                     text,
                 },
                 user: Math.random() * 10000000000,
-              })
-        })
+            }),
+        });
 
-        return await res.json()
+        return await res.json();
     }
 }

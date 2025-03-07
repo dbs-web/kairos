@@ -11,12 +11,12 @@ const createSubtitlesUseCase = new CreateSubtitlesUseCase(difyAdapter);
 const sendContentCreationRequestsUseCase = new SendContentCreationRequestsUseCase(difyAdapter);
 const generateNewSuggestionUseCase = new GenerateNewSuggestionUseCase(difyAdapter);
 const customBriefingRequestUseCase = new CustomBriefingRequestUseCase(difyAdapter);
-const checkContentUseCase = new CheckContentUseCase(difyAdapter)
+const checkContentUseCase = new CheckContentUseCase(difyAdapter);
 
 export {
     sendContentCreationRequestsUseCase,
     generateNewSuggestionUseCase,
     customBriefingRequestUseCase,
     createSubtitlesUseCase,
-    checkContentUseCase
+    checkContentUseCase,
 };

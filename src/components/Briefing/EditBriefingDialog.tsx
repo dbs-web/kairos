@@ -31,24 +31,31 @@ export default function EditBriefingDialog({
 
     const handleSubmit = async () => {
         setOpen(false);
-        toast({title : "Aguarde...", description: "Nós estamos verificando se o seu texto segue as nossas diretrizes de uso."})
-        
+        toast({
+            title: 'Aguarde...',
+            description:
+                'Nós estamos verificando se o seu texto segue as nossas diretrizes de uso.',
+        });
+
         try {
             await updateBriefing(briefing.id, text, briefing.status);
             toast({
                 title: 'Seu briefing foi editado com sucesso!',
             });
-        } catch (e) {
+        } catch (error) {
             toast({
-                title : "Seu texto foi rejeitado.",
-                description: "Verifique se ele segue as normas e políticas de uso do nosso app."
-            })
+                title: 'Seu texto foi rejeitado.',
+                description: `${error instanceof Error ? error.message : error}`,
+                duration: 100000,
+            });
         }
     };
 
     return (
         <Dialog open={open} onOpenChange={() => setOpen(!open)}>
-            <DialogTrigger className={className} asChild>{children}</DialogTrigger>
+            <DialogTrigger className={className} asChild>
+                {children}
+            </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle>{briefing.title}</DialogTitle>
@@ -65,7 +72,6 @@ export default function EditBriefingDialog({
                 <button
                     onClick={handleSubmit}
                     className="mt-4 w-full rounded-lg bg-primary p-2 text-white"
-
                 >
                     {'Salvar'}
                 </button>

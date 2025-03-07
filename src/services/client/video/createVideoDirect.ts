@@ -4,7 +4,7 @@ export const createVideoDirect = async (
     payload: { title: string; text: string },
     avatar: IAvatar,
     dimensions: { width: number; height: number },
-): Promise<boolean> => {
+): Promise<{ ok: boolean; message: string }> => {
     const response = await fetch('/api/videos', {
         method: 'POST',
         headers: {
@@ -19,5 +19,7 @@ export const createVideoDirect = async (
         }),
     });
 
-    return response.ok;
+    const data = await response.json();
+
+    return { ok: response.ok, message: data.message };
 };
