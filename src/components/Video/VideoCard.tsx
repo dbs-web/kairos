@@ -36,30 +36,34 @@ export default function VideoCard({ video }: VideoCardProps) {
     const aspectRatio = isLandscape ? 'aspect-video' : 'aspect-[9/16]';
 
     return (
-        <div className="flex h-full flex-col overflow-hidden rounded-xl border border-border bg-card shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
+        <div className="flex h-full flex-col overflow-hidden rounded-xl border border-border bg-card shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:shadow-primary/10">
             {/* Video Container */}
-            <div
-                className={`relative ${aspectRatio} flex w-full items-center justify-center bg-muted/50`}
-            >
-                {video.heygenStatus === 'SUCCESS' && (
-                    <video controls className="h-full w-full object-contain">
-                        <source src={video.url} type="video/mp4" />
-                    </video>
-                )}
-                {video.heygenStatus === 'PROCESSING' && (
-                    <div className="flex h-full w-full animate-pulse flex-col items-center justify-center">
-                        <PiSpinnerThin className="mb-2 animate-spin text-3xl text-primary drop-shadow-sm" />
-                        <p className="text-xs text-foreground/70">Processando seu vídeo...</p>
-                    </div>
-                )}
-                {video.heygenStatus === 'FAILED' && (
-                    <div className="flex h-full w-full flex-col items-center justify-center">
-                        <BiErrorCircle className="mb-2 text-3xl text-destructive" />
-                        <p className="px-4 text-center text-xs text-destructive/90">
-                            Falha no processamento
-                        </p>
-                    </div>
-                )}
+            <div className="group relative overflow-hidden rounded-t-xl">
+                {/* Background placeholder with gradient */}
+                <div className={`${aspectRatio} flex w-full items-center justify-center bg-gradient-to-b from-primary/5 to-primary/20`}></div>
+                
+                {/* Video content positioned absolutely */}
+                <div className="absolute inset-0 flex items-center justify-center">
+                    {video.heygenStatus === 'SUCCESS' && (
+                        <video controls className="h-full w-full object-contain">
+                            <source src={video.url} type="video/mp4" />
+                        </video>
+                    )}
+                    {video.heygenStatus === 'PROCESSING' && (
+                        <div className="flex h-full w-full animate-pulse flex-col items-center justify-center">
+                            <PiSpinnerThin className="mb-2 animate-spin text-3xl text-primary drop-shadow-sm" />
+                            <p className="text-xs text-foreground/70">Processando seu vídeo...</p>
+                        </div>
+                    )}
+                    {video.heygenStatus === 'FAILED' && (
+                        <div className="flex h-full w-full flex-col items-center justify-center">
+                            <BiErrorCircle className="mb-2 text-3xl text-destructive" />
+                            <p className="px-4 text-center text-xs text-destructive/90">
+                                Falha no processamento
+                            </p>
+                        </div>
+                    )}
+                </div>
             </div>
 
             {/* Content Area */}
