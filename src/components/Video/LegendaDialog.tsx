@@ -99,9 +99,9 @@ export default function LegendaDialog({ video }: LegendaDialogProps) {
 
                     <Button
                         onClick={() => setOpen(false)}
-                        className="bg-gradient-to-r from-[#0085A3] to-primary text-primary-foreground transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-primary/30"
+                        className="bg-gradient-to-r from-[#0085A3] to-primary transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-primary/30"
                     >
-                        Fechar
+                        <span className="text-white">Fechar</span>
                     </Button>
                 </DialogFooter>
             </DialogContent>

@@ -92,7 +92,7 @@ export default function VideoCard({ video }: VideoCardProps) {
                     className="flex items-center gap-1 bg-gradient-to-r from-[#0085A3] to-primary text-white transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-primary/30"
                 >
                     <FiDownload className="text-sm text-white" />
-                    <span>Download</span>
+                    <span className="text-white">Download</span>
                 </Button>
             </div>
         </div>

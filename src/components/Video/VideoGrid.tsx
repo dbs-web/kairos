@@ -99,16 +99,19 @@ export function VideoGrid() {
             <div className="p-6">
                 {isLoading ? (
                     // Show skeletons while loading in a regular grid
-                    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-                        {Array.from({ length: 8 }).map((_, index) => (
-                            <div key={`skeleton-${index}`} className="h-full">
-                                <VideoCardSkeleton />
+                    <div className="mx-auto grid w-full max-w-6xl grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                        {organizedVideos.map((video) => (
+                            <div
+                                key={`video-${video.id}`}
+                                className={`h-96 ${video.gridClass || ''}`}
+                            >
+                                <VideoCard video={video} />
                             </div>
                         ))}
                     </div>
                 ) : // Show actual videos when loaded
                 organizedVideos.length > 0 ? (
-                    <div className="grid auto-rows-auto grid-cols-2 gap-6 md:grid-cols-3 lg:grid-cols-4">
+                    <div className="mx-auto grid w-full max-w-6xl grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                         {organizedVideos.map((video) => (
                             <div
                                 key={`video-${video.id}`}

@@ -23,9 +23,9 @@ export const VideoProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
     const limits = {
         sm: 1,
-        md: 1,
-        lg: 2,
-        xl: 2,
+        md: 2,
+        lg: 3,
+        xl: 3,
     };
 
     const { page, setPage, limit } = usePagination(limits);
