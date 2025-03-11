@@ -100,12 +100,9 @@ export function VideoGrid() {
                 {isLoading ? (
                     // Show skeletons while loading in a regular grid
                     <div className="mx-auto grid w-full max-w-6xl grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                        {organizedVideos.map((video) => (
-                            <div
-                                key={`video-${video.id}`}
-                                className={`h-96 ${video.gridClass || ''}`}
-                            >
-                                <VideoCard video={video} />
+                        {Array.from({ length: 3 }).map((_, index) => (
+                            <div key={`skeleton-${index}`} className="h-full">
+                                <VideoCardSkeleton />
                             </div>
                         ))}
                     </div>
@@ -121,7 +118,8 @@ export function VideoGrid() {
                             </div>
                         ))}
                     </div>
-                ) : (
+) : (
+
                     // Empty state
                     <div className="flex flex-col items-center justify-center rounded-xl border border-border bg-card/50 py-16 text-center shadow-sm">
                         <p className="mb-4 text-lg text-foreground/80">Nenhum vídeo disponível.</p>
