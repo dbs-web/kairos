@@ -4,7 +4,7 @@ export const createVideoBriefing = async (
     payload: { briefingId: number },
     avatar: IAvatar,
     dimensions: { width: number; height: number },
-): Promise<boolean> => {
+): Promise<{ ok: boolean; message: string }> => {
     const response = await fetch('/api/briefings/aprovar', {
         method: 'POST',
         headers: {
@@ -17,6 +17,6 @@ export const createVideoBriefing = async (
             briefing: payload.briefingId,
         }),
     });
-
-    return response.ok;
+    const data = await response.json();
+    return { ok: response.ok, message: data.message };
 };

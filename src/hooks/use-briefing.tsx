@@ -77,11 +77,13 @@ export const BriefingProvider = ({ children }: { children: React.ReactNode }) =>
             });
 
             if (!response.ok) {
-                throw new Error('Erro ao atualizar briefing');
+                const data = await response.json();
+                const error = data.message;
+                throw new Error(error);
             }
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['briefing'] });
+            refetch();
         },
     });
 

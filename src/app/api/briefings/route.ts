@@ -11,7 +11,7 @@ import {
     getPaginatedBriefingsUseCase,
     updateBriefingUseCase,
 } from '@/use-cases/BriefingUseCases';
-import { customBriefingRequestUseCase } from '@/use-cases/DifyUseCases';
+import { checkContentUseCase, customBriefingRequestUseCase } from '@/use-cases/DifyUseCases';
 
 // Adapters
 import { Session, withAuthorization } from '@/adapters/withAuthorization';
@@ -86,6 +86,9 @@ export const POST = withAuthorization([UserRoles.USER, UserRoles.ADMIN], async (
     }
 
     try {
+        // Checks whether the text complies with policy standards
+        await checkContentUseCase.execute(prompt);
+
         const createdBriefing = await createBriefingsUseCase.fromPrompt({
             userId: user.id,
             title,
@@ -108,6 +111,7 @@ export const POST = withAuthorization([UserRoles.USER, UserRoles.ADMIN], async (
         return createApiResponseUseCase.INTERNAL_SERVER_ERROR({
             route,
             body: body,
+            data: { message: `${error instanceof Error ? error.message : error}` },
             message: 'Failed to create briefing',
             error: `Internal server error: ${error instanceof Error ? error.message : error}`,
         });
@@ -129,6 +133,9 @@ export const PUT = withAuthorization([UserRoles.USER], async (request, user) => 
     }
 
     try {
+        // Checks whether the text complies with policy standards
+        await checkContentUseCase.execute(text);
+
         const updatedBriefing = await updateBriefingUseCase.execute({
             id,
             userId: user.id,
@@ -148,6 +155,7 @@ export const PUT = withAuthorization([UserRoles.USER], async (request, user) => 
         return createApiResponseUseCase.INTERNAL_SERVER_ERROR({
             route,
             body: body,
+            data: { message: `${error instanceof Error ? error.message : error}` },
             message: 'Failed to update briefing',
             error: `Internal server error: ${error instanceof Error ? error.message : error}`,
         });

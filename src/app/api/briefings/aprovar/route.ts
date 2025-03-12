@@ -1,10 +1,7 @@
-import { authOptions } from '@/lib/auth';
-import { getServerSession } from 'next-auth';
 import { NextResponse } from 'next/server';
 
 // Entities
 import { Status } from '@/domain/entities/status';
-import { HeyGenStatus } from '@/domain/entities/video';
 import { UserRoles } from '@/domain/entities/user';
 
 // Use Cases

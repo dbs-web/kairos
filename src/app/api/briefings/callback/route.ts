@@ -5,6 +5,7 @@ import { Status } from '@/domain/entities/status';
 // Use Cases
 import { createApiResponseUseCase } from '@/use-cases/ApiLogUseCases';
 import { updateBriefingUseCase } from '@/use-cases/BriefingUseCases';
+import { DifyStatus } from '@prisma/client';
 
 interface CallbackBody {
     briefingId?: number;
@@ -40,6 +41,8 @@ export const POST = withExternalRequestValidation(async (request: Request) => {
 
         const updateData: any = {
             status: Status.EM_ANALISE,
+            difyStatus: DifyStatus.PRONTO,
+            difyMessage: '',
             text,
         };
 

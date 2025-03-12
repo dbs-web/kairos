@@ -1,6 +1,7 @@
 import DifyAdapter from '@/adapters/DifyAdapter';
 import { IBriefing } from '@/domain/entities/briefing';
 import { UseCaseError } from '@/shared/errors';
+import { checkContentUseCase } from '.';
 
 export default class CustomBriefingRequestUseCase {
     private difyAdapter: DifyAdapter;

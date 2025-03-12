@@ -1,11 +1,11 @@
 import { IAvatar } from '@/domain/entities/briefing';
 
-export const createVideoDirect = async (
-    payload: { title: string; text: string },
+export const redoVideo = async (
+    payload: { videoId: number; transcription: string },
     avatar: IAvatar,
     dimensions: { width: number; height: number },
-): Promise<{ ok: boolean; message: string }> => {
-    const response = await fetch('/api/videos', {
+): Promise<{ok: boolean, message: string}> => {
+    const response = await fetch('/api/videos/redo', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -14,12 +14,11 @@ export const createVideoDirect = async (
             avatar: avatar.avatar_id,
             width: dimensions.width,
             height: dimensions.height,
-            title: payload.title,
-            text: payload.text,
+            videoId: payload.videoId,
+            transcription: payload.transcription,
         }),
     });
 
-    const data = await response.json();
-
-    return { ok: response.ok, message: data.message };
+    const data = await response.json()
+    return {ok: response.ok, message: data.message};
 };

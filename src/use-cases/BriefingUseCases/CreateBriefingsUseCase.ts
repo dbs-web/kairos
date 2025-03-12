@@ -1,8 +1,9 @@
 import { ISuggestion } from '@/domain/entities/suggestion';
 import { IBriefingService } from '../../services/BriefingService';
-import { IBriefing } from '@/domain/entities/briefing';
+import { DifyStatus, IBriefing } from '@/domain/entities/briefing';
 import { Status } from '@/domain/entities/status';
 import { INews } from '@/domain/entities/news';
+
 import { UseCaseError } from '@/shared/errors';
 
 export default class CreateBriefingsUseCase {
@@ -24,6 +25,7 @@ export default class CreateBriefingsUseCase {
             date: new Date(),
             suggestionId: suggestion.id,
             status: Status.EM_PRODUCAO,
+            difyStatus: DifyStatus.EM_PRODUCAO,
             userId: userId,
         }));
 
@@ -42,6 +44,7 @@ export default class CreateBriefingsUseCase {
             date: new Date(),
             newsId: news.id,
             status: Status.EM_PRODUCAO,
+            difyStatus: DifyStatus.EM_PRODUCAO,
             userId: userId,
         }));
 
@@ -61,6 +64,7 @@ export default class CreateBriefingsUseCase {
             date: new Date(),
             userId,
             status: Status.EM_PRODUCAO,
+            difyStatus: DifyStatus.EM_PRODUCAO,
         });
 
         if (!createdBriefing) {

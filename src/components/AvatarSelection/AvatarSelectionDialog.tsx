@@ -29,7 +29,7 @@ export default function AvatarSelectionDialog({
     payload,
     children,
 }: AvatarSelectionDialogProps) {
-    const { sendVideo, clearSelectedAvatar, selectedAvatar } = useVideoCreation();
+    const { sendVideo, clearSelectedAvatar, selectedAvatar, error } = useVideoCreation();
     const { toast } = useToast();
     const [open, setOpen] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -52,7 +52,7 @@ export default function AvatarSelectionDialog({
         } else {
             toast({
                 title: 'Erro ao enviar vídeo',
-                description: 'Tente novamente mais tarde.',
+                description: error,
             });
         }
     };

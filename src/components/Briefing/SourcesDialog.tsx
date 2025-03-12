@@ -1,21 +1,21 @@
-import React, { useState } from 'react';
+import { ReactNode, useState } from 'react';
 import {
     Dialog,
     DialogContent,
+    DialogFooter,
     DialogHeader,
     DialogTitle,
-    DialogFooter,
     DialogTrigger,
 } from '@/components/ui/dialog';
 
 import MarkdownText from './MarkdownText';
-import { Button } from '../ui/button';
 import { MdOpenInNew } from 'react-icons/md';
+import { Button } from '../ui/button';
 
 interface SourcesDialogProps {
     title: string;
     sources: string;
-    children: React.ReactNode;
+    children: ReactNode;
 }
 
 export default function SourcesDialog({ title, sources, children }: SourcesDialogProps) {

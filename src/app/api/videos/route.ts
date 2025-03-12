@@ -6,12 +6,13 @@ import { UserRoles } from '@/domain/entities/user';
 // Use Cases
 import { createVideoUseCase, getPaginatedVideosUseCase } from '@/use-cases/VideoUseCases';
 import { createApiResponseUseCase } from '@/use-cases/ApiLogUseCases';
+import { getUsersUseCase } from '@/use-cases/UserUseCases';
+import { generateVideoUseCase } from '@/use-cases/HeyGen';
+import { checkContentUseCase } from '@/use-cases/DifyUseCases';
 
 // Adapters
 import { Session, withAuthorization } from '@/adapters/withAuthorization';
 import { Pagination, withPagination } from '@/adapters/withPagination';
-import { getUsersUseCase } from '@/use-cases/UserUseCases';
-import { generateVideoUseCase } from '@/use-cases/HeyGen';
 
 const route = '/api/videos';
 
@@ -45,6 +46,9 @@ export const POST = withAuthorization([UserRoles.USER], async (request, { id: us
     const body = await request.json();
     try {
         const { avatar, title, text, width, height } = body;
+
+        // Checks whether the text complies with policy standards
+        await checkContentUseCase.execute(text);
 
         if (!avatar || !title || !text || !width || !height) {
             return createApiResponseUseCase.BAD_REQUEST({
@@ -90,6 +94,7 @@ export const POST = withAuthorization([UserRoles.USER], async (request, { id: us
     } catch (error) {
         return createApiResponseUseCase.INTERNAL_SERVER_ERROR({
             route,
+            data: { message: `${error instanceof Error ? error.message : error}` },
             message: 'Error while creating new video',
             body,
             error: `${error instanceof Error ? error.message : error}`,

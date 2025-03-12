@@ -1,4 +1,4 @@
-import { IBriefing } from '@/domain/entities/briefing';
+import { DifyStatus, IBriefing } from '@/domain/entities/briefing';
 
 // Components
 import {
@@ -20,7 +20,6 @@ import { MdArticle, MdRefresh } from 'react-icons/md';
 import EditBriefingDialog from './EditBriefingDialog';
 import MarkdownText from './MarkdownText';
 import { useBriefing } from '@/hooks/use-briefing';
-import { Status } from '@/domain/entities/status';
 
 import SourcesDialog from './SourcesDialog';
 import { useToast } from '@/hooks/use-toast';
@@ -29,6 +28,7 @@ import AvatarSelectionDialog from '../AvatarSelection/AvatarSelectionDialog';
 import { VideoCreationProvider } from '@/hooks/use-video-creation';
 import { createVideoBriefing } from '@/services/client/video/createVideoBriefing';
 import { Button } from '../ui/button';
+import { Status } from '@prisma/client';
 
 interface BriefingCardProps {
     briefing: IBriefing;
@@ -102,11 +102,16 @@ export default function BriefingCard({ briefing }: BriefingCardProps) {
 
             {/* Conteúdo do briefing */}
             <div className="flex-grow px-5 py-4">
-                {briefing.status === Status.EM_PRODUCAO ? (
+                {briefing.difyStatus === DifyStatus.ERROR ? (
+                    <MarkdownText
+                        text={
+                            'Ocorreu um erro ao gerar seu conteúdo, tente gerar ele novamente clicando em refazer. Caso o erro persista, entre em contato com os desenvolvedores.'
+                        }
+                    />
+                ) : briefing.status === Status.EM_PRODUCAO ? (
                     <TextFallBack />
                 ) : (
-                    // @ts-expect-error Briefing will always have text field
-                    <MarkdownText text={briefing.text} />
+                    <MarkdownText text={briefing.text as string} />
                 )}
             </div>
 

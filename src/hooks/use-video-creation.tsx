@@ -20,7 +20,7 @@ interface VideoCreationProviderProps {
         payload: any,
         avatar: IAvatar,
         dimensions: { width: number; height: number },
-    ) => Promise<boolean>;
+    ) => Promise<{ ok: boolean; message: string }>;
 }
 
 export const VideoCreationProvider = ({ children, createVideo }: VideoCreationProviderProps) => {
@@ -42,12 +42,12 @@ export const VideoCreationProvider = ({ children, createVideo }: VideoCreationPr
         }
 
         try {
-            const success = await createVideo(payload, selectedAvatar, { width, height });
-            if (success) {
+            const { ok, message } = await createVideo(payload, selectedAvatar, { width, height });
+            if (ok) {
                 setError('');
                 return true;
             } else {
-                setError('Erro ao enviar vídeo para produção');
+                setError(message);
                 return false;
             }
         } catch (error) {

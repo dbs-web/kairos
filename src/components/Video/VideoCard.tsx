@@ -8,6 +8,10 @@ import LegendaDialog from './LegendaDialog';
 // Entities
 import { IVideo } from '@/domain/entities/video';
 import { HeyGenStatus } from '@prisma/client';
+import { ScrollArea } from '../ui/scroll-area';
+import VideoRedoDialog from './VideoRedoDialog';
+import { redoVideo } from '@/services/client/video/redoVideo';
+import { VideoCreationProvider } from '@/hooks/use-video-creation';
 import { Button } from '../ui/button';
 
 interface VideoCardProps {
@@ -87,6 +91,9 @@ export default function VideoCard({ video }: VideoCardProps) {
                 <div className="flex gap-2">
                     <TranscriptionDialog video={video} />
                     <LegendaDialog video={video} />
+                    <VideoCreationProvider createVideo={redoVideo}>
+                        <VideoRedoDialog video={video} />
+                    </VideoCreationProvider>
                 </div>
 
                 <Button
