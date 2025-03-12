@@ -44,8 +44,10 @@ export default function VideoCard({ video }: VideoCardProps) {
             {/* Video Container */}
             <div className="group relative overflow-hidden rounded-t-xl">
                 {/* Background placeholder with gradient */}
-                <div className={`${aspectRatio} flex w-full items-center justify-center bg-gradient-to-b from-primary/5 to-primary/20`}></div>
-                
+                <div
+                    className={`${aspectRatio} flex w-full items-center justify-center bg-gradient-to-b from-primary/5 to-primary/20`}
+                ></div>
+
                 {/* Video content positioned absolutely */}
                 <div className="absolute inset-0 flex items-center justify-center">
                     {video.heygenStatus === 'SUCCESS' && (

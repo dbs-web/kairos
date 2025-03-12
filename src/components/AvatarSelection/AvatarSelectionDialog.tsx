@@ -74,9 +74,7 @@ export default function AvatarSelectionDialog({
                     className="create-video-button mt-6 flex w-full items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-[#0085A3] to-primary p-3 text-sm transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-primary/30 disabled:cursor-not-allowed disabled:opacity-50"
                     disabled={!selectedAvatar || loading}
                 >
-                    <span className="text-white">
-                        {loading ? 'Enviando...' : 'Enviar Vídeo'}
-                    </span>
+                    <span className="text-white">{loading ? 'Enviando...' : 'Enviar Vídeo'}</span>
                 </button>
             </DialogContent>
         </Dialog>

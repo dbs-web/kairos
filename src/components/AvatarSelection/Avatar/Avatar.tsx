@@ -73,9 +73,7 @@ export function Avatar({ avatar }: AvatarProps) {
                         : '',
                 }}
             >
-                <span className="text-white">
-                    {isSelected ? 'Selecionado' : 'Escolher Avatar'}
-                </span>
+                <span className="text-white">{isSelected ? 'Selecionado' : 'Escolher Avatar'}</span>
             </button>
         </div>
     );

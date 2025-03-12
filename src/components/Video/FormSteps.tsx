@@ -17,7 +17,7 @@ export default function FormSteps({ step }: { step: number }) {
                     className="grid h-8 w-8 items-center rounded-full bg-slate-300 text-center font-bold text-neutral-700 data-[active=true]:bg-primary data-[active=true]:text-white"
                     data-active={step == 2}
                 >
-                    <span className={step == 2 ? "text-white" : "text-neutral-700"}>2</span>
+                    <span className={step == 2 ? 'text-white' : 'text-neutral-700'}>2</span>
                 </div>
 
                 <span>Avatar</span>

@@ -49,7 +49,7 @@ export default function VideoRedoDialog({ video }: VideoRedoDialogProps) {
             });
         }
     };
-    
+
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <TooltipProvider delayDuration={100}>
@@ -74,11 +74,13 @@ export default function VideoRedoDialog({ video }: VideoRedoDialogProps) {
                     </TooltipContent>
                 </Tooltip>
             </TooltipProvider>
-            
-            <DialogContent className="max-w-[90vw] overflow-hidden !rounded p-6 sm:px-8 xl:max-w-7xl border-border bg-card text-foreground">
+
+            <DialogContent className="max-w-[90vw] overflow-hidden !rounded border-border bg-card p-6 text-foreground sm:px-8 xl:max-w-7xl">
                 <DialogHeader>
-                    <DialogTitle className="my-4 text-center text-xl text-foreground">{video.title}</DialogTitle>
-                    
+                    <DialogTitle className="my-4 text-center text-xl text-foreground">
+                        {video.title}
+                    </DialogTitle>
+
                     {/* Move FormSteps outside of DialogDescription */}
                     <div className="my-8">
                         <FormSteps step={step} />

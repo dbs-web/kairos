@@ -118,8 +118,7 @@ export function VideoGrid() {
                             </div>
                         ))}
                     </div>
-) : (
-
+                ) : (
                     // Empty state
                     <div className="flex flex-col items-center justify-center rounded-xl border border-border bg-card/50 py-16 text-center shadow-sm">
                         <p className="mb-4 text-lg text-foreground/80">Nenhum vídeo disponível.</p>
