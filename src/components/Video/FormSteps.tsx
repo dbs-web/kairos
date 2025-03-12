@@ -3,7 +3,7 @@ export default function FormSteps({ step }: { step: number }) {
         <div className="relative mx-auto grid w-48 grid-cols-2 items-center justify-center">
             <div className="flex flex-col items-center">
                 <div className="z-[10] grid h-8 w-8 items-center rounded-full bg-primary text-center font-bold text-white">
-                    1
+                    <span className="text-white">1</span>
                 </div>
                 <span>Transcrição</span>
             </div>
@@ -17,7 +17,7 @@ export default function FormSteps({ step }: { step: number }) {
                     className="grid h-8 w-8 items-center rounded-full bg-slate-300 text-center font-bold text-neutral-700 data-[active=true]:bg-primary data-[active=true]:text-white"
                     data-active={step == 2}
                 >
-                    2
+                    <span className={step == 2 ? "text-white" : "text-neutral-700"}>2</span>
                 </div>
 
                 <span>Avatar</span>

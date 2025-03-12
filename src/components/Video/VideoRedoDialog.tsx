@@ -52,77 +52,78 @@ export default function VideoRedoDialog({ video }: VideoRedoDialogProps) {
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
-                <TooltipProvider>
-                    <Tooltip>
-                        <TooltipTrigger asChild>
-                                <Button
-                                    variant="outline"
-                                    size="icon"
-                                    className="h-8 w-8 border-border text-foreground/70 hover:border-primary/30 hover:text-foreground"
-                                >
-                                    <CiRedo className="text-xl" />
-                                </Button>
-                        </TooltipTrigger>
-                        <TooltipContent className="border-border bg-card text-foreground shadow-lg">
-                            <p className="font-medium text-primary">Ver transcrição do vídeo</p>
-                        </TooltipContent>
-                    </Tooltip>
-                </TooltipProvider>
+                <Button
+                    variant="outline"
+                    size="icon"
+                    className="h-8 w-8 border-border text-foreground/70 hover:border-primary/30 hover:text-foreground"
+                >
+                    <CiRedo className="text-xl" />
+                </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-[90vw] overflow-hidden !rounded p-2 sm:px-4 xl:max-w-7xl">
+            <DialogContent className="max-w-[90vw] overflow-hidden !rounded p-6 sm:px-8 xl:max-w-7xl border-border bg-card text-foreground">
                 <DialogHeader>
-                    <DialogTitle className="my-4 text-center">{video.title}</DialogTitle>
-                    <DialogDescription className="my-8">
+                    <DialogTitle className="my-4 text-center text-xl text-foreground">{video.title}</DialogTitle>
+                    
+                    {/* Move FormSteps outside of DialogDescription */}
+                    <div className="my-8">
                         <FormSteps step={step} />
-                    </DialogDescription>
+                    </div>
                 </DialogHeader>
                 <>
                     {step == 1 && (
-                        <textarea
-                            rows={15}
-                            value={transcription}
-                            onChange={(e) => setTranscription(e.target.value)}
-                            className="min-h-32 rounded-lg border bg-transparent p-2"
-                        />
+                        <>
+                            <div className="mb-4 text-center">
+                                <p className="text-muted-foreground">Editar conteúdo do vídeo</p>
+                            </div>
+                            <textarea
+                                rows={15}
+                                value={transcription}
+                                onChange={(e) => setTranscription(e.target.value)}
+                                className="min-h-32 w-full rounded-lg border border-border bg-muted/10 p-4 text-foreground focus-visible:ring-primary"
+                            />
+                        </>
                     )}
 
                     {step == 2 && <AvatarList />}
                 </>
 
-                <DialogFooter>
+                <DialogFooter className="mt-6">
                     {step == 1 && (
                         <Button
-                            className="mx-auto w-72"
+                            className="mx-auto w-72 bg-gradient-to-r from-[#0085A3] to-primary transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-primary/30"
                             type="submit"
                             onClick={() => setStep(2)}
                             disabled={transcription.length < 10}
                         >
-                            Escolha o Avatar
+                            <span className="text-white">Escolha o Avatar</span>
                         </Button>
                     )}
                     {step == 2 && (
-                        <div className="mx-auto flex w-1/2 min-w-[400px] items-center justify-center gap-x-4">
+                        <div className="mx-auto flex w-full max-w-2xl items-center justify-center gap-x-4">
                             <Button
-                                className="w-48 bg-secondary"
+                                variant="outline"
+                                className="w-48 border-border text-foreground hover:border-primary/30 hover:text-foreground"
                                 type="submit"
                                 onClick={() => setStep(1)}
                                 disabled={loading}
                             >
-                                Voltar
+                                <span>Voltar</span>
                             </Button>
 
                             <Button
-                                className="w-72 data-[loading=true]:animate-pulse"
+                                className="w-72 bg-gradient-to-r from-[#0085A3] to-primary transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-primary/30 data-[loading=true]:animate-pulse"
                                 type="submit"
                                 onClick={handleRedo}
                                 disabled={!selectedAvatar || loading}
                                 data-loading={loading}
                             >
-                                {loading
-                                    ? 'Carregando...'
-                                    : selectedAvatar
-                                      ? 'Enviar'
-                                      : 'Selecione um Avatar'}
+                                <span className="text-white">
+                                    {loading
+                                        ? 'Carregando...'
+                                        : selectedAvatar
+                                          ? 'Enviar'
+                                          : 'Selecione um Avatar'}
+                                </span>
                             </Button>
                         </div>
                     )}
