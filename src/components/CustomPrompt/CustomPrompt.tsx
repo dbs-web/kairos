@@ -28,7 +28,7 @@ export default function CustomPrompt() {
                     >
                         <div className="flex items-center justify-center gap-2">
                             <MdTextFields className="text-xl" />
-                            <span>Texto Próprio</span>
+                            <span>Seu Texto</span>
                         </div>
                     </TabsTrigger>
                 </TabsList>
