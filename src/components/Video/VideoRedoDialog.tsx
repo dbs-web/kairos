@@ -51,16 +51,19 @@ export default function VideoRedoDialog({ video }: VideoRedoDialogProps) {
     };
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
-            <DialogTrigger>
+            <DialogTrigger asChild>
                 <TooltipProvider>
                     <Tooltip>
                         <TooltipTrigger asChild>
-                            <div className="flex cursor-pointer items-center gap-x-2 rounded-xl bg-neutral-200 p-1 px-2 font-bold text-neutral-600 transition-all duration-300 hover:bg-primary hover:text-white">
-                                <CiRedo className="text-xl" />
-                                Refazer
-                            </div>
+                                <Button
+                                    variant="outline"
+                                    size="icon"
+                                    className="h-8 w-8 border-border text-foreground/70 hover:border-primary/30 hover:text-foreground"
+                                >
+                                    <CiRedo className="text-xl" />
+                                </Button>
                         </TooltipTrigger>
-                        <TooltipContent className="bg-white shadow-lg">
+                        <TooltipContent className="border-border bg-card text-foreground shadow-lg">
                             <p className="font-medium text-primary">Ver transcrição do vídeo</p>
                         </TooltipContent>
                     </Tooltip>
