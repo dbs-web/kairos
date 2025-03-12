@@ -49,17 +49,32 @@ export default function VideoRedoDialog({ video }: VideoRedoDialogProps) {
             });
         }
     };
+    
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
-            <DialogTrigger asChild>
-                <Button
-                    variant="outline"
-                    size="icon"
-                    className="h-8 w-8 border-border text-foreground/70 hover:border-primary/30 hover:text-foreground"
-                >
-                    <CiRedo className="text-xl" />
-                </Button>
-            </DialogTrigger>
+            <TooltipProvider delayDuration={100}>
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <DialogTrigger asChild>
+                            <Button
+                                variant="outline"
+                                size="icon"
+                                className="h-8 w-8 border-border text-foreground/70 hover:border-primary/30 hover:text-foreground"
+                            >
+                                <CiRedo className="text-xl" />
+                            </Button>
+                        </DialogTrigger>
+                    </TooltipTrigger>
+                    <TooltipContent
+                        side="top"
+                        align="center"
+                        className="border-border bg-card text-foreground shadow-lg"
+                    >
+                        <p className="font-medium text-primary">Refazer vídeo</p>
+                    </TooltipContent>
+                </Tooltip>
+            </TooltipProvider>
+            
             <DialogContent className="max-w-[90vw] overflow-hidden !rounded p-6 sm:px-8 xl:max-w-7xl border-border bg-card text-foreground">
                 <DialogHeader>
                     <DialogTitle className="my-4 text-center text-xl text-foreground">{video.title}</DialogTitle>

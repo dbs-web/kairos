@@ -64,17 +64,19 @@ export default function AvatarSelectionDialog({
                     {children}
                 </span>
             </DialogTrigger>
-            <DialogContent className="max-w-[90vw] overflow-hidden !rounded border-border bg-card p-2 sm:px-4 xl:max-w-7xl">
+            <DialogContent className="max-w-[90vw] overflow-hidden !rounded border-border bg-card p-6 sm:px-8 xl:max-w-7xl">
                 <DialogHeader>
                     <DialogTitle className="text-foreground">Selecione o Avatar</DialogTitle>
                 </DialogHeader>
                 <AvatarList />
                 <button
                     onClick={handleSubmit}
-                    className="create-video-button mt-4 flex w-full items-center justify-center gap-2 rounded-lg p-2 text-xs text-white disabled:cursor-not-allowed disabled:opacity-50"
+                    className="create-video-button mt-6 flex w-full items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-[#0085A3] to-primary p-3 text-sm transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-primary/30 disabled:cursor-not-allowed disabled:opacity-50"
                     disabled={!selectedAvatar || loading}
                 >
-                    {loading ? 'Enviando...' : 'Enviar Vídeo'}
+                    <span className="text-white">
+                        {loading ? 'Enviando...' : 'Enviar Vídeo'}
+                    </span>
                 </button>
             </DialogContent>
         </Dialog>

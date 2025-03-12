@@ -145,8 +145,8 @@ export default function BriefingCard({ briefing }: BriefingCardProps) {
                             type="button"
                             className="w-full bg-gradient-to-r from-[#0085A3] to-primary text-primary-foreground shadow-sm transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-primary/30"
                         >
-                            <CiCircleCheck className="mr-2 text-xl" />
-                            Aprovar
+                            <CiCircleCheck className="mr-2 text-xl text-white" />
+                            <span className="text-white">Aprovar</span>
                         </Button>
                     </AvatarSelectionDialog>
                 </VideoCreationProvider>

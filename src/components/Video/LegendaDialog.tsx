@@ -33,7 +33,7 @@ export default function LegendaDialog({ video }: LegendaDialogProps) {
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
                 <span className="inline-block">
-                    <TooltipProvider delayDuration={200}>
+                    <TooltipProvider delayDuration={100}>
                         <Tooltip>
                             <TooltipTrigger asChild>
                                 <Button
