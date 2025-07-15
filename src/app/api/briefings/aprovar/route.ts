@@ -70,6 +70,8 @@ export const POST = withAuthorization(
                 { status: 200 },
             );
         } catch (error) {
+            console.error("Detailed error in /api/briefings/aprovar:", error);
+
             return NextResponse.json(
                 { status: 500, message: 'Erro interno ao criar o vídeo' },
                 { status: 500 },

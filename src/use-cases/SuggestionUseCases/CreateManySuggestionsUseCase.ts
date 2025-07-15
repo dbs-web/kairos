@@ -9,6 +9,7 @@ export default class CreateManySuggestionsUseCase {
     }
 
     async execute({ suggestionsArr }: { suggestionsArr: Omit<ISuggestion, 'id'>[] }) {
+        console.log('CreateManySuggestionsUseCase - Received data:', JSON.stringify(suggestionsArr, null, 2));
         await this.suggestionService.createMany(suggestionsArr);
     }
 }

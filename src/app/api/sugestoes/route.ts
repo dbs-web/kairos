@@ -17,15 +17,21 @@ import { withExternalRequestValidation } from '@/adapters/withExternalRequestVal
 import { Pagination, withPagination } from '@/adapters/withPagination';
 
 export const POST = withExternalRequestValidation(async (request: Request) => {
+    console.log('=== POST /api/sugestoes - Request received ===');
     try {
         const { data } = await request.json();
+        console.log('=== POST /api/sugestoes - Data parsed ===');
 
         if (!Array.isArray(data) || data.length === 0) {
+            console.log('=== POST /api/sugestoes - Invalid data ===');
             return NextResponse.json({ status: 400, message: 'Dados inválidos' });
         }
 
+        console.log('POST /api/sugestoes - Received data:', JSON.stringify(data, null, 2));
         await createManySuggestionsUseCase.execute({ suggestionsArr: data });
+        console.log('=== POST /api/sugestoes - Success ===');
     } catch (e) {
+        console.error('=== POST /api/sugestoes - Error details ===', e);
         return NextResponse.json({ status: 500, message: 'Erro ao criar sugestões', error: e });
     }
 

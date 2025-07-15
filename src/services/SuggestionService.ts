@@ -74,7 +74,7 @@ export default class SuggestionService implements ISuggestionService {
             status: {
                 in: statuses,
             },
-            title: {
+            post_text: {
                 contains: query,
             },
         };

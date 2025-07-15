@@ -26,16 +26,20 @@ model User {
 }
 
 model Suggestion {
-  id        Int        @id @default(autoincrement())
-  title     String     @db.VarChar(500)
-  date      DateTime   @default(now())
-  briefing  String
-  userId    Int
-  status    Status     @default(EM_ANALISE)
-  briefings Briefing[]
-  user      User       @relation(fields: [userId], references: [id])
+  id               Int        @id @default(autoincrement())
+  post_url         String
+  user_photo       String?
+  post_image       String?    // Optional since Twitter posts might not have images
+  name_profile     String     // The @ username
+  post_text        String     @db.Text
+  socialmedia_name String     // "instagram" or "x"
+  date             DateTime   @default(now())
+  userId           Int
+  status           Status     @default(EM_ANALISE)
+  briefings        Briefing[]
+  user             User       @relation(fields: [userId], references: [id])
 
-  @@index([userId], map: "Suggestion_userId_fkey")
+  @@index([userId])
 }
 
 model Briefing {
@@ -117,7 +121,8 @@ enum Status {
 
 enum HeyGenStatus {
   PROCESSING
-  SUCCESS
+ 
+ SUCCESS
   FAILED
 }
 
