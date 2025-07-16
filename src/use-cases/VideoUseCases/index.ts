@@ -28,11 +28,12 @@ const addVideoFailedStatusUseCase = new AddVideoFailedStatusUseCase(videoService
 const updateVideoUseCase = new UpdateVideoUseCase(videoService);
 
 export {
-    getVideosUseCase,
-    createVideoUseCase,
-    getPaginatedVideosUseCase,
     addVideoSubtitleUseCase,
     addVideoUrlUseCase,
     addVideoFailedStatusUseCase,
+    createVideoUseCase,
+    getPaginatedVideosUseCase,
+    getVideosUseCase,
     updateVideoUseCase,
+    videoService,
 };

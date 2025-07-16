@@ -7,6 +7,8 @@ import {
     addVideoFailedStatusUseCase,
     addVideoSubtitleUseCase,
     addVideoUrlUseCase,
+    getVideosUseCase,
+    videoService,
 } from '@/use-cases/VideoUseCases';
 import { createSubtitlesUseCase } from '@/use-cases/DifyUseCases';
 
@@ -60,7 +62,13 @@ export async function POST(request: Request) {
                 
                 if (videoIdMatch) {
                     const extractedVideoId = videoIdMatch[1];
-                    permanentUrl = `https://resource2.heygen.ai/video/transcode/${extractedVideoId}/1280x720.mp4`;
+                    
+                    // Get video from database to check dimensions
+                    const video = await getVideosUseCase.byHeyGenId({ heygenVideoId: video_id });
+                    const isLandscape = video && video.width > video.height;
+                    const dimensions = isLandscape ? '1280x720' : '720x1280';
+                    
+                    permanentUrl = `https://resource2.heygen.ai/video/transcode/${extractedVideoId}/${dimensions}.mp4`;
                     
                     // Log the conversion for debugging
                     await createApiResponseUseCase.SUCCESS({
@@ -68,9 +76,10 @@ export async function POST(request: Request) {
                         body: { 
                             original_url: url,
                             converted_url: permanentUrl,
-                            video_id: extractedVideoId
+                            video_id: extractedVideoId,
+                            dimensions: dimensions
                         },
-                        message: `URL converted successfully`,
+                        message: `URL converted successfully with ${dimensions}`,
                         log: true,
                     });
                 }
