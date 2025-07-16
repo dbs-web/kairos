@@ -47,10 +47,10 @@ export default class SendContentCreationRequestsUseCase {
     private buildQuery({ data }: { data: INews | ISuggestion }) {
         let query = '';
 
-        if ((data as ISuggestion).briefing !== undefined)
-            query = `Faça um conteúdo sobre: ${data.title} | ${data.date}\n | ${(data as ISuggestion).briefing}`;
+        if ((data as ISuggestion).post_text !== undefined)
+            query = `Faça um conteúdo sobre: ${(data as ISuggestion).post_text} | ${data.date}\n | ${(data as ISuggestion).name_profile}`;
         else
-            query = `Faça um conteúdo sobre: ${data.title} | ${data.date}\n ${(data as INews).summary}`;
+            query = `Faça um conteúdo sobre: ${(data as INews).title} | ${data.date}\n ${(data as INews).summary}`;
 
         return query;
     }
