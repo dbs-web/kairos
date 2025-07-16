@@ -13,20 +13,16 @@ export default class CreateBriefingsUseCase {
         this.briefingService = briefingService;
     }
 
-    async fromSuggestions({
-        suggestionsData,
-        userId,
-    }: {
-        suggestionsData: Omit<ISuggestion, 'briefing'>[];
-        userId: number;
-    }): Promise<IBriefing[]> {
+    async execute(
+        suggestionsData: Omit<ISuggestion, 'briefing'>[],
+    ): Promise<IBriefing[]> {
         const briefingsToCreate: Omit<IBriefing, 'id'>[] = suggestionsData.map((suggestion) => ({
-            title: suggestion.title,
+            title: suggestion.post_text || suggestion.name_profile || 'Briefing sem título',
             date: new Date(),
             suggestionId: suggestion.id,
             status: Status.EM_PRODUCAO,
             difyStatus: DifyStatus.EM_PRODUCAO,
-            userId: userId,
+            userId: suggestion.userId,
         }));
 
         return await this.briefingService.createMany(briefingsToCreate);
