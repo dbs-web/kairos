@@ -14,15 +14,19 @@ export async function POST(request: Request) {
     const body = await request.json();
     const route = '/api/heygen/callback';
 
-    try {
-        // if (!heygenAdapter.checkCallbackRequest(request))
-        //     return createApiResponseUseCase.BAD_REQUEST({
-        //         route,
-        //         body,
-        //         message: 'Failed on heygen check',
-        //         error: 'Invalid signature',
-        //     });
+    // Log the entire callback payload
+    console.log('=== HEYGEN CALLBACK RECEIVED ===');
+    console.log('Full body:', JSON.stringify(body, null, 2));
 
+    // Also log to database for debugging
+    await createApiResponseUseCase.SUCCESS({
+        route: route + '/debug',
+        body: body,
+        message: `DEBUG: Callback received with event_type: ${body.event_type}`,
+        log: true,
+    });
+
+    try {
         const { event_type, event_data } = body;
 
         if (!event_type || !event_data) {
@@ -35,12 +39,39 @@ export async function POST(request: Request) {
         }
 
         const { video_id, url, msg } = event_data;
+        
+        // Log specific fields
+        console.log('Event type:', event_type);
+        console.log('Video ID:', video_id);
+        console.log('URL received:', url);
 
         if (event_type === HeyGenAvatarVideoStatus.SUCCESS) {
-            // Update video url
+            console.log('HeyGen callback - Video URL received:', url);
+            
+            // Convert AWS URL to permanent resource2.heygen.ai URL
+            let permanentUrl = url;
+            if (url.includes('files2.heygen.ai/aws_pacific/avatar_tmp/')) {
+                // Extract video_id from the URL path (before query parameters)
+                const urlWithoutQuery = url.split('?')[0]; // Remove query parameters first
+                const videoIdMatch = urlWithoutQuery.match(/\/([a-f0-9]{32})\.mp4$/);
+                console.log('URL without query:', urlWithoutQuery);
+                console.log('Video ID match:', videoIdMatch);
+                
+                if (videoIdMatch) {
+                    const extractedVideoId = videoIdMatch[1];
+                    permanentUrl = `https://resource2.heygen.ai/video/transcode/${extractedVideoId}/1280x720.mp4`;
+                    console.log('Original URL:', url);
+                    console.log('Extracted video ID:', extractedVideoId);
+                    console.log('Converted to permanent URL:', permanentUrl);
+                } else {
+                    console.log('Failed to extract video ID from URL:', url);
+                }
+            }
+            
+            // Update video url with permanent URL
             const video = await addVideoUrlUseCase.execute({
                 heygenVideoId: video_id,
-                url,
+                url: permanentUrl,
                 heygenStatus: HeyGenStatus.SUCCESS,
             });
 
@@ -85,3 +116,10 @@ export async function POST(request: Request) {
         });
     }
 }
+
+
+
+
+
+
+

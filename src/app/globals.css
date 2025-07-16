@@ -420,3 +420,26 @@ a[class*='bg-primary']:hover,
     border-color: hsl(var(--primary));
     box-shadow: 0 0 0 2px hsl(var(--primary) / 0.2);
 }
+
+/* Social Media Icons Styling */
+.social-icon-instagram {
+    /* Keep Instagram's original colors - no filter */
+    filter: none;
+}
+
+.social-icon-x {
+    /* Make X logo white */
+    filter: brightness(0) invert(1);
+}
+
+/* Alternative styling for better contrast */
+.social-icon-overlay {
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(4px);
+}
+
+/* Instagram specific overlay for better contrast */
+.social-icon-overlay.instagram {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(4px);
+}

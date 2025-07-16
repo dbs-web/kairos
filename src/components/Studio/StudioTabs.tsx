@@ -3,10 +3,11 @@
 import { usePathname } from 'next/navigation';
 
 //Icons
-import { GoLightBulb } from 'react-icons/go';
 import { PiNewspaperLight } from 'react-icons/pi';
+import { GoLightBulb } from 'react-icons/go';
 import { CiCircleCheck } from 'react-icons/ci';
 import { IoPlaySkipForwardOutline } from 'react-icons/io5';
+import { HiOutlineShare } from 'react-icons/hi'; // Social media icon
 import NavLink from '../ui/Nav/nav-link';
 import { ScrollArea, ScrollBar } from '../ui/scroll-area';
 
@@ -17,8 +18,8 @@ const tabs = [
         href: '/panel/estudio/noticias',
     },
     {
-        Icon: <GoLightBulb className="mb-1 text-xl lg:text-2xl" />,
-        text: 'Planejamento Mensal',
+        Icon: <HiOutlineShare className="mb-1 text-xl lg:text-2xl" />,
+        text: 'Redes Sociais',
         href: '/panel/estudio/planejamento',
     },
     {
@@ -53,3 +54,4 @@ export default function StudioTabs() {
         </ScrollArea>
     );
 }
+

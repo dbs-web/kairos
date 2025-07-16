@@ -21,17 +21,34 @@ interface VideoCardProps {
 export default function VideoCard({ video }: VideoCardProps) {
     const handleDownload = async () => {
         if (video.url) {
-            const response = await fetch(video.url);
-            const blob = await response.blob();
-            const link = document.createElement('a');
-            const url = URL.createObjectURL(blob);
+            try {
+                // For AWS signed URLs, use proxy endpoint
+                if (video.url.includes('aws_pacific') || video.url.includes('Signature=')) {
+                    const proxyUrl = `/api/videos/download?url=${encodeURIComponent(video.url)}`;
+                    const link = document.createElement('a');
+                    link.href = proxyUrl;
+                    link.download = `${video.title}.mp4`;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                } else {
+                    // Original method for older URLs
+                    const response = await fetch(video.url);
+                    const blob = await response.blob();
+                    const link = document.createElement('a');
+                    const url = URL.createObjectURL(blob);
 
-            link.href = url;
-            link.download = `${video.title}.mp4`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            return URL.revokeObjectURL(url);
+                    link.href = url;
+                    link.download = `${video.title}.mp4`;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    URL.revokeObjectURL(url);
+                }
+            } catch (error) {
+                console.error('Download failed:', error);
+                window.open(video.url, '_blank');
+            }
         }
     };
 

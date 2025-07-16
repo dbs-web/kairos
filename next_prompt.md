@@ -1,104 +1,109 @@
-# Next Session Context - Suggestions Interface Development
+# Next Session Context - Video URL Conversion & UI Fixes
 
 ## Current Project State
-We are working on a Next.js application called "Kairos" - a content management system for social media suggestions and briefings.
+We are working on a Next.js application called "Kairos" - a content management system for social media suggestions and briefings with HeyGen video generation.
 
-## What We Just Completed
-- Fixed suggestions API to work with new social media post structure
-- Successfully tested POST/GET endpoints for suggestions
-- Created n8n integration documentation
-- See detailed progress in: `backlog/backlog1.md`
+## CRITICAL ISSUE - Video URL Conversion
+**PRIORITY 1**: Fix HeyGen callback URL conversion that's preventing video downloads.
+
+### The Problem
+- HeyGen sends AWS temporary URLs in callbacks: `https://files2.heygen.ai/aws_pacific/avatar_tmp/.../[VIDEO_ID].mp4?Expires=...`
+- These URLs expire and cause download failures
+- Should convert to permanent URLs: `https://resource2.heygen.ai/video/transcode/[VIDEO_ID]/1280x720.mp4`
+- Conversion logic exists in callback but **IS NOT WORKING**
+
+### What We Tried (Session 2)
+- ✅ Confirmed manual URL conversion works
+- ✅ Updated regex pattern in callback route
+- ✅ Added debug logging
+- ❌ **Conversion still not working** - AWS URLs still being stored
+
+### Files to Debug
+- **`src/app/api/heygen/callback/route.ts`** - Main callback handler (conversion logic here)
+- **`src/use-cases/VideoUseCases/AddVideoUrlUseCase.ts`** - Database update
+- **Database Video table** - Check what URLs are actually being stored
+
+### Debugging Steps Needed
+1. **Verify callback is being called** - Check HeyGen webhook configuration
+2. **Add more detailed logging** - Log every step of URL conversion
+3. **Test regex pattern** - Isolate and test URL matching logic
+4. **Check database updates** - Verify `addVideoUrlUseCase` is receiving converted URL
+
+## Secondary Issue - Avatar Selection UI
+The avatar selection dialog has styling/layout issues that need attention after the URL issue is resolved.
 
 ## Current Working Directory
 `C:\Users\Usuário\Documents\kairos`
 
-## Key Files & Structure
+## Recent Progress (See backlog/backlog2.md)
+- Investigated video URL conversion issue
+- Confirmed permanent URLs work when manually converted
+- Identified callback conversion logic failure
+- Added enhanced debugging to callback route
 
-### Database Schema (`prisma/schema.prisma`)
-- **Suggestion Model**: Uses social media fields (`post_url`, `user_photo`, `post_image`, `name_profile`, `post_text`, `socialmedia_name`)
-- **Status Enum**: `EM_ANALISE`, `EM_PRODUCAO`, `APROVADO`, `ARQUIVADO`
-- **Relationships**: Suggestions → User, Suggestions → Briefings
+## Key Technical Context
 
-### API Endpoints
-- **GET/POST** `/api/sugestoes` - Fully functional
-- **POST** `/api/sugestoes/aprovar` - Approves suggestions and creates briefings
-- **External validation**: Uses `x-api-key` header with `withExternalRequestValidation` adapter
+### HeyGen Integration Flow
+1. User approves briefing → `/api/briefings/aprovar`
+2. HeyGen API called → Video generation starts
+3. **HeyGen callback** → `/api/heygen/callback` (THIS IS WHERE THE ISSUE IS)
+4. URL should be converted here before database storage
+5. Video displayed in "Finalizados" page
 
-### Current Frontend Structure
-- **Page**: `src/app/panel/estudio/planejamento/page.tsx` - Suggestions page wrapper
-- **Main Component**: `src/components/Suggestions/SuggestionsGrid.tsx` - Main grid layout
-- **Card Component**: `src/components/Suggestions/SuggestionCard.tsx` - Individual suggestion display
-- **Hooks**: `src/hooks/use-suggestions.tsx` - Suggestions state management
-- **Context**: Uses React Query for data fetching and state management
-
-### Existing UI Components
-- `src/components/ui/` - Reusable UI components (buttons, badges, pagination, etc.)
-- **Status Badge**: Shows suggestion status with colors
-- **Pagination**: Working pagination component
-- **Custom Prompt**: AI content creation form
-
-## Current Interface Status
-The suggestions page exists but needs updates to properly display the new social media post format:
-
-### What's Working
-- ✅ Data fetching (GET requests)
-- ✅ Pagination
-- ✅ Selection/approval workflow
-- ✅ Status management
-- ✅ Basic card layout
-
-### What Needs Updates
-- 🔄 **SuggestionCard component** - Update to show social media post data instead of title/briefing
-- 🔄 **Display format** - Show post images, profile photos, social media platform
-- 🔄 **Post content** - Display `post_text` instead of old briefing text
-- 🔄 **Social media indicators** - Show platform (Instagram/X) with icons
-- 🔄 **Profile information** - Display `name_profile` and `user_photo`
-
-## Technical Context
-
-### Data Structure (ISuggestion interface)
+### Current Callback Logic (Not Working)
 ```typescript
-interface ISuggestion {
-    id: number;
-    post_url: string;
-    user_photo: string | null;
-    post_image: string | null;
-    name_profile: string;
-    post_text: string;
-    socialmedia_name: string;
-    date: Date;
-    userId: number;
-    status: Status;
+// In /api/heygen/callback/route.ts
+if (url.includes('files2.heygen.ai/aws_pacific/avatar_tmp/')) {
+    const urlWithoutQuery = url.split('?')[0];
+    const videoIdMatch = urlWithoutQuery.match(/\/([a-f0-9]{32})\.mp4$/);
+    if (videoIdMatch) {
+        const extractedVideoId = videoIdMatch[1];
+        permanentUrl = `https://resource2.heygen.ai/video/transcode/${extractedVideoId}/1280x720.mp4`;
+    }
 }
 ```
 
-### Current Styling
-- Uses Tailwind CSS
-- Dark theme with primary blue colors
-- Grid layout (responsive)
-- Card-based design
+### Database Schema
+```sql
+-- Video table has these URL-related fields:
+url VARCHAR(500) -- This should store the permanent URL
+heygenVideoId VARCHAR(191) -- HeyGen's video ID
+heygenStatus ENUM('PROCESSING', 'SUCCESS', 'FAILED')
+```
 
-## Immediate Next Steps
-1. **Update SuggestionCard component** to display social media post format
-2. **Add social media platform icons** (Instagram, X/Twitter)
-3. **Implement image display** for post images and profile photos
-4. **Update card layout** to accommodate new data structure
-5. **Test with real data** from the working API
+## Immediate Action Plan
+1. **DEBUG CALLBACK EXECUTION**
+   - Add comprehensive logging to callback route
+   - Verify HeyGen is actually calling our webhook
+   - Check if conversion logic is being reached
 
-## Important Notes
-- The API is fully functional - focus on frontend updates
-- Existing hooks and state management work correctly
-- Keep the same approval/archive workflow
-- Maintain responsive design and accessibility
-- Use existing UI components where possible
+2. **FIX URL CONVERSION**
+   - Test regex pattern in isolation
+   - Verify video ID extraction
+   - Ensure converted URL is passed to database
+
+3. **TEST WITH NEW VIDEO**
+   - Generate test video
+   - Monitor callback logs
+   - Verify database stores permanent URL
+
+4. **UPDATE EXISTING VIDEOS** (if needed)
+   - Create migration script for already generated videos
+   - Convert existing AWS URLs to permanent format
 
 ## Files to Focus On
-- `src/components/Suggestions/SuggestionCard.tsx` - Main component to update
-- `src/components/Suggestions/SuggestionsGrid.tsx` - May need minor updates
-- `src/domain/entities/suggestion.ts` - Reference for data structure
-- `src/hooks/use-suggestions.tsx` - Already working correctly
+- **`src/app/api/heygen/callback/route.ts`** - PRIMARY FOCUS
+- **`src/use-cases/VideoUseCases/AddVideoUrlUseCase.ts`** - Verify database update
+- **HeyGen webhook configuration** - Ensure callbacks are being sent
 
-## Testing
-- Use existing suggestions data or create test data via API
-- Test responsive design on different screen sizes
-- Verify approval workflow still works after UI updates
+## Success Criteria
+- ✅ New videos store permanent URLs in database
+- ✅ Video downloads work without proxy
+- ✅ "Finalizados" page shows working video players
+- ✅ Avatar selection UI is clean and functional
+
+## Notes
+- Video generation pipeline is otherwise working correctly
+- The issue is specifically in the callback URL processing
+- Manual URL conversion confirmed working
+- This is blocking the download functionality for all videos

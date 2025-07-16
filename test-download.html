@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Video Download</title>
+</head>
+<body>
+    <button onclick="testDownload()">Test Download</button>
+    
+    <script>
+        function testDownload() {
+            const testUrl = "https://files2.heygen.ai/aws_pacific/avatar_tmp/b7dd102e96fd480e882e18a7135e028c/934639e4a99545fba3d6366552dcad87.mp4?Expires=1753188398&Signature=ORRtDdcUY8nWtB6-RcqI2D8xkNB7nVksJP-rSiwmcXdRcIr3eb6kIQJziXJ1loM9aEjxVxR4YFx9ogdQLbK3s-z~HiYo6ux6ptpyUbYFlLHECRw8bv5JijmNqzOSHGzfhTVcHxwrSFYXKYPLkJJugx0xpcBgdkVD6cYF1HfFyDzoA2VwobC8RD5hZ6OjT7vdPcgE2WWv~4hRx6d2e7Uo1Yq3dnzRQ543cp6E9sYfZQnHj8aKV43yPXWCFlEVMH-iT~fzn5vsxkX33F6ClVb2maRVuCBhJCjfnSyzL8YXem4IrgFR2ba0Qu2tAYl5EcRvuythzGvy0x~kH8a7WQb0Ug__&Key-Pair-Id=K2Q3HDJ0XDAGJB";
+            
+            const link = document.createElement('a');
+            link.href = testUrl;
+            link.download = 'test-video.mp4';
+            link.target = '_blank';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
+</body>
+</html>
