@@ -14,15 +14,11 @@ export async function POST(request: Request) {
     const body = await request.json();
     const route = '/api/heygen/callback';
 
-    // Log the entire callback payload
-    console.log('=== HEYGEN CALLBACK RECEIVED ===');
-    console.log('Full body:', JSON.stringify(body, null, 2));
-
-    // Also log to database for debugging
+    // Log the entire callback payload to database
     await createApiResponseUseCase.SUCCESS({
-        route: route + '/debug',
+        route: route + '/received',
         body: body,
-        message: `DEBUG: Callback received with event_type: ${body.event_type}`,
+        message: `CALLBACK RECEIVED: event_type=${body.event_type}, video_id=${body.event_data?.video_id}`,
         log: true,
     });
 
@@ -30,6 +26,12 @@ export async function POST(request: Request) {
         const { event_type, event_data } = body;
 
         if (!event_type || !event_data) {
+            await createApiResponseUseCase.BAD_REQUEST({
+                route: route + '/validation',
+                body,
+                message: 'Invalid payload - missing event_type or event_data',
+                error: 'Missing event_type or event_data',
+            });
             return createApiResponseUseCase.BAD_REQUEST({
                 route,
                 body,
@@ -40,31 +42,37 @@ export async function POST(request: Request) {
 
         const { video_id, url, msg } = event_data;
         
-        // Log specific fields
-        console.log('Event type:', event_type);
-        console.log('Video ID:', video_id);
-        console.log('URL received:', url);
+        // Log URL processing start
+        await createApiResponseUseCase.SUCCESS({
+            route: route + '/url-processing',
+            body: { video_id, original_url: url, event_type },
+            message: `Processing URL for video ${video_id}: ${url}`,
+            log: true,
+        });
 
         if (event_type === HeyGenAvatarVideoStatus.SUCCESS) {
-            console.log('HeyGen callback - Video URL received:', url);
-            
             // Convert AWS URL to permanent resource2.heygen.ai URL
             let permanentUrl = url;
+            
             if (url.includes('files2.heygen.ai/aws_pacific/avatar_tmp/')) {
-                // Extract video_id from the URL path (before query parameters)
-                const urlWithoutQuery = url.split('?')[0]; // Remove query parameters first
-                const videoIdMatch = urlWithoutQuery.match(/\/([a-f0-9]{32})\.mp4$/);
-                console.log('URL without query:', urlWithoutQuery);
-                console.log('Video ID match:', videoIdMatch);
+                const urlWithoutQuery = url.split('?')[0];
+                const videoIdMatch = urlWithoutQuery.match(/([a-f0-9]{32})\.mp4$/);
                 
                 if (videoIdMatch) {
                     const extractedVideoId = videoIdMatch[1];
                     permanentUrl = `https://resource2.heygen.ai/video/transcode/${extractedVideoId}/1280x720.mp4`;
-                    console.log('Original URL:', url);
-                    console.log('Extracted video ID:', extractedVideoId);
-                    console.log('Converted to permanent URL:', permanentUrl);
-                } else {
-                    console.log('Failed to extract video ID from URL:', url);
+                    
+                    // Log the conversion for debugging
+                    await createApiResponseUseCase.SUCCESS({
+                        route: route + '/url-converted',
+                        body: { 
+                            original_url: url,
+                            converted_url: permanentUrl,
+                            video_id: extractedVideoId
+                        },
+                        message: `URL converted successfully`,
+                        log: true,
+                    });
                 }
             }
             
@@ -73,6 +81,18 @@ export async function POST(request: Request) {
                 heygenVideoId: video_id,
                 url: permanentUrl,
                 heygenStatus: HeyGenStatus.SUCCESS,
+            });
+
+            // Log database update result
+            await createApiResponseUseCase.SUCCESS({
+                route: route + '/database-updated',
+                body: { 
+                    video_id: video.id,
+                    heygen_video_id: video_id,
+                    saved_url: permanentUrl
+                },
+                message: `Database updated successfully for video ${video.id}`,
+                log: true,
             });
 
             // Create subtitles for video
@@ -88,7 +108,7 @@ export async function POST(request: Request) {
             return createApiResponseUseCase.SUCCESS({
                 route,
                 body,
-                message: 'Video generataded successfully!',
+                message: 'Video generated successfully!',
             });
         } else if (event_type === HeyGenAvatarVideoStatus.FAIL) {
             await addVideoFailedStatusUseCase.execute(video_id);

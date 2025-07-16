@@ -13,34 +13,38 @@ export default function AvatarList() {
     const { avatars } = useVideoCreation();
     return (
         <Carousel
-            className="lg:min-w-3/4 mx-auto max-w-xs sm:max-w-sm lg:max-w-5xl"
+            className="w-full max-w-6xl mx-auto"
             opts={{
                 align: 'start',
+                loop: false,
             }}
         >
-            <CarouselContent className="py-4">
+            <CarouselContent className="py-6 px-4">
                 {avatars?.length > 0
                     ? avatars.map((avatar) => (
                           <CarouselItem
                               key={avatar.avatar_id}
-                              className="basis-1/1 lg:basis-1/3 xl:basis-1/5"
+                              className="basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4 pl-4"
                           >
                               <Avatar avatar={avatar} />
                           </CarouselItem>
                       ))
-                    : Array.from({ length: 5 }).map((_, index) => (
+                    : Array.from({ length: 4 }).map((_, index) => (
                           <CarouselItem
-                              className="basis-1/1 lg:basis-1/3 xl:basis-1/5"
+                              className="basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4 pl-4"
                               key={`carousel-skeleton-${index}`}
                           >
-                              <div className="h-[120px] w-32 animate-pulse place-self-center rounded-xl bg-muted" />
-                              <div className="mt-4 h-4 w-32 animate-pulse place-self-center rounded-xl bg-muted/70"></div>
-                              <div className="mt-4 h-3 w-40 animate-pulse place-self-center rounded-xl bg-muted/50"></div>
+                              <div className="flex flex-col items-center gap-3 p-4 min-w-[200px] max-w-[220px]">
+                                  <div className="h-[140px] w-[140px] animate-pulse rounded-xl bg-muted" />
+                                  <div className="h-4 w-32 animate-pulse rounded bg-muted/70"></div>
+                                  <div className="h-3 w-24 animate-pulse rounded bg-muted/50"></div>
+                                  <div className="h-8 w-full animate-pulse rounded bg-muted/30"></div>
+                              </div>
                           </CarouselItem>
                       ))}
             </CarouselContent>
-            <CarouselPrevious className="border-border bg-card text-foreground hover:bg-muted/30" />
-            <CarouselNext className="border-border bg-card text-foreground hover:bg-muted/30" />
+            <CarouselPrevious className="left-2" />
+            <CarouselNext className="right-2" />
         </Carousel>
     );
 }

@@ -64,18 +64,22 @@ export default function AvatarSelectionDialog({
                     {children}
                 </span>
             </DialogTrigger>
-            <DialogContent className="max-w-[90vw] overflow-hidden !rounded border-border bg-card p-6 sm:px-8 xl:max-w-7xl">
-                <DialogHeader>
-                    <DialogTitle className="text-foreground">Selecione o Avatar</DialogTitle>
+            <DialogContent className="max-w-[95vw] max-h-[90vh] overflow-hidden !rounded border-border bg-card p-6 xl:max-w-7xl">
+                <DialogHeader className="pb-4">
+                    <DialogTitle className="text-foreground text-xl">Selecione o Avatar</DialogTitle>
                 </DialogHeader>
-                <AvatarList />
-                <button
-                    onClick={handleSubmit}
-                    className="create-video-button mt-6 flex w-full items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-[#0085A3] to-primary p-3 text-sm transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-primary/30 disabled:cursor-not-allowed disabled:opacity-50"
-                    disabled={!selectedAvatar || loading}
-                >
-                    <span className="text-white">{loading ? 'Enviando...' : 'Enviar Vídeo'}</span>
-                </button>
+                <div className="overflow-y-auto max-h-[60vh]">
+                    <AvatarList />
+                </div>
+                <div className="pt-4 border-t border-border">
+                    <button
+                        onClick={handleSubmit}
+                        className="create-video-button w-full flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-[#0085A3] to-primary p-3 text-sm font-medium transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-primary/30 disabled:cursor-not-allowed disabled:opacity-50"
+                        disabled={!selectedAvatar || loading}
+                    >
+                        <span className="text-white">{loading ? 'Enviando...' : 'Enviar Vídeo'}</span>
+                    </button>
+                </div>
             </DialogContent>
         </Dialog>
     );

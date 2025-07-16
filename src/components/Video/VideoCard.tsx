@@ -19,35 +19,49 @@ interface VideoCardProps {
 }
 
 export default function VideoCard({ video }: VideoCardProps) {
-    const handleDownload = async () => {
-        if (video.url) {
-            try {
-                // For AWS signed URLs, use proxy endpoint
-                if (video.url.includes('aws_pacific') || video.url.includes('Signature=')) {
-                    const proxyUrl = `/api/videos/download?url=${encodeURIComponent(video.url)}`;
-                    const link = document.createElement('a');
-                    link.href = proxyUrl;
-                    link.download = `${video.title}.mp4`;
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                } else {
-                    // Original method for older URLs
-                    const response = await fetch(video.url);
-                    const blob = await response.blob();
-                    const link = document.createElement('a');
-                    const url = URL.createObjectURL(blob);
+    // Convert AWS URL to permanent URL for display
+    const getDisplayUrl = (originalUrl: string | undefined) => {
+        if (!originalUrl) return undefined;
+        
+        // If it's already a permanent URL, use it
+        if (originalUrl.includes('resource2.heygen.ai')) {
+            return originalUrl;
+        }
+        
+        // Convert AWS URL to permanent URL
+        if (originalUrl.includes('files2.heygen.ai/aws_pacific/avatar_tmp/')) {
+            const urlWithoutQuery = originalUrl.split('?')[0];
+            const videoIdMatch = urlWithoutQuery.match(/([a-f0-9]{32})\.mp4$/);
+            
+            if (videoIdMatch) {
+                const extractedVideoId = videoIdMatch[1];
+                return `https://resource2.heygen.ai/video/transcode/${extractedVideoId}/1280x720.mp4`;
+            }
+        }
+        
+        return originalUrl;
+    };
 
-                    link.href = url;
-                    link.download = `${video.title}.mp4`;
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                    URL.revokeObjectURL(url);
-                }
+    const displayUrl = getDisplayUrl(video.url);
+
+    const handleDownload = async () => {
+        if (displayUrl) {
+            try {
+                // Use the converted permanent URL for download
+                const response = await fetch(displayUrl);
+                const blob = await response.blob();
+                const link = document.createElement('a');
+                const url = URL.createObjectURL(blob);
+
+                link.href = url;
+                link.download = `${video.title}.mp4`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
             } catch (error) {
                 console.error('Download failed:', error);
-                window.open(video.url, '_blank');
+                window.open(displayUrl, '_blank');
             }
         }
     };
@@ -69,7 +83,7 @@ export default function VideoCard({ video }: VideoCardProps) {
                 <div className="absolute inset-0 flex items-center justify-center">
                     {video.heygenStatus === 'SUCCESS' && (
                         <video controls className="h-full w-full object-contain">
-                            <source src={video.url} type="video/mp4" />
+                            <source src={displayUrl} type="video/mp4" />
                         </video>
                     )}
                     {video.heygenStatus === 'PROCESSING' && (
