@@ -36,10 +36,7 @@ export const POST = withAuthorization([UserRoles.USER], async (request, user) =>
         }
 
         // Create the briefings for successfull updated suggestions
-        const createdBriefings = await createBriefingsUseCase.fromSuggestions({
-            suggestionsData,
-            userId,
-        });
+        const createdBriefings = await createBriefingsUseCase.execute(suggestionsData);
 
         // Send request to dify create the content of briefing
         await sendContentCreationRequestsUseCase.execute({
