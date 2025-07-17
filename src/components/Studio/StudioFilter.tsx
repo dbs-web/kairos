@@ -19,7 +19,7 @@ export default function StudioFilter() {
         <div className="flex w-full items-center justify-center gap-x-2 overflow-hidden px-0 lg:w-1/3 lg:px-0 2xl:w-1/4">
             {statuses?.length > 0 && (
                 <div>
-                    <Select onValueChange={setSelectedStatus} value={selectedStatus}>
+                    <Select onValueChange={setSelectedStatus} value={selectedStatus || undefined}>
                         <SelectTrigger className="gap-x-1.5 rounded-lg border-none bg-muted/50 !text-foreground/70 outline-none focus:border-transparent focus:ring-0 active:ring-0">
                             <VscSettings className="!text-xs text-foreground/70 md:text-lg" />
                             <SelectValue placeholder="Filtrar" />
