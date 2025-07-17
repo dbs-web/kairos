@@ -1,6 +1,7 @@
 import bcrypt from 'bcryptjs';
 import NextAuth, { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
+import { UserRoles } from '@/domain/entities/user';
 
 // Use Cases
 import { getUsersUseCase } from '@/use-cases/UserUseCases';
@@ -58,14 +59,25 @@ export const authOptions: NextAuthOptions = {
                     name: user.name,
                     email: user.email,
                     role: user.role,
+                    sessionVersion: user.sessionVersion || 1,
                 };
             }
             return token;
         },
         async session({ session, token }) {
-            if (token) {
-                //@ts-expect-error
-                session.user = token.user;
+            if (token?.user && typeof token.user === 'object' && 'id' in token.user) {
+                const tokenUser = token.user as any;
+                // Quick DB check only when needed
+                const user = await getUsersUseCase.byId(tokenUser.id);
+                if (!user || user.sessionVersion !== tokenUser.sessionVersion) {
+                    throw new Error('Session invalidated');
+                }
+                session.user = {
+                    ...session.user,
+                    id: tokenUser.id,
+                    role: tokenUser.role as UserRoles,
+                    sessionVersion: tokenUser.sessionVersion,
+                };
             }
             return session;
         },
@@ -73,3 +85,8 @@ export const authOptions: NextAuthOptions = {
 };
 
 export default NextAuth(authOptions);
+
+
+
+
+

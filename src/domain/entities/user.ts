@@ -12,6 +12,7 @@ export interface IUser {
     difyAgent?: string;
     difyContentCreation?: string;
     role: UserRoles;
+    sessionVersion?: number;
     briefings?: IBriefing[];
     videos?: IVideo[];
     suggestions?: ISuggestion[];
@@ -21,3 +22,4 @@ export enum UserRoles {
     ADMIN = 'ADMIN',
     USER = 'USER',
 }
+

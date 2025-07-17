@@ -1,12 +1,9 @@
 import { redirect } from 'next/navigation';
-
 import { getServerSession } from 'next-auth';
-
-import Nav from '@/components/ui/Nav/nav';
-import SessionProvider from '../AuthProvider';
 import { authOptions } from '@/lib/auth';
 import { CiUser } from 'react-icons/ci';
 import { LuLogs } from 'react-icons/lu';
+import AdminLayoutClient from './AdminLayoutClient';
 
 const adminLinks = [
     {
@@ -36,11 +33,13 @@ export default async function RootLayout({
     }
 
     return (
-        <SessionProvider session={session}>
-            <section className="grid h-full w-full grid-cols-1 grid-rows-[100px_1fr] gap-y-4">
-                <Nav links={adminLinks} />
-                {children}
-            </section>
-        </SessionProvider>
+        <AdminLayoutClient session={session} adminLinks={adminLinks}>
+            {children}
+        </AdminLayoutClient>
     );
 }
+
+
+
+
+

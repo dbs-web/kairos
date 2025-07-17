@@ -1,13 +1,12 @@
 import { getServerSession } from 'next-auth';
-
 import Nav from '@/components/ui/Nav/nav';
 import SessionProvider from '../AuthProvider';
 import { authOptions } from '@/lib/auth';
-
 import { IoIosPlayCircle } from 'react-icons/io';
 import { BiBook } from 'react-icons/bi';
 import { IoHelpCircleOutline } from 'react-icons/io5';
 import { redirect } from 'next/navigation';
+import PanelLayoutClient from './PanelLayoutClient';
 
 const navLinks = [
     {
@@ -43,11 +42,9 @@ export default async function RootLayout({
     }
 
     return (
-        <SessionProvider session={session}>
-            <main className={`grid h-screen w-screen grid-cols-1 grid-rows-[64px_1fr]`}>
-                <Nav links={navLinks} />
-                {children}
-            </main>
-        </SessionProvider>
+        <PanelLayoutClient session={session} navLinks={navLinks}>
+            {children}
+        </PanelLayoutClient>
     );
 }
+

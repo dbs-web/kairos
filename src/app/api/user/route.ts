@@ -46,19 +46,24 @@ export const POST = withAuthorization([UserRoles.ADMIN], async (request: Request
 export const PUT = withAuthorization([UserRoles.ADMIN], async (request: Request) => {
     const body = await request.json();
 
+    const updateData: any = {
+        name: body.name,
+        email: body.email,
+        role: body.role,
+        avatarGroupId: body.avatarGroupId,
+        voiceId: body.voiceId,
+        difyAgent: body.difyAgent,
+    };
+
+    // If password is being changed, increment sessionVersion to logout user
+    if (body.password) {
+        updateData.password = await bcrypt.hash(body.password, 10);
+        updateData.sessionVersion = { increment: 1 }; // This logs out the user
+    }
+
     const updatedUser = await updateUserUseCase.execute({
         id: Number(body.id),
-        data: {
-            name: body.name,
-            email: body.email,
-            role: body.role,
-            avatarGroupId: body.avatarGroupId,
-            voiceId: body.voiceId,
-            difyAgent: body.difyAgent,
-            ...(body.password && {
-                password: await bcrypt.hash(body.password, 10),
-            }),
-        },
+        data: updateData,
     });
 
     return NextResponse.json({ data: updatedUser });
@@ -76,3 +81,4 @@ export const DELETE = withAuthorization([UserRoles.ADMIN], async (request: Reque
 
     return NextResponse.json({ message: 'User deleted successfully', user: deletedUser });
 });
+

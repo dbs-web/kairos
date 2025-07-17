@@ -1,86 +1,47 @@
 'use client';
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useState, ReactNode } from 'react';
 
-interface StatusOption {
-    label: string;
-    value: string;
-}
-
-interface SearchDataContextProps {
-    searchTerm: string;
-    setSearchTerm: (term: string) => void;
-    debouncedSearchTerm: string;
+interface SearchDataContextType {
+    searchData: any;
+    setSearchData: (data: any) => void;
     searchText: string;
     setSearchText: (text: string) => void;
-    selectedStatus: string | undefined;
-    setSelectedStatus: (status: string | undefined) => void;
-    statuses: StatusOption[];
-    setStatuses: (statuses: StatusOption[]) => void;
-    clearFilters: () => void;
+    selectedStatus: string | null;
+    setSelectedStatus: (status: string | null) => void;
+    statuses: any[];
+    setStatuses: (statuses: any[]) => void;
 }
 
-const SearchDataContext = createContext<SearchDataContextProps | undefined>(undefined);
+const SearchDataContext = createContext<SearchDataContextType | undefined>(undefined);
 
-export const SearchDataProvider = ({ children }: { children: React.ReactNode }) => {
+export function SearchDataProvider({ children }: { children: ReactNode }) {
+    const [searchData, setSearchData] = useState(null);
     const [searchText, setSearchText] = useState('');
-    const [selectedStatus, setSelectedStatus] = useState<string | undefined>(undefined);
-    const [statuses, setStatuses] = useState<StatusOption[]>([]);
-
-    // Debouncing para a busca
-    const [searchTerm, setSearchTerm] = useState('');
-    const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
-
-    const normalizeText = (text: string) => {
-        return text
-            .normalize('NFD')
-            .replace(/[\u0300-\u036f]/g, '')
-            .toLowerCase();
-    };
-
-    useEffect(() => {
-        const handler = setTimeout(() => {
-            setDebouncedSearchTerm(searchTerm);
-        }, 300);
-
-        return () => {
-            clearTimeout(handler);
-        };
-    }, [searchTerm]);
-
-    useEffect(() => {
-        setSearchText(normalizeText(debouncedSearchTerm));
-    }, [debouncedSearchTerm]);
-
-    const clearFilters = () => {
-        setSearchText('');
-        setSelectedStatus(undefined);
-        setSearchTerm('');
-    };
+    const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
+    const [statuses, setStatuses] = useState<any[]>([]);
 
     return (
-        <SearchDataContext.Provider
-            value={{
-                searchTerm,
-                setSearchTerm,
-                debouncedSearchTerm,
-                searchText,
-                setSearchText,
-                selectedStatus,
-                setSelectedStatus,
-                statuses,
-                setStatuses,
-                clearFilters,
-            }}
-        >
+        <SearchDataContext.Provider value={{ 
+            searchData, 
+            setSearchData,
+            searchText,
+            setSearchText,
+            selectedStatus,
+            setSelectedStatus,
+            statuses,
+            setStatuses
+        }}>
             {children}
         </SearchDataContext.Provider>
     );
-};
+}
 
-export const useSearchData = (): SearchDataContextProps => {
+export function useSearchData() {
     const context = useContext(SearchDataContext);
     if (!context) {
         throw new Error('useSearchData must be used within a SearchDataProvider');
     }
     return context;
-};
+}
+
+

@@ -83,6 +83,34 @@ export const useClients = () => {
         },
     });
 
+    const logoutUsersMutation = useMutation({
+        mutationFn: async (userIds: number[]) => {
+            const response = await fetch('/api/user/logout', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userIds })
+            });
+            if (!response.ok) throw new Error('Failed to logout users');
+            return response.json();
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['users'] });
+        },
+    });
+
+    const logoutAllUsersMutation = useMutation({
+        mutationFn: async () => {
+            const response = await fetch('/api/user/logout-all', {
+                method: 'POST'
+            });
+            if (!response.ok) throw new Error('Failed to logout all users');
+            return response.json();
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['users'] });
+        },
+    });
+
     const users = data?.data || [];
     const totalPages = data?.pagination?.totalPages || 1;
 
@@ -96,5 +124,9 @@ export const useClients = () => {
         totalPages,
         limit,
         isFetching,
+        logoutUsers: logoutUsersMutation.mutate,
+        logoutAllUsers: logoutAllUsersMutation.mutate,
+        isLoggingOut: logoutUsersMutation.isPending || logoutAllUsersMutation.isPending,
     };
 };
+
