@@ -6,6 +6,8 @@ interface SearchDataContextType {
     setSearchData: (data: any) => void;
     searchText: string;
     setSearchText: (text: string) => void;
+    searchTerm: string;
+    setSearchTerm: (term: string) => void;
     selectedStatus: string | null;
     setSelectedStatus: (status: string | null) => void;
     statuses: any[];
@@ -17,6 +19,7 @@ const SearchDataContext = createContext<SearchDataContextType | undefined>(undef
 export function SearchDataProvider({ children }: { children: ReactNode }) {
     const [searchData, setSearchData] = useState(null);
     const [searchText, setSearchText] = useState('');
+    const [searchTerm, setSearchTerm] = useState('');
     const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
     const [statuses, setStatuses] = useState<any[]>([]);
 
@@ -26,6 +29,8 @@ export function SearchDataProvider({ children }: { children: ReactNode }) {
             setSearchData,
             searchText,
             setSearchText,
+            searchTerm,
+            setSearchTerm,
             selectedStatus,
             setSelectedStatus,
             statuses,
@@ -43,5 +48,6 @@ export function useSearchData() {
     }
     return context;
 }
+
 
 
