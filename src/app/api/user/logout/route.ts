@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server';
 import { withAuthorization } from '@/adapters/withAuthorization';
 import { UserRoles } from '@/domain/entities/user';
-import { updateUserUseCase } from '@/use-cases/UserUseCases';
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
 
 export const POST = withAuthorization([UserRoles.ADMIN], async (request: Request) => {
     const { userIds } = await request.json();
@@ -13,8 +15,8 @@ export const POST = withAuthorization([UserRoles.ADMIN], async (request: Request
     try {
         // Increment sessionVersion for all specified users
         const logoutPromises = userIds.map(userId =>
-            updateUserUseCase.execute({
-                id: Number(userId),
+            prisma.user.update({
+                where: { id: Number(userId) },
                 data: { sessionVersion: { increment: 1 } }
             })
         );
@@ -31,3 +33,4 @@ export const POST = withAuthorization([UserRoles.ADMIN], async (request: Request
         }, { status: 500 });
     }
 });
+
