@@ -20,7 +20,7 @@ export const POST = withAuthorization(
             // Check if user has dify token set before any operation
             const difyAgentToken = await getUserDifyAgentUseCase.execute({ userId });
 
-            const { news } = await request.json();
+            const { news, approaches } = await request.json();
 
             if (!Array.isArray(news) || news.length === 0) {
                 return NextResponse.json({ error: 'No news provided.', status: 400 });
@@ -45,6 +45,7 @@ export const POST = withAuthorization(
                 difyAgentToken,
                 dataArr: updatedNews,
                 briefings: createdBriefings,
+                approaches: approaches || {},
             });
 
             return NextResponse.json({

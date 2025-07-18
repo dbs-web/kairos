@@ -6,11 +6,20 @@ import { INews } from '@/domain/entities/news';
 import { usePagination } from './use-pagination';
 import { useFetchData } from './use-fetch-data';
 
+interface NewsApproach {
+    newsId: number;
+    approach: string;
+}
+
 interface NewsContextProps {
     news: INews[];
     selectedNews: number[];
+    newsApproaches: Record<number, string>;
     isLoading: boolean;
     toggleSelectNews: (id: number) => void;
+    saveNewsApproach: (newsId: number, approach: string) => void;
+    getNewsApproach: (newsId: number) => string | undefined;
+    hasApproach: (newsId: number) => boolean;
     sendToProduction: () => Promise<void>;
     page: number;
     setPage: (page: number) => void;
@@ -24,6 +33,7 @@ export const NewsProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const queryClient = useQueryClient();
 
     const [selectedNews, setSelectedNews] = useState<number[]>([]);
+    const [newsApproaches, setNewsApproaches] = useState<Record<number, string>>({});
     const { page, setPage, limit } = usePagination();
 
     const { data, isLoading, refetch } = useFetchData<INews>('news', { page, limit }, 'news');
@@ -32,19 +42,46 @@ export const NewsProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const totalPages = data?.pagination?.totalPages || 1;
 
     const toggleSelectNews = useCallback((id: number) => {
+        setSelectedNews((prev) => {
+            const isCurrentlySelected = prev.includes(id);
+            if (isCurrentlySelected) {
+                // If deselecting and no approach is saved, remove from selection
+                return prev.filter((item) => item !== id);
+            } else {
+                // If selecting, add to selection
+                return [...prev, id];
+            }
+        });
+    }, []);
+
+    const saveNewsApproach = useCallback((newsId: number, approach: string) => {
+        setNewsApproaches((prev) => ({
+            ...prev,
+            [newsId]: approach,
+        }));
+
+        // Ensure the news is selected when approach is saved
         setSelectedNews((prev) =>
-            prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id],
+            prev.includes(newsId) ? prev : [...prev, newsId]
         );
     }, []);
 
+    const getNewsApproach = useCallback((newsId: number) => {
+        return newsApproaches[newsId];
+    }, [newsApproaches]);
+
+    const hasApproach = useCallback((newsId: number) => {
+        return Boolean(newsApproaches[newsId]);
+    }, [newsApproaches]);
+
     const mutation = useMutation({
-        mutationFn: async (selectedIds: number[]) => {
+        mutationFn: async (payload: { news: number[]; approaches: Record<number, string> }) => {
             const res = await fetch('/api/news/aprovar', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ news: selectedIds }),
+                body: JSON.stringify(payload),
             });
             if (!res.ok) {
                 throw new Error('Erro ao enviar notícias para produção');
@@ -57,8 +94,21 @@ export const NewsProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const sendToProduction = async () => {
         if (selectedNews.length > 0) {
-            await mutation.mutateAsync(selectedNews);
+            // Filter approaches to only include selected news
+            const selectedApproaches = selectedNews.reduce((acc, newsId) => {
+                if (newsApproaches[newsId]) {
+                    acc[newsId] = newsApproaches[newsId];
+                }
+                return acc;
+            }, {} as Record<number, string>);
+
+            await mutation.mutateAsync({
+                news: selectedNews,
+                approaches: selectedApproaches
+            });
+
             setSelectedNews([]);
+            // Keep approaches saved for potential future use
         }
     };
 
@@ -67,8 +117,12 @@ export const NewsProvider: React.FC<{ children: React.ReactNode }> = ({ children
             value={{
                 news,
                 selectedNews,
+                newsApproaches,
                 isLoading,
                 toggleSelectNews,
+                saveNewsApproach,
+                getNewsApproach,
+                hasApproach,
                 sendToProduction,
                 page,
                 setPage,

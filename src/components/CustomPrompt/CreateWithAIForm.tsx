@@ -83,13 +83,13 @@ export default function CreateWithAIForm() {
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel className="text-sm font-medium text-foreground">
-                                Título
+                                Tema
                             </FormLabel>
                             <FormControl>
                                 <Input
                                     {...field}
                                     disabled={isSubmitting}
-                                    placeholder="Título do seu vídeo"
+                                    placeholder="Digite o tema do seu vídeo"
                                     className="mt-1.5 border-border bg-card text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-primary/20"
                                 />
                             </FormControl>

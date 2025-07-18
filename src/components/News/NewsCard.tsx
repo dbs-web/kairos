@@ -10,20 +10,36 @@ import { INews } from '@/domain/entities/news';
 interface NewsCardProps {
     news: INews;
     isSelected: boolean;
+    hasApproach: boolean;
     onSelect: (id: number) => void;
+    onApproachClick: (news: INews) => void;
 }
 
-export default function NewsCard({ news, isSelected, onSelect }: NewsCardProps) {
+export default function NewsCard({ news, isSelected, hasApproach, onSelect, onApproachClick }: NewsCardProps) {
     const [imageError, setImageError] = useState(false);
     const handleSelect = () => {
         if (news.status === 'EM_ANALISE') {
-            onSelect(news.id);
+            if (isSelected && hasApproach) {
+                // If already selected and has approach, deselect
+                onSelect(news.id);
+            } else if (!isSelected) {
+                // If not selected, open approach dialog
+                onApproachClick(news);
+            } else {
+                // If selected but no approach, open approach dialog
+                onApproachClick(news);
+            }
         }
     };
 
     const handleOpenNews = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.stopPropagation();
         window.open(news.url, '_blank');
+    };
+
+    const handleApproachClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.stopPropagation();
+        onApproachClick(news);
     };
 
     const getSiteName = (url: string) => {
@@ -104,6 +120,19 @@ export default function NewsCard({ news, isSelected, onSelect }: NewsCardProps) 
                             {siteName}
                         </span>
                     </div>
+
+                    {/* Approach button for selected cards with saved approach */}
+                    {isSelected && hasApproach && (
+                        <div className="mt-3 flex justify-center">
+                            <button
+                                onClick={handleApproachClick}
+                                className="flex items-center gap-x-1.5 rounded-md bg-primary/10 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-primary/20 hover:text-white"
+                            >
+                                <MdArticle className="text-sm text-white" />
+                                <span className="text-white">Mudar abordagem</span>
+                            </button>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

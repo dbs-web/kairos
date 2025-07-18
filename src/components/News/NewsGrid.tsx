@@ -1,8 +1,9 @@
 'use client';
 
 import NewsCard from './NewsCard';
+import NewsApproachDialog from './NewsApproachDialog';
 import { INews } from '@/domain/entities/news';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { useNews } from '@/hooks/use-news';
 import { useSearchData } from '@/hooks/use-search-data';
@@ -38,6 +39,9 @@ export default function NewsGrid() {
         isLoading,
         selectedNews,
         toggleSelectNews,
+        saveNewsApproach,
+        getNewsApproach,
+        hasApproach,
         sendToProduction,
         page,
         setPage,
@@ -45,6 +49,11 @@ export default function NewsGrid() {
     } = useNews();
     const { toast } = useToast();
     const { setStatuses } = useSearchData();
+
+    const [approachDialog, setApproachDialog] = useState<{
+        open: boolean;
+        news: INews | null;
+    }>({ open: false, news: null });
 
     useEffect(() => {
         setStatuses(statuses);
@@ -57,6 +66,19 @@ export default function NewsGrid() {
             description:
                 "O briefing para seu vídeo será gerado e enviado para você na aba de 'Aprovações'",
         });
+    };
+
+    const handleApproachClick = (news: INews) => {
+        setApproachDialog({ open: true, news });
+    };
+
+    const handleApproachSave = (newsId: number, approach: string) => {
+        saveNewsApproach(newsId, approach);
+        setApproachDialog({ open: false, news: null });
+    };
+
+    const handleApproachDialogClose = () => {
+        setApproachDialog({ open: false, news: null });
     };
 
     return (
@@ -72,7 +94,9 @@ export default function NewsGrid() {
                                     key={news.id}
                                     news={news}
                                     isSelected={selectedNews.includes(news.id)}
+                                    hasApproach={hasApproach(news.id)}
                                     onSelect={toggleSelectNews}
+                                    onApproachClick={handleApproachClick}
                                 />
                             ))}
 
@@ -124,6 +148,17 @@ export default function NewsGrid() {
                         </div>
                     </div>
                 </div>
+            )}
+
+            {/* Approach Dialog */}
+            {approachDialog.news && (
+                <NewsApproachDialog
+                    news={approachDialog.news}
+                    open={approachDialog.open}
+                    onOpenChange={handleApproachDialogClose}
+                    onSave={handleApproachSave}
+                    initialApproach={getNewsApproach(approachDialog.news.id) || ''}
+                />
             )}
         </div>
     );
