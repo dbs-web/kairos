@@ -5,6 +5,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useFetchData } from './use-fetch-data';
 import { usePagination } from './use-pagination';
 import { useAvatars } from './use-avatars';
+import { sendToN8nWebhook } from '@/services/client/webhook/sendToN8nWebhook';
 
 // Entities
 import { IBriefing, IAvatar } from '@/domain/entities/briefing';
@@ -93,16 +94,20 @@ export const BriefingProvider = ({ children }: { children: React.ReactNode }) =>
 
     const redoMutation = useMutation({
         mutationFn: async ({ id, instruction }: { id: number; instruction: string }) => {
-            const response = await fetch('/api/briefings/redo', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ briefingId: id, instruction }),
+            // Find the briefing to get its title
+            const briefing = briefings.find(b => b.id === id);
+            if (!briefing) {
+                throw new Error('Briefing não encontrado');
+            }
+
+            const result = await sendToN8nWebhook({
+                tema: briefing.title,
+                abordagem: instruction,
+                briefingId: id.toString(),
             });
 
-            if (!response.ok) {
-                throw new Error('Erro ao refazer o briefing');
+            if (!result.ok) {
+                throw new Error(result.message);
             }
         },
         onSuccess: () => {

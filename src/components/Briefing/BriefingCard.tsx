@@ -116,15 +116,15 @@ export default function BriefingCard({ briefing }: BriefingCardProps) {
             </div>
 
             {/* Botões de ação - Simplificados e com z-index mais alto */}
-            <div className="relative z-10 grid grid-cols-3 gap-3 border-t border-border p-5">
+            <div className="relative z-10 flex gap-3 border-t border-border p-5">
                 <RedoBriefingDialog briefing={briefing}>
                     <Button
                         type="button"
                         variant="outline"
-                        className="w-full border-border text-foreground hover:border-border/80 hover:bg-muted"
+                        className="flex-1 border-border text-foreground hover:border-border/80 hover:bg-muted"
                     >
                         <MdRefresh className="mr-2" />
-                        Refazer
+                        Trocar abordagem
                     </Button>
                 </RedoBriefingDialog>
 
@@ -132,7 +132,7 @@ export default function BriefingCard({ briefing }: BriefingCardProps) {
                     <Button
                         type="button"
                         variant="outline"
-                        className="w-full border-border text-foreground hover:border-border/80 hover:bg-muted"
+                        className="flex-none px-4 border-border text-foreground hover:border-border/80 hover:bg-muted"
                     >
                         <FiEdit2 className="mr-2" />
                         Editar
@@ -143,7 +143,7 @@ export default function BriefingCard({ briefing }: BriefingCardProps) {
                     <AvatarSelectionDialog payload={{ briefingId: briefing.id }}>
                         <Button
                             type="button"
-                            className="w-full bg-gradient-to-r from-[#0085A3] to-primary text-primary-foreground shadow-sm transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-primary/30"
+                            className="flex-none px-4 bg-gradient-to-r from-[#0085A3] to-primary text-primary-foreground shadow-sm transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-primary/30"
                         >
                             <CiCircleCheck className="mr-2 text-xl text-white" />
                             <span className="text-white">Aprovar</span>

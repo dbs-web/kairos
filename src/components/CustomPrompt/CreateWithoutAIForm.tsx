@@ -30,7 +30,7 @@ export default function CreateWithoutAIForm() {
             </div>
 
             <div>
-                <label className="text-sm font-medium text-foreground">Instruções</label>
+                <label className="text-sm font-medium text-foreground">Abordagem</label>
                 <textarea
                     value={text}
                     onChange={(e) => setText(e.target.value)}
@@ -90,6 +90,7 @@ export default function CreateWithoutAIForm() {
                     </Tooltip>
                 </TooltipProvider>
             )}
+
         </form>
     );
 }

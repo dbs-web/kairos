@@ -65,7 +65,7 @@ export default function RedoBriefingDialog({ briefing, children }: RedoBriefingP
                 <DialogHeader>
                     <DialogTitle className="text-xl text-foreground">{briefing.title}</DialogTitle>
                     <DialogDescription className="text-muted-foreground">
-                        Digite as instruções para refazer o briefing. Seja específico sobre as
+                        Digite as instruções para nova abordagem do briefing. Seja específico sobre as
                         mudanças desejadas.
                     </DialogDescription>
                 </DialogHeader>
@@ -98,7 +98,7 @@ export default function RedoBriefingDialog({ briefing, children }: RedoBriefingP
                         ) : (
                             <>
                                 <MdRefresh className="text-lg" />
-                                Refazer Briefing
+                                Enviar nova abordagem
                             </>
                         )}
                     </Button>

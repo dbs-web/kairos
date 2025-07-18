@@ -6,6 +6,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useForm } from 'react-hook-form';
 import LoadingSubmission from './LoadingSubmission';
 import { useState } from 'react';
+import { sendToN8nWebhook } from '@/services/client/webhook/sendToN8nWebhook';
 
 // UI
 import { MdPlayCircleFilled } from 'react-icons/md';
@@ -41,28 +42,24 @@ export default function CreateWithAIForm() {
     const onSubmit = async (data: z.infer<typeof formSchema>) => {
         setIsSubmitting(true);
         try {
-            //api call
-            const res = await fetch('/api/briefings', {
-                method: 'POST',
-                body: JSON.stringify(data),
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+            const result = await sendToN8nWebhook({
+                tema: data.title,
+                abordagem: data.prompt,
             });
 
-            if (res.ok)
+            if (result.ok) {
                 toast({
                     title: 'Seu conteúdo está sendo gerado.',
                     description: `Em breve você receberá o seu texto na aba de Aprovações.`,
                 });
-            else {
-                const error = await res.json();
-                throw new Error(error.message);
+            } else {
+                throw new Error(result.message);
             }
         } catch (e) {
             toast({
                 title: 'Erro',
                 description: `${e instanceof Error ? e.message : e}`,
+                variant: 'destructive',
             });
         }
 
@@ -104,7 +101,7 @@ export default function CreateWithAIForm() {
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel className="text-sm font-medium text-foreground">
-                                Instruções
+                                Abordagem
                             </FormLabel>
                             <FormControl>
                                 <Textarea

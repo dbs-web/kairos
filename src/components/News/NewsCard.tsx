@@ -129,7 +129,7 @@ export default function NewsCard({ news, isSelected, hasApproach, onSelect, onAp
                                 className="flex items-center gap-x-1.5 rounded-md bg-primary/10 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-primary/20 hover:text-white"
                             >
                                 <MdArticle className="text-sm text-white" />
-                                <span className="text-white">Mudar abordagem</span>
+                                <span className="text-white">Trocar abordagem</span>
                             </button>
                         </div>
                     )}
