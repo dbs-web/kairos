@@ -1,5 +1,5 @@
 'use client';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 // Hooks
 import { useSuggestions } from '@/hooks/use-suggestions';
@@ -7,7 +7,8 @@ import { useToast } from '@/hooks/use-toast';
 import { useSearchData } from '@/hooks/use-search-data';
 
 // UI
-import SuggestionCard from './SuggestionCard';
+import SuggestionCard from './SuggestionCard_Option2';
+import SuggestionApproachDialog from './SuggestionApproachDialog_Option2';
 import Skeleton from './SuggestionSkeleton';
 import Pagination from '../ui/pagination';
 import Calendar from '../News/Calendar';
@@ -29,6 +30,9 @@ export default function SuggestionsGrid() {
         suggestions,
         selectedSuggestions,
         toggleSelectSuggestion,
+        saveSuggestionApproach,
+        getSuggestionApproach,
+        hasApproach,
         sendToProduction,
         archiveSuggestions,
         page,
@@ -39,6 +43,12 @@ export default function SuggestionsGrid() {
     const { setStatuses } = useSearchData();
 
     const { toast } = useToast();
+
+    const [approachDialog, setApproachDialog] = useState<{
+        open: boolean;
+        suggestion: ISuggestion | null;
+        preselectedStance?: 'APOIAR' | 'REFUTAR';
+    }>({ open: false, suggestion: null });
 
     useEffect(() => {
         setStatuses(enumStatuses);
@@ -78,6 +88,19 @@ export default function SuggestionsGrid() {
         }
     };
 
+    const handleApproachClick = (suggestion: ISuggestion, preselectedStance?: 'APOIAR' | 'REFUTAR') => {
+        setApproachDialog({ open: true, suggestion, preselectedStance });
+    };
+
+    const handleApproachDialogClose = () => {
+        setApproachDialog({ open: false, suggestion: null });
+    };
+
+    const handleApproachSave = (suggestionId: number, approach: string, stance?: 'APOIAR' | 'REFUTAR') => {
+        saveSuggestionApproach(suggestionId, approach, stance);
+        setApproachDialog({ open: false, suggestion: null });
+    };
+
     return (
         <div className="relative h-full w-full">
             {/* Layout principal - grid de 4 colunas */}
@@ -91,7 +114,10 @@ export default function SuggestionsGrid() {
                                     key={suggestion.id}
                                     suggestion={suggestion}
                                     isSelected={selectedSuggestions.includes(suggestion.id)}
+                                    hasApproach={hasApproach(suggestion.id)}
+                                    savedStance={getSuggestionApproach(suggestion.id)?.stance}
                                     onSelect={toggleSelectSuggestion}
+                                    onApproachClick={handleApproachClick}
                                 />
                             ))}
 
@@ -153,6 +179,18 @@ export default function SuggestionsGrid() {
                         </div>
                     </div>
                 </div>
+            )}
+
+            {/* Approach Dialog */}
+            {approachDialog.suggestion && (
+                <SuggestionApproachDialog
+                    suggestion={approachDialog.suggestion}
+                    open={approachDialog.open}
+                    onOpenChange={handleApproachDialogClose}
+                    onSave={handleApproachSave}
+                    initialApproach={getSuggestionApproach(approachDialog.suggestion.id)?.approach || ''}
+                    initialStance={approachDialog.preselectedStance || getSuggestionApproach(approachDialog.suggestion.id)?.stance}
+                />
             )}
         </div>
     );

@@ -12,8 +12,12 @@ import { usePagination } from './use-pagination';
 interface SuggestionsContextProps {
     suggestions: ISuggestion[];
     selectedSuggestions: number[];
+    suggestionApproaches: Record<number, { approach: string; stance?: 'APOIAR' | 'REFUTAR' }>;
     isLoading: boolean;
     toggleSelectSuggestion: (id: number) => void;
+    saveSuggestionApproach: (suggestionId: number, approach: string, stance?: 'APOIAR' | 'REFUTAR') => void;
+    getSuggestionApproach: (suggestionId: number) => { approach: string; stance?: 'APOIAR' | 'REFUTAR' } | undefined;
+    hasApproach: (suggestionId: number) => boolean;
     sendToProduction: () => Promise<void>;
     archiveSuggestions: () => Promise<void>;
     page: number;
@@ -28,6 +32,7 @@ export const SuggestionsProvider: React.FC<{ children: React.ReactNode }> = ({ c
     const queryClient = useQueryClient();
 
     const [selectedSuggestions, setSelectedSuggestions] = useState<number[]>([]);
+    const [suggestionApproaches, setSuggestionApproaches] = useState<Record<number, { approach: string; stance?: 'APOIAR' | 'REFUTAR' }>>({});
     const { page, setPage, limit } = usePagination();
 
     const { data, isLoading } = useFetchData<ISuggestion>(
@@ -40,10 +45,37 @@ export const SuggestionsProvider: React.FC<{ children: React.ReactNode }> = ({ c
     const totalPages = data?.pagination?.totalPages || 1;
 
     const toggleSelectSuggestion = useCallback((id: number) => {
+        setSelectedSuggestions((prev) => {
+            const isCurrentlySelected = prev.includes(id);
+            if (isCurrentlySelected) {
+                // If deselecting and no approach is saved, remove from selection
+                return prev.filter((item) => item !== id);
+            } else {
+                // If selecting, add to selection
+                return [...prev, id];
+            }
+        });
+    }, []);
+
+    const saveSuggestionApproach = useCallback((suggestionId: number, approach: string, stance?: 'APOIAR' | 'REFUTAR') => {
+        setSuggestionApproaches((prev) => ({
+            ...prev,
+            [suggestionId]: { approach, stance },
+        }));
+
+        // Ensure the suggestion is selected when approach is saved
         setSelectedSuggestions((prev) =>
-            prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id],
+            prev.includes(suggestionId) ? prev : [...prev, suggestionId]
         );
     }, []);
+
+    const getSuggestionApproach = useCallback((suggestionId: number) => {
+        return suggestionApproaches[suggestionId];
+    }, [suggestionApproaches]);
+
+    const hasApproach = useCallback((suggestionId: number) => {
+        return !!suggestionApproaches[suggestionId];
+    }, [suggestionApproaches]);
 
     // Mutação para enviar sugestões para produção
     const sendMutation = useMutation({
@@ -104,8 +136,12 @@ export const SuggestionsProvider: React.FC<{ children: React.ReactNode }> = ({ c
             value={{
                 suggestions,
                 selectedSuggestions,
+                suggestionApproaches,
                 isLoading,
                 toggleSelectSuggestion,
+                saveSuggestionApproach,
+                getSuggestionApproach,
+                hasApproach,
                 sendToProduction,
                 archiveSuggestions,
                 page,
