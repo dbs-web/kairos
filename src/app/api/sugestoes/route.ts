@@ -19,23 +19,36 @@ import { Pagination, withPagination } from '@/adapters/withPagination';
 export const POST = withExternalRequestValidation(async (request: Request) => {
     console.log('=== POST /api/sugestoes - Request received ===');
     try {
-        const { data } = await request.json();
-        console.log('=== POST /api/sugestoes - Data parsed ===');
+        const body = await request.json();
+        console.log('=== POST /api/sugestoes - Body parsed:', JSON.stringify(body, null, 2));
+        const { data, userId } = body;
+        console.log('=== POST /api/sugestoes - Data extracted ===');
 
         if (!Array.isArray(data) || data.length === 0) {
             console.log('=== POST /api/sugestoes - Invalid data ===');
             return NextResponse.json({ status: 400, message: 'Dados inválidos' });
         }
 
+        if (!userId) {
+            return NextResponse.json({
+                message: 'UserId é obrigatório.',
+                status: 400,
+            });
+        }
+
         console.log('POST /api/sugestoes - Received data:', JSON.stringify(data, null, 2));
-        await createManySuggestionsUseCase.execute({ suggestionsArr: data });
+        const createdSuggestions = await createManySuggestionsUseCase.execute({ suggestionsArr: data, userId });
         console.log('=== POST /api/sugestoes - Success ===');
+
+        return NextResponse.json({
+            message: 'Suggestions created successfully!',
+            created: createdSuggestions.length,
+            duplicatesFiltered: data.length - createdSuggestions.length
+        });
     } catch (e) {
         console.error('=== POST /api/sugestoes - Error details ===', e);
         return NextResponse.json({ status: 500, message: 'Erro ao criar sugestões', error: e });
     }
-
-    return NextResponse.json({ message: 'Suggestions created successfully!' });
 });
 
 async function getSuggestionsHandler(request: Request, user: Session, pagination: Pagination) {

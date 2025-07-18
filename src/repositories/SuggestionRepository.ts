@@ -18,6 +18,7 @@ export interface ISuggestionRepository extends IRepository<ISuggestion> {
     updateMany: (args: UpdateManyArgs<ISuggestion>) => Promise<ISuggestion[]>;
     createMany: (suggestionsDataArr: Omit<ISuggestion, 'id'>[]) => Promise<ISuggestion[]>;
     findManyBiIds: ({ ids, userId }: FindManySuggestionsByIdArgs) => Promise<ISuggestion[]>;
+    findExistingContentHashes: (userId: number, contentHashes: string[]) => Promise<Set<string>>;
 }
 
 export default class SuggestionRepository implements ISuggestionRepository {
@@ -82,5 +83,28 @@ export default class SuggestionRepository implements ISuggestionRepository {
                 status: Status.ARQUIVADO,
             },
         });
+    }
+
+    async findExistingContentHashes(userId: number, contentHashes: string[]): Promise<Set<string>> {
+        // Import here to avoid circular dependency
+        const { generateSuggestionContentHash } = await import('@/utils/duplicateDetection');
+
+        // Get all suggestions for this user
+        const existingSuggestions = await this.find({
+            criteria: { userId },
+            skip: 0,
+            take: undefined, // Get all records
+        });
+
+        // Generate hashes for existing suggestions and check against provided hashes
+        const existingHashes = new Set<string>();
+        for (const suggestion of existingSuggestions) {
+            const hash = generateSuggestionContentHash(suggestion);
+            if (contentHashes.includes(hash)) {
+                existingHashes.add(hash);
+            }
+        }
+
+        return existingHashes;
     }
 }

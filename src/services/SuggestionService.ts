@@ -28,10 +28,10 @@ interface FindManySuggestionsByIds {
 export interface ISuggestionService extends IPaginatedDataService<ISuggestion> {
     create(data: Omit<ISuggestion, 'id'>): Promise<ISuggestion>;
     createMany(dataArr: Omit<ISuggestion, 'id'>[]): Promise<ISuggestion[]>;
+    createManyWithDuplicateCheck: (suggestionsDataArr: Omit<ISuggestion, 'id'>[], userId: number) => Promise<ISuggestion[]>;
     update(args: UpdateSuggestionArgs): Promise<ISuggestion>;
     delete(args: DeleteSuggestionArgs): Promise<ISuggestion>;
     findUnique(args: { id: number; userId: number }): Promise<ISuggestion>;
-    createMany: (suggestionsDataArr: Omit<ISuggestion, 'id'>[]) => Promise<ISuggestion[]>;
     deleteMany: (args: DeleteManySuggestionArgs) => Promise<void>;
 }
 
@@ -91,6 +91,43 @@ export default class SuggestionService implements ISuggestionService {
 
     async createMany(suggestionsDataArr: Omit<ISuggestion, 'id'>[]): Promise<ISuggestion[]> {
         return this.repository.createMany(suggestionsDataArr);
+    }
+
+    async createManyWithDuplicateCheck(suggestionsDataArr: Omit<ISuggestion, 'id'>[], userId: number): Promise<ISuggestion[]> {
+        try {
+            console.log('SuggestionService.createManyWithDuplicateCheck - Starting with', suggestionsDataArr.length, 'items');
+
+            // Import here to avoid circular dependency
+            const { generateSuggestionContentHash, filterDuplicateSuggestions } = await import('@/utils/duplicateDetection');
+            console.log('SuggestionService.createManyWithDuplicateCheck - Imported duplicate detection utils');
+
+            // Generate hashes for all new suggestion items
+            const newContentHashes = suggestionsDataArr.map(suggestion => generateSuggestionContentHash(suggestion));
+            console.log('SuggestionService.createManyWithDuplicateCheck - Generated', newContentHashes.length, 'hashes');
+
+            // Check which hashes already exist in the database
+            const existingHashes = await this.repository.findExistingContentHashes(userId, newContentHashes);
+            console.log('SuggestionService.createManyWithDuplicateCheck - Found', existingHashes.size, 'existing hashes');
+
+            // Filter out duplicates
+            const filteredSuggestions = filterDuplicateSuggestions(suggestionsDataArr, existingHashes);
+            console.log('SuggestionService.createManyWithDuplicateCheck - Filtered to', filteredSuggestions.length, 'unique items');
+
+            // Create only the non-duplicate suggestions
+            if (filteredSuggestions.length === 0) {
+                console.log('SuggestionService.createManyWithDuplicateCheck - No items to create');
+                return [];
+            }
+
+            const result = await this.repository.createMany(filteredSuggestions);
+            console.log('SuggestionService.createManyWithDuplicateCheck - Created', result.length, 'items');
+            return result;
+        } catch (error) {
+            console.error('Error in createManyWithDuplicateCheck:', error);
+            // Fallback to regular creation without duplicate checking
+            console.log('Falling back to regular createMany without duplicate checking');
+            return this.repository.createMany(suggestionsDataArr);
+        }
     }
 
     async update({ id, userId, data }: UpdateSuggestionArgs): Promise<ISuggestion> {

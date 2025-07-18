@@ -10,6 +10,7 @@ import { Status } from '@/domain/entities/status';
 
 export interface INewsRepository extends IRepository<INews> {
     createMany: (newssDataArr: Omit<INews, 'id'>[]) => Promise<INews[]>;
+    findExistingContentHashes: (userId: number, contentHashes: string[]) => Promise<Set<string>>;
 }
 
 export default class NewsRepository implements INewsRepository {
@@ -59,5 +60,34 @@ export default class NewsRepository implements INewsRepository {
                 status: Status.ARQUIVADO,
             },
         });
+    }
+
+    async findExistingContentHashes(userId: number, contentHashes: string[]): Promise<Set<string>> {
+        try {
+            // Import here to avoid circular dependency
+            const { generateNewsContentHash } = await import('@/utils/duplicateDetection');
+
+            // Get all news for this user
+            const existingNews = await this.find({
+                criteria: { userId },
+                skip: 0,
+                take: undefined, // Get all records
+            });
+
+            // Generate hashes for existing news and check against provided hashes
+            const existingHashes = new Set<string>();
+            for (const news of existingNews) {
+                const hash = generateNewsContentHash(news);
+                if (contentHashes.includes(hash)) {
+                    existingHashes.add(hash);
+                }
+            }
+
+            return existingHashes;
+        } catch (error) {
+            console.error('Error in findExistingContentHashes:', error);
+            // Return empty set if there's an error - this allows the operation to continue
+            return new Set<string>();
+        }
     }
 }

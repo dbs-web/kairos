@@ -8,7 +8,7 @@ export default class CreateManyNewsUseCase {
         this.newsService = newsService;
     }
 
-    async execute({ newsDataArr }: { newsDataArr: Omit<INews, 'id'>[] }) {
-        return this.newsService.createMany(newsDataArr);
+    async execute({ newsDataArr, userId }: { newsDataArr: Omit<INews, 'id'>[]; userId: number }) {
+        return this.newsService.createManyWithDuplicateCheck(newsDataArr, userId);
     }
 }

@@ -28,6 +28,7 @@ export interface INewsService extends IPaginatedDataService<INews> {
     findById: (args: FindByIdArgs) => Promise<INews>;
     findByIds: ({ ids }: { ids: number[] }) => Promise<INews[]>;
     createMany: (suggestionsDataArr: Omit<INews, 'id'>[]) => Promise<INews[]>;
+    createManyWithDuplicateCheck: (newsDataArr: Omit<INews, 'id'>[], userId: number) => Promise<INews[]>;
     update: (args: UpdateVideoArgs) => Promise<INews>;
     deleteMany: ({ ids, userId }: { ids: number[]; userId: number }) => Promise<void>;
     updateMany: ({ dataArr, userId }: UpdateManyVideoArgs) => Promise<INews[]>;
@@ -94,6 +95,43 @@ export default class NewsService implements INewsService {
 
     async createMany(newsDataArr: Omit<INews, 'id'>[]): Promise<INews[]> {
         return this.repository.createMany(newsDataArr);
+    }
+
+    async createManyWithDuplicateCheck(newsDataArr: Omit<INews, 'id'>[], userId: number): Promise<INews[]> {
+        try {
+            console.log('NewsService.createManyWithDuplicateCheck - Starting with', newsDataArr.length, 'items');
+
+            // Import here to avoid circular dependency
+            const { generateNewsContentHash, filterDuplicateNews } = await import('@/utils/duplicateDetection');
+            console.log('NewsService.createManyWithDuplicateCheck - Imported duplicate detection utils');
+
+            // Generate hashes for all new news items
+            const newContentHashes = newsDataArr.map(news => generateNewsContentHash(news));
+            console.log('NewsService.createManyWithDuplicateCheck - Generated', newContentHashes.length, 'hashes');
+
+            // Check which hashes already exist in the database
+            const existingHashes = await this.repository.findExistingContentHashes(userId, newContentHashes);
+            console.log('NewsService.createManyWithDuplicateCheck - Found', existingHashes.size, 'existing hashes');
+
+            // Filter out duplicates
+            const filteredNews = filterDuplicateNews(newsDataArr, existingHashes);
+            console.log('NewsService.createManyWithDuplicateCheck - Filtered to', filteredNews.length, 'unique items');
+
+            // Create only the non-duplicate news
+            if (filteredNews.length === 0) {
+                console.log('NewsService.createManyWithDuplicateCheck - No items to create');
+                return [];
+            }
+
+            const result = await this.repository.createMany(filteredNews);
+            console.log('NewsService.createManyWithDuplicateCheck - Created', result.length, 'items');
+            return result;
+        } catch (error) {
+            console.error('Error in createManyWithDuplicateCheck:', error);
+            // Fallback to regular creation without duplicate checking
+            console.log('Falling back to regular createMany without duplicate checking');
+            return this.repository.createMany(newsDataArr);
+        }
     }
 
     async update({ id, userId, data }: UpdateVideoArgs): Promise<INews> {

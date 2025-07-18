@@ -28,11 +28,10 @@ export default function SuggestionCard({ suggestion, isSelected, onSelect }: Sug
     };
 
     const getSocialIcon = () => {
-        return suggestion.socialmedia_name === 'instagram' 
+        return suggestion.socialmedia_name === 'instagram'
             ? 'https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg'
             : 'https://upload.wikimedia.org/wikipedia/commons/5/53/X_logo_2023_original.svg';
     };
-
     const getSocialIconStyle = () => {
         if (suggestion.socialmedia_name === 'instagram') {
             return 'brightness-0 invert'; // Makes Instagram logo white
@@ -41,17 +40,9 @@ export default function SuggestionCard({ suggestion, isSelected, onSelect }: Sug
         }
     };
 
-    const getProxiedImageUrl = (originalUrl: string | null) => {
-        if (!originalUrl) return null;
-        
-        // If it's already a local URL, use it directly
-        if (originalUrl.startsWith('/') || originalUrl.includes('localhost')) {
-            return originalUrl;
-        }
-        
-        // Use proxy for external URLs
-        return `/api/proxy-image?url=${encodeURIComponent(originalUrl)}`;
-    };
+
+
+
 
     return (
         <div
@@ -71,17 +62,17 @@ export default function SuggestionCard({ suggestion, isSelected, onSelect }: Sug
             <div className="relative flex h-full flex-col">
                 {/* Post Image */}
                 <div className="relative mb-4 h-48 w-full shrink-0 overflow-hidden rounded-lg">
-                    {imageError || !getProxiedImageUrl(suggestion.post_image) ? (
+                    {imageError || !suggestion.post_image ? (
                         // Fallback: Different behavior for X vs Instagram
                         suggestion.socialmedia_name === 'x' ? (
                             // X: Blurred profile background
                             <div className="relative h-full w-full">
                                 {/* Blurred profile background */}
                                 {!userPhotoError && suggestion.user_photo ? (
-                                    <div 
+                                    <div
                                         className="absolute inset-0 bg-cover bg-center"
                                         style={{
-                                            backgroundImage: `url(${getProxiedImageUrl(suggestion.user_photo)})`,
+                                            backgroundImage: `url(${suggestion.user_photo})`,
                                             filter: 'blur(5px) brightness(0.7)',
                                             transform: 'scale(1.1)' // Prevents blur edge artifacts
                                         }}
@@ -101,14 +92,14 @@ export default function SuggestionCard({ suggestion, isSelected, onSelect }: Sug
                         )
                     ) : (
                         <Image
-                            src={getProxiedImageUrl(suggestion.post_image)!}
+                            src={suggestion.post_image!}
                             alt="Post content"
                             fill
                             className="object-cover"
                             onError={() => setImageError(true)}
                         />
                     )}
-                    
+
                     {/* Social Media Icon Overlay */}
                     <div className={`social-icon-overlay absolute top-2 right-2 rounded-full p-2 ${
                         suggestion.socialmedia_name === 'instagram' ? 'instagram' : ''
@@ -126,13 +117,13 @@ export default function SuggestionCard({ suggestion, isSelected, onSelect }: Sug
                 {/* Profile Section */}
                 <div className="mb-3 flex items-center gap-3">
                     <div className="relative h-10 w-10 overflow-hidden rounded-full">
-                        {userPhotoError || !getProxiedImageUrl(suggestion.user_photo) ? (
+                        {userPhotoError || !suggestion.user_photo ? (
                             <div className="flex h-full w-full items-center justify-center bg-muted text-xs text-muted-foreground">
                                 ?
                             </div>
                         ) : (
                             <Image
-                                src={getProxiedImageUrl(suggestion.user_photo)!}
+                                src={suggestion.user_photo!}
                                 alt={suggestion.name_profile}
                                 fill
                                 className="object-cover"
