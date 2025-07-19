@@ -2,24 +2,35 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import { MdImageNotSupported, MdThumbUp, MdThumbDown } from 'react-icons/md';
+import { MdImageNotSupported, MdThumbUp, MdThumbDown, MdOpenInNew, MdArticle } from 'react-icons/md';
 import StatusBadge from '../ui/status-badge';
 import { ISuggestion } from '@/domain/entities/suggestion';
 
 interface SuggestionCardProps {
     suggestion: ISuggestion;
     isSelected: boolean;
+    hasApproach: boolean;
+    savedStance?: 'APOIAR' | 'REFUTAR';
     onSelect: (id: number) => void;
     onApproachClick: (suggestion: ISuggestion, preselectedStance?: 'APOIAR' | 'REFUTAR') => void;
 }
 
-export default function SuggestionCard({ suggestion, isSelected, onSelect, onApproachClick }: SuggestionCardProps) {
+export default function SuggestionCard({ suggestion, isSelected, hasApproach, savedStance, onSelect, onApproachClick }: SuggestionCardProps) {
     const [imageError, setImageError] = useState(false);
     const [userPhotoError, setUserPhotoError] = useState(false);
 
     const handleCardClick = () => {
         if (suggestion.status === 'EM_ANALISE') {
-            onApproachClick(suggestion);
+            if (isSelected && hasApproach) {
+                // If already selected and has approach, deselect
+                onSelect(suggestion.id);
+            } else if (!isSelected) {
+                // If not selected, open approach dialog
+                onApproachClick(suggestion);
+            } else {
+                // If selected but no approach, open approach dialog
+                onApproachClick(suggestion);
+            }
         }
     };
 
@@ -42,6 +53,11 @@ export default function SuggestionCard({ suggestion, isSelected, onSelect, onApp
         }
     };
 
+    const handleApproachClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.stopPropagation();
+        onApproachClick(suggestion);
+    };
+
     const getSocialIcon = () => {
         return suggestion.socialmedia_name === 'instagram'
             ? 'https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg'
@@ -55,10 +71,6 @@ export default function SuggestionCard({ suggestion, isSelected, onSelect, onApp
         }
     };
 
-
-
-
-
     return (
         <div
             onClick={handleCardClick}
@@ -68,16 +80,24 @@ export default function SuggestionCard({ suggestion, isSelected, onSelect, onApp
                     : 'cursor-not-allowed opacity-75'
             } ${isSelected ? 'card-glow selected' : ''}`}
         >
-            <div
-                className={`absolute inset-0 rounded-lg border transition-all duration-100 ${
-                    isSelected ? 'border-2 border-primary' : 'border border-border'
-                }`}
-            />
+            <>
+                <div
+                    className={`absolute inset-0 rounded-lg transition-all duration-100 ${
+                        isSelected ? 'border-2 border-primary' : 'border border-border'
+                    }`}
+                />
+                {isSelected && (
+                    <>
+                        <div className="absolute left-0 top-0 h-8 w-8 rounded-tl-lg border-l-2 border-t-2 border-primary" />
+                        <div className="absolute bottom-0 right-0 h-8 w-8 rounded-br-lg border-b-2 border-r-2 border-primary" />
+                    </>
+                )}
+            </>
 
-            <div className="relative flex flex-col">
+            <div className="relative flex flex-col min-h-0">
                 {/* Profile Section - Top */}
-                <div className="flex items-center gap-3 p-4 pb-2">
-                    <div className="relative h-10 w-10 overflow-hidden rounded-full">
+                <div className="flex items-center gap-2 p-3 pb-2 sm:gap-3 sm:p-4 sm:pb-2">
+                    <div className="relative h-8 w-8 flex-shrink-0 overflow-hidden rounded-full sm:h-10 sm:w-10">
                         {userPhotoError || !suggestion.user_photo ? (
                             <div className="flex h-full w-full items-center justify-center bg-muted text-xs text-muted-foreground">
                                 ?
@@ -92,17 +112,19 @@ export default function SuggestionCard({ suggestion, isSelected, onSelect, onApp
                             />
                         )}
                     </div>
-                    <div className="flex-1">
-                        <p className="font-medium text-foreground">@{suggestion.name_profile}</p>
+                    <div className="flex-1 min-w-0">
+                        <p className="font-medium text-foreground text-sm sm:text-base truncate">@{suggestion.name_profile}</p>
                         <time className="text-xs text-muted-foreground">
                             {new Date(suggestion.date).toLocaleDateString('pt-BR')}
                         </time>
                     </div>
-                    <StatusBadge status={suggestion.status} />
+                    <div className="flex-shrink-0">
+                        <StatusBadge status={suggestion.status} />
+                    </div>
                 </div>
 
                 {/* Post Image - 4:5 aspect ratio */}
-                <div className="relative mx-4 mb-4 overflow-hidden rounded-lg" style={{ aspectRatio: '4/5' }}>
+                <div className="relative mx-3 mb-3 overflow-hidden rounded-lg sm:mx-4 sm:mb-4" style={{ aspectRatio: '4/5' }}>
                     {imageError || !suggestion.post_image ? (
                         // Fallback: Different behavior for X vs Instagram
                         suggestion.socialmedia_name === 'x' ? (
@@ -128,7 +150,7 @@ export default function SuggestionCard({ suggestion, isSelected, onSelect, onApp
                         ) : (
                             // Instagram: Show image not supported icon
                             <div className="flex h-full w-full items-center justify-center bg-muted text-muted-foreground">
-                                <MdImageNotSupported className="text-4xl" />
+                                <MdImageNotSupported className="text-2xl sm:text-4xl" />
                             </div>
                         )
                     ) : (
@@ -142,51 +164,86 @@ export default function SuggestionCard({ suggestion, isSelected, onSelect, onApp
                     )}
 
                     {/* Social Media Icon Overlay */}
-                    <div className={`social-icon-overlay absolute top-2 right-2 rounded-full p-2 ${
+                    <div className={`social-icon-overlay absolute top-1.5 right-1.5 rounded-full p-1.5 sm:top-2 sm:right-2 sm:p-2 ${
                         suggestion.socialmedia_name === 'instagram' ? 'instagram' : ''
                     }`}>
                         <Image
                             src={getSocialIcon()}
                             alt={suggestion.socialmedia_name}
-                            width={20}
-                            height={20}
-                            className={`${suggestion.socialmedia_name === 'instagram' ? 'social-icon-instagram' : 'social-icon-x'}`}
+                            width={16}
+                            height={16}
+                            className={`sm:w-5 sm:h-5 ${suggestion.socialmedia_name === 'instagram' ? 'social-icon-instagram' : 'social-icon-x'}`}
                         />
                     </div>
                 </div>
 
                 {/* Post Text */}
-                <div className="px-4 mb-4">
-                    <p className="line-clamp-3 text-sm leading-relaxed text-foreground/80">
+                <div className="px-3 mb-3 sm:px-4 sm:mb-4">
+                    <p className="line-clamp-3 text-xs leading-relaxed text-foreground/80 sm:text-sm">
                         {suggestion.post_text}
                     </p>
                 </div>
 
-                {/* Action Buttons - Option 1: Thematic */}
-                <div className="flex gap-2 p-4 pt-0">
-                    <button
-                        onClick={handleApoiarClick}
-                        disabled={suggestion.status !== 'EM_ANALISE'}
-                        className="flex-1 flex items-center justify-center gap-2 rounded-lg border-2 border-teal-500 bg-teal-500/10 px-3 py-2 text-sm font-medium text-teal-500 transition-all duration-200 hover:bg-teal-500/20 hover:border-teal-400 hover:text-teal-400 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                        <MdThumbUp className="text-base" />
-                        Apoiar
-                    </button>
-                    <button
-                        onClick={handleRefutarClick}
-                        disabled={suggestion.status !== 'EM_ANALISE'}
-                        className="flex-1 flex items-center justify-center gap-2 rounded-lg border-2 border-amber-600 bg-amber-600/10 px-3 py-2 text-sm font-medium text-amber-600 transition-all duration-200 hover:bg-amber-600/20 hover:border-amber-500 hover:text-amber-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                        <MdThumbDown className="text-base" />
-                        Refutar
-                    </button>
+                {/* Action Buttons - Hybrid: Gray default, Thematic hover */}
+                <div className="flex flex-col gap-2 p-3 pt-0 sm:flex-row sm:p-4 sm:pt-0">
+                    <div className="flex gap-2">
+                        <button
+                            onClick={handleApoiarClick}
+                            disabled={suggestion.status !== 'EM_ANALISE'}
+                            className={`flex-1 flex items-center justify-center gap-1.5 rounded-lg border-2 px-2 py-1.5 text-xs font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed sm:gap-2 sm:px-3 sm:py-2 sm:text-sm ${
+                                savedStance === 'APOIAR'
+                                    ? 'border-teal-500 bg-teal-500/10 text-teal-500'
+                                    : 'border-slate-600 bg-transparent text-slate-400 hover:bg-teal-500/10 hover:border-teal-500 hover:text-teal-500'
+                            }`}
+                        >
+                            <MdThumbUp className="text-sm sm:text-base" />
+                            Apoiar
+                        </button>
+                        <button
+                            onClick={handleRefutarClick}
+                            disabled={suggestion.status !== 'EM_ANALISE'}
+                            className={`flex-1 flex items-center justify-center gap-1.5 rounded-lg border-2 px-2 py-1.5 text-xs font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed sm:gap-2 sm:px-3 sm:py-2 sm:text-sm ${
+                                savedStance === 'REFUTAR'
+                                    ? 'border-amber-600 bg-amber-600/10 text-amber-600'
+                                    : 'border-slate-600 bg-transparent text-slate-400 hover:bg-amber-600/10 hover:border-amber-600 hover:text-amber-600'
+                            }`}
+                        >
+                            <MdThumbDown className="text-sm sm:text-base" />
+                            Refutar
+                        </button>
+                    </div>
                     <button
                         onClick={handleOpenPost}
-                        className="flex-1 rounded-lg bg-primary px-3 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+                        className="group flex items-center justify-center gap-1.5 rounded-lg px-2 py-1.5 font-medium transition-colors duration-200 sm:flex-1 sm:px-3 sm:py-2"
+                        style={{
+                            backgroundColor: 'hsl(var(--primary)/.2)',
+                            color: 'hsl(var(--primary))',
+                            fontSize: '12px'
+                        }}
+                        onMouseEnter={(e) => {
+                            e.currentTarget.style.backgroundColor = 'hsl(var(--primary)/.3)';
+                        }}
+                        onMouseLeave={(e) => {
+                            e.currentTarget.style.backgroundColor = 'hsl(var(--primary)/.2)';
+                        }}
                     >
+                        <MdOpenInNew className="text-xs transition-transform group-hover:rotate-12 sm:text-sm" />
                         Ver Post
                     </button>
                 </div>
+
+                {/* Approach button for selected cards with saved approach */}
+                {isSelected && hasApproach && (
+                    <div className="px-3 pb-3 sm:px-4 sm:pb-4">
+                        <button
+                            onClick={handleApproachClick}
+                            className="w-full flex items-center justify-center gap-1.5 rounded-md bg-primary/10 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-primary/20 hover:text-white"
+                        >
+                            <MdArticle className="text-sm text-white" />
+                            <span className="text-white">Trocar abordagem</span>
+                        </button>
+                    </div>
+                )}
             </div>
         </div>
     );

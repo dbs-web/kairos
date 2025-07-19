@@ -7,8 +7,8 @@ import { useToast } from '@/hooks/use-toast';
 import { useSearchData } from '@/hooks/use-search-data';
 
 // UI
-import SuggestionCard from './SuggestionCard_Option2';
-import SuggestionApproachDialog from './SuggestionApproachDialog_Option2';
+import SuggestionCard from './SuggestionCard';
+import SuggestionApproachDialog from './SuggestionApproachDialog';
 import Skeleton from './SuggestionSkeleton';
 import Pagination from '../ui/pagination';
 import Calendar from '../News/Calendar';

@@ -48,7 +48,12 @@ export const SuggestionsProvider: React.FC<{ children: React.ReactNode }> = ({ c
         setSelectedSuggestions((prev) => {
             const isCurrentlySelected = prev.includes(id);
             if (isCurrentlySelected) {
-                // If deselecting and no approach is saved, remove from selection
+                // If deselecting, also clear the saved approach
+                setSuggestionApproaches((prevApproaches) => {
+                    const newApproaches = { ...prevApproaches };
+                    delete newApproaches[id];
+                    return newApproaches;
+                });
                 return prev.filter((item) => item !== id);
             } else {
                 // If selecting, add to selection
