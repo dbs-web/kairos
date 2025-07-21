@@ -1,25 +1,27 @@
 # Test for localhost
 $headers = @{
-    'Content-Type' = 'application/json'
+    'Content-Type' = 'application/json; charset=utf-8'
     'x-api-key' = '6Kh8bBoBilUCUypzKD3Lftj15oQJOaFIBHLTFImAKDA1y2YBQdlFK43raubOfKDp'
 }
 
 $bodyObject = @{
     data = @(
         @{
-            post_url = "https://www.tiktok.com/@emmanuelmacron/video/7528164276956040470"
-            user_photo = "https://p77-sign-va-lite.tiktokcdn.com/tos-maliva-avt-0068/8a140844b44cf27192e579c5011ec6e3~tplv-tiktokx-cropcenter:100:100.jpeg"
-            post_image = "https://p16-pu-sign-no.tiktokcdn-eu.com/tos-no1a-p-0037-no/oQALNMQfA0j3IPcILtADmIQGyAAI8AMFOeeTwd~tplv-tiktokx-origin.image"
-            name_profile = "@emmanuelmacron"
-            post_text = "teste request"
-            socialmedia_name = "tiktok"
+            post_url = "https://www.instagram.com/p/DMXrCoix4Ec/"
+            user_photo = "https://kairosimgs.blob.core.windows.net/images/17865860787349386_profile.jpg"
+            post_image = "https://kairosimgs.blob.core.windows.net/images/17865860787349386_media.jpg"
+            name_profile = "bolsonarosp"
+            post_text = "O mundo esta vendo. Voces ai no Brasil e nos aqui de fora, se todos remarmos na mesma nos venceremos!"
+            socialmedia_name = "instagram"
             userId = 10
-            date = "2025-07-17T18:22:17.000Z"
+            date = "2025-07-21T15:53:02.000Z"
         }
     )
+    userId = 10
 }
 
 $body = $bodyObject | ConvertTo-Json -Depth 3
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
 Write-Host "Testing localhost..."
 try {
