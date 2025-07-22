@@ -52,7 +52,7 @@ export const POST = withAuthorization([UserRoles.USER], async (request, user) =>
                         await sendSuggestionToN8nWebhook({
                             rede_social: suggestion.socialmedia_name,
                             post_url: suggestion.post_url,
-                            briefingid: createdBriefings.find(b => b.ref_id === suggestion.id)?.id?.toString() || "",
+                            briefingid: createdBriefings.find(b => b.suggestionId === suggestion.id)?.id?.toString() || "",
                             abordagem: approach.approach,
                             button: buttonValue as 'apoiar' | 'refutar' | 'neutro'
                         });
