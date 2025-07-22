@@ -6,10 +6,10 @@ $webhookUrl = "https://n8n.dbsweb.com.br/webhook/b30d3d2d-4848-49cc-83fc-a47e4ff
 # Test payload matching exactly what the app sends
 $testPayload = @(
     @{
-        cliente = "Cliente"
+        cliente = "10"
         rede_social = "instagram"
         post_url = "https://www.instagram.com/p/TEST123/"
-        briefingid = ""
+        briefingid = "1583"
         "instruções específicas" = "test approach text"
         button = "apoiar"
     }

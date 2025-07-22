@@ -50,6 +50,7 @@ export const POST = withAuthorization([UserRoles.USER], async (request, user) =>
                     const buttonValue = approach.stance ? approach.stance.toLowerCase() : 'neutro';
                     try {
                         await sendSuggestionToN8nWebhook({
+                            cliente: userId.toString(),
                             rede_social: suggestion.socialmedia_name,
                             post_url: suggestion.post_url,
                             briefingid: createdBriefings.find(b => b.suggestionId === suggestion.id)?.id?.toString() || "",

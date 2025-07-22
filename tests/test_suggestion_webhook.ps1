@@ -7,7 +7,7 @@ Write-Host "`n[WEBHOOK TEST] Testing sendSuggestionToN8nWebhook service..." -For
 # Create a test payload that matches the expected structure
 $testPayload = @(
     @{
-        cliente = "Cliente"
+        cliente = "10"
         rede_social = "instagram"
         post_url = "https://www.instagram.com/p/TEST123/?hl=pt-br"
         briefingid = "test-briefing-123"
@@ -39,7 +39,7 @@ Write-Host "3. Check browser console for webhook logs when testing in the UI" -F
 Write-Host "`nExpected webhook payload structure:" -ForegroundColor Yellow
 @"
 [{
-    "cliente": "Cliente",
+    "cliente": "[user_id_from_database]",
     "rede_social": "[rede]",
     "post_url": "[url]",
     "briefingid": "[briefingid]",
