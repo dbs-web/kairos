@@ -84,13 +84,13 @@ export const SuggestionsProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
     // Mutação para enviar sugestões para produção
     const sendMutation = useMutation({
-        mutationFn: async (selectedIds: number[]) => {
+        mutationFn: async (payload: { suggestions: number[]; approaches: Record<number, { approach: string; stance?: 'APOIAR' | 'REFUTAR' }> }) => {
             const response = await fetch('/api/sugestoes/aprovar', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ suggestions: selectedIds }),
+                body: JSON.stringify(payload),
             });
 
             if (!response.ok) {
@@ -104,8 +104,19 @@ export const SuggestionsProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
     const sendToProduction = async () => {
         if (selectedSuggestions.length > 0) {
-            await sendMutation.mutateAsync(selectedSuggestions);
+            // Filter approaches for selected suggestions only
+            const selectedApproaches = Object.fromEntries(
+                Object.entries(suggestionApproaches).filter(([id]) =>
+                    selectedSuggestions.includes(parseInt(id))
+                )
+            );
+
+            await sendMutation.mutateAsync({
+                suggestions: selectedSuggestions,
+                approaches: selectedApproaches
+            });
             setSelectedSuggestions([]);
+            setSuggestionApproaches({});
         }
     };
 

@@ -50,7 +50,7 @@ export default function SuggestionApproachDialog({
             onSave(suggestion.id, approach.trim(), stance || undefined);
             toast({
                 title: 'Abordagem salva com sucesso!',
-                description: stance 
+                description: stance
                     ? `A abordagem foi definida para ${stance === 'APOIAR' ? 'apoiar' : 'refutar'} esta sugestão.`
                     : 'A abordagem foi definida para esta sugestão.',
             });
