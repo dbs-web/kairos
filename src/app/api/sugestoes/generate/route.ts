@@ -3,25 +3,32 @@ import { NextResponse } from 'next/server';
 // Entities
 import { UserRoles } from '@/domain/entities/user';
 
-// UseCases
-import { getUserDifyAgentUseCase } from '@/use-cases/UserUseCases';
-import { generateNewSuggestionUseCase } from '@/use-cases/DifyUseCases';
+// Services
+import { sendToN8nWebhook } from '@/services/client/webhook/sendToN8nWebhook';
 import { withAuthorization } from '@/adapters/withAuthorization';
 
 export const POST = withAuthorization([UserRoles.USER], async (request, user) => {
-    const difyAgentToken = await getUserDifyAgentUseCase.execute({ userId: user.id });
+    try {
+        // Send request to N8N to generate new suggestions
+        const webhookResult = await sendToN8nWebhook({
+            tema: 'Gerar novas sugestões',
+            abordagem: 'Gere novos conteúdos para o usuário baseado nas tendências atuais e temas relevantes.',
+            briefingId: '', // No specific briefing for new suggestion generation
+            userId: user.id.toString(),
+        });
 
-    if (difyAgentToken) {
-        await generateNewSuggestionUseCase.execute({ difyAgentToken });
-    } else {
+        if (!webhookResult.ok) {
+            throw new Error(`Webhook failed: ${webhookResult.message}`);
+        }
+
         return NextResponse.json({
-            error: 'User difyAgentToken is missing.',
+            message: `Seu conteúdo está sendo gerado, em breve ele estará disponível aqui.`,
+            status: 200,
+        });
+    } catch (error) {
+        return NextResponse.json({
+            error: 'Erro ao gerar sugestões.',
             status: 500,
         });
     }
-
-    return NextResponse.json({
-        message: `Seu conteúdo está sendo gerado, em breve ele estará disponível aqui.`,
-        status: 200,
-    });
 });

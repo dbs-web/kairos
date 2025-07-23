@@ -11,14 +11,15 @@ import {
     getPaginatedBriefingsUseCase,
     updateBriefingUseCase,
 } from '@/use-cases/BriefingUseCases';
-import { checkContentUseCase, customBriefingRequestUseCase } from '@/use-cases/DifyUseCases';
+import { checkContentUseCase } from '@/use-cases/DifyUseCases';
+
+// Services
+import { sendToN8nWebhook } from '@/services/client/webhook/sendToN8nWebhook';
 
 // Adapters
 import { Session, withAuthorization } from '@/adapters/withAuthorization';
 import { Pagination, withPagination } from '@/adapters/withPagination';
 import { IBriefing } from '@/domain/entities/briefing';
-import GetUserDifyAgentUseCase from '@/use-cases/UserUseCases/GetUserDifyAgentUseCase';
-import { getUserDifyAgentUseCase } from '@/use-cases/UserUseCases';
 
 const route = '/api/briefings';
 
@@ -74,17 +75,6 @@ export const POST = withAuthorization([UserRoles.USER, UserRoles.ADMIN], async (
         });
     }
 
-    const difyAgentToken = await getUserDifyAgentUseCase.execute({ userId: user.id });
-
-    if (!difyAgentToken) {
-        return createApiResponseUseCase.INTERNAL_SERVER_ERROR({
-            route,
-            body: body,
-            message: 'Failed to create briefing',
-            error: 'Internal server error: failed to get Dify agent token',
-        });
-    }
-
     try {
         // Checks whether the text complies with policy standards
         await checkContentUseCase.execute(prompt);
@@ -94,11 +84,17 @@ export const POST = withAuthorization([UserRoles.USER, UserRoles.ADMIN], async (
             title,
         });
 
-        await customBriefingRequestUseCase.execute({
-            difyAgentToken: difyAgentToken,
-            briefing: createdBriefing,
-            prompt,
+        // Send to N8N webhook for content creation
+        const webhookResult = await sendToN8nWebhook({
+            tema: title,
+            abordagem: prompt,
+            briefingId: createdBriefing.id.toString(),
+            userId: user.id.toString(),
         });
+
+        if (!webhookResult.ok) {
+            throw new Error(`Webhook failed: ${webhookResult.message}`);
+        }
 
         return createApiResponseUseCase.SUCCESS({
             route,

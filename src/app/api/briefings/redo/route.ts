@@ -5,10 +5,9 @@ import { UserRoles } from '@/domain/entities/user';
 // Use Cases
 import { createApiResponseUseCase } from '@/use-cases/ApiLogUseCases';
 import { updateBriefingUseCase } from '@/use-cases/BriefingUseCases';
-import { getUserDifyAgentUseCase } from '@/use-cases/UserUseCases';
 
-// Adapters
-import DifyAdapter from '@/adapters/DifyAdapter';
+// Services
+import { sendToN8nWebhook } from '@/services/client/webhook/sendToN8nWebhook';
 import { withAuthorization } from '@/adapters/withAuthorization';
 
 const route = '/api/briefings/redo';
@@ -47,17 +46,19 @@ export const POST = withAuthorization([UserRoles.USER], async (request: Request,
             });
         }
 
-        const query = `Refaça esse conteúdo: ${briefing.title} | ${briefing.date} \n\n ${briefing.text}\n\n\n\n Instruções para refação:\n${instruction}`;
+        const redoInstruction = `Refaça esse conteúdo: ${briefing.title} | ${briefing.date} \n\n ${briefing.text}\n\n\n\n Instruções para refação:\n${instruction}`;
 
-        // Get content creation token
-        const difyContentCreation = await getUserDifyAgentUseCase.execute({ userId });
-
-        // Send the request
-        await new DifyAdapter().sendContentCreationRequest({
-            briefingId: briefing.id,
-            query,
-            difyAgentToken: difyContentCreation,
+        // Send to N8N webhook for content creation
+        const webhookResult = await sendToN8nWebhook({
+            tema: briefing.title,
+            abordagem: redoInstruction,
+            briefingId: briefing.id.toString(),
+            userId: userId.toString(),
         });
+
+        if (!webhookResult.ok) {
+            throw new Error(`Webhook failed: ${webhookResult.message}`);
+        }
 
         return createApiResponseUseCase.SUCCESS({
             route,

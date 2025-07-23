@@ -1,0 +1,78 @@
+{
+  "description": "Test payloads for N8N callback endpoint",
+  "endpoint": "https://api.dbsweb.com.br/n8n-callback",
+  "method": "POST",
+  "headers": {
+    "Content-Type": "application/json"
+  },
+  "test_cases": {
+    "instagram_test": [
+      {
+        "cliente": "10",
+        "rede_social": "instagram",
+        "post_url": "https://www.instagram.com/p/DMahHCsRNCg/",
+        "briefingid": "1583",
+        "texto": "🎯 **Análise Política Completa - Instagram**\n\n📊 **Contexto da Publicação:**\nEste post demonstra uma abordagem estratégica de comunicação política, focando na união nacional e participação cidadã.\n\n**Pontos-chave identificados:**\n• Discurso inclusivo e unificador\n• Apelo à participação ativa dos brasileiros\n• Visão otimista sobre o futuro nacional\n• Reconhecimento da diáspora brasileira\n\n**Análise Estratégica:**\nA mensagem utiliza elementos de esperança e coletividade, características que historicamente geram maior engajamento político. O tom conciliador pode atrair eleitores indecisos.\n\n**Impacto Esperado:**\n✅ Alto potencial de compartilhamento\n✅ Engajamento positivo esperado\n✅ Fortalecimento da base de apoio\n\n**Recomendações:**\n1. Monitorar reações nos comentários\n2. Preparar conteúdo de follow-up\n3. Amplificar mensagens similares\n\n#PolíticaBrasil #Análise #Estratégia #União"
+      }
+    ],
+    "twitter_test": [
+      {
+        "cliente": "10",
+        "rede_social": "x",
+        "post_url": "https://x.com/example/status/1234567890",
+        "briefingid": "1584",
+        "texto": "📈 **Relatório de Análise - X/Twitter**\n\n**Resumo Executivo:**\nAnálise detalhada do cenário político atual baseada no conteúdo monitorado.\n\n**Principais Insights:**\n🔍 Crescimento do engajamento em temas de união nacional\n📊 Aumento de 23% nas interações positivas\n🎯 Público-alvo respondendo bem a mensagens otimistas\n\n**Estratégia Recomendada:**\n• Manter tom esperançoso e inclusivo\n• Focar em conquistas concretas\n• Destacar participação cidadã\n• Amplificar histórias de sucesso\n\n**Próximos Passos:**\n1. Desenvolver série de conteúdos similares\n2. Monitorar métricas de engajamento\n3. Ajustar abordagem conforme feedback\n\n**Conclusão:**\nA estratégia atual está alinhada com as expectativas do público e deve ser mantida com pequenos ajustes táticos.\n\n#Estratégia #Comunicação #Política #Análise"
+      }
+    ],
+    "facebook_test": [
+      {
+        "cliente": "10",
+        "rede_social": "facebook",
+        "post_url": "https://www.facebook.com/example/posts/123456789",
+        "briefingid": "1585",
+        "texto": "📱 **Análise de Conteúdo - Facebook**\n\n**Visão Geral:**\nMonitoramento e análise de publicação com alto potencial de engajamento na plataforma Facebook.\n\n**Características do Conteúdo:**\n📝 Linguagem acessível e direta\n🎯 Foco em temas de interesse público\n💬 Estímulo à participação e diálogo\n📈 Potencial viral identificado\n\n**Métricas Esperadas:**\n• Alcance: 15-20k usuários\n• Engajamento: 8-12% da audiência\n• Compartilhamentos: 200-300 unidades\n• Comentários: 50-80 interações\n\n**Recomendações Táticas:**\n1. Responder ativamente aos comentários\n2. Compartilhar em grupos relevantes\n3. Criar conteúdo complementar\n4. Monitorar sentimento das reações\n\n**Observações:**\nO algoritmo do Facebook favorece conteúdos que geram discussão saudável. Esta publicação tem potencial para atingir esse objetivo.\n\n#Facebook #EngajamentoDigital #RedesSociais"
+      }
+    ],
+    "linkedin_test": [
+      {
+        "cliente": "10",
+        "rede_social": "linkedin",
+        "post_url": "https://www.linkedin.com/posts/example_123456789",
+        "briefingid": "1586",
+        "texto": "💼 **Análise Profissional - LinkedIn**\n\n**Contexto Empresarial:**\nAnálise de conteúdo voltado para audiência profissional e tomadores de decisão.\n\n**Elementos Estratégicos:**\n🎯 Linguagem corporativa adequada\n📊 Dados e estatísticas relevantes\n🤝 Foco em networking e parcerias\n💡 Insights para liderança\n\n**Público-Alvo:**\n• Executivos e gestores\n• Empreendedores\n• Profissionais liberais\n• Formadores de opinião\n\n**Estratégia de Conteúdo:**\n1. Estabelecer autoridade no tema\n2. Gerar discussões construtivas\n3. Expandir rede de contatos\n4. Posicionar como thought leader\n\n**Resultados Esperados:**\n📈 Aumento de conexões qualificadas\n💬 Engajamento de alto valor\n🔗 Oportunidades de negócio\n📝 Convites para eventos/palestras\n\n**Conclusão:**\nO LinkedIn oferece ambiente ideal para discussões aprofundadas sobre temas relevantes ao setor.\n\n#LinkedIn #Networking #Liderança #Negócios"
+      }
+    ],
+    "minimal_test": [
+      {
+        "cliente": "10",
+        "rede_social": "test",
+        "post_url": "https://test.com/post/123",
+        "briefingid": "1587",
+        "texto": "Teste simples do endpoint N8N callback."
+      }
+    ],
+    "invalid_test_missing_briefingid": [
+      {
+        "cliente": "10",
+        "rede_social": "instagram",
+        "post_url": "https://www.instagram.com/p/TEST123/",
+        "texto": "Este teste deve falhar - sem briefingid"
+      }
+    ],
+    "invalid_test_missing_texto": [
+      {
+        "cliente": "10",
+        "rede_social": "instagram",
+        "post_url": "https://www.instagram.com/p/TEST123/",
+        "briefingid": "1588"
+      }
+    ]
+  },
+  "usage_instructions": {
+    "step1": "Copy one of the test cases from above",
+    "step2": "Send POST request to https://api.dbsweb.com.br/n8n-callback",
+    "step3": "Include Content-Type: application/json header",
+    "step4": "Check Kairos briefing page for updates within 10 seconds",
+    "note": "The briefingid should correspond to an existing briefing for user 10"
+  }
+}

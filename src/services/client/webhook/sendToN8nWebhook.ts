@@ -10,6 +10,7 @@ interface WebhookRequestData {
     tema: string;
     abordagem: string;
     briefingId?: string;
+    userId?: string;
 }
 
 const N8N_WEBHOOK_URL = 'https://n8n.dbsweb.com.br/webhook/ef485eb2-4640-4569-b4f4-6a03297fff62';
@@ -22,7 +23,7 @@ const N8N_WEBHOOK_URL = 'https://n8n.dbsweb.com.br/webhook/ef485eb2-4640-4569-b4
 export const sendToN8nWebhook = async (data: WebhookRequestData): Promise<{ ok: boolean; message: string }> => {
     try {
         const payload: N8nWebhookPayload[] = [{
-            CLIENTE: "Cliente",
+            CLIENTE: data.userId || "Cliente",
             TEMA: data.tema,
             FORMATO: "Kairós",
             INSTRUÇÕES: data.abordagem,

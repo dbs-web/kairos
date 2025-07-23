@@ -7,8 +7,6 @@ import { Status } from '@/domain/entities/status';
 // Use Cases
 import { updateSuggestionsStatusUseCase } from '@/use-cases/SuggestionUseCases';
 import { createBriefingsUseCase } from '@/use-cases/BriefingUseCases';
-import { getUserDifyAgentUseCase } from '@/use-cases/UserUseCases';
-import { sendContentCreationRequestsUseCase } from '@/use-cases/DifyUseCases';
 
 // Services
 import { sendSuggestionToN8nWebhook } from '@/services/client/webhook/sendSuggestionToN8nWebhook';
@@ -19,7 +17,6 @@ import { withAuthorization } from '@/adapters/withAuthorization';
 export const POST = withAuthorization([UserRoles.USER], async (request, user) => {
     const userId = user.id;
     try {
-        const difyAgentToken = await getUserDifyAgentUseCase.execute({ userId });
         const { suggestions, approaches } = await request.json();
 
         if (!Array.isArray(suggestions) || suggestions.length === 0) {
@@ -68,12 +65,8 @@ export const POST = withAuthorization([UserRoles.USER], async (request, user) =>
             await Promise.allSettled(webhookPromises);
         }
 
-        // Send request to dify create the content of briefing
-        await sendContentCreationRequestsUseCase.execute({
-            difyAgentToken,
-            dataArr: suggestionsData,
-            briefings: createdBriefings,
-        });
+        // Content creation is now handled by N8N webhook above
+        // Dify content creation removed - using N8N only
 
         return NextResponse.json({
             message: `${createdBriefings.length} briefings created and requests sent successfully.`,

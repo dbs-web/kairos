@@ -5,7 +5,6 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { INews } from '@/domain/entities/news';
 import { usePagination } from './use-pagination';
 import { useFetchData } from './use-fetch-data';
-import { sendToN8nWebhook } from '@/services/client/webhook/sendToN8nWebhook';
 
 interface NewsApproach {
     newsId: number;
@@ -77,24 +76,21 @@ export const NewsProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const mutation = useMutation({
         mutationFn: async (payload: { news: number[]; approaches: Record<number, string> }) => {
-            // Send each selected news with its approach to the webhook
-            const webhookPromises = payload.news.map(async (newsId) => {
-                const newsItem = news.find(n => n.id === newsId);
-                const approach = payload.approaches[newsId];
-
-                if (newsItem && approach) {
-                    const result = await sendToN8nWebhook({
-                        tema: newsItem.title,
-                        abordagem: approach,
-                    });
-
-                    if (!result.ok) {
-                        throw new Error(result.message);
-                    }
-                }
+            const response = await fetch('/api/news/aprovar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    news: payload.news,
+                    approaches: payload.approaches,
+                }),
             });
 
-            await Promise.all(webhookPromises);
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Erro ao aprovar notícias');
+            }
         },
         onSuccess: async () => {
             await queryClient.invalidateQueries({ queryKey: ['news'] });

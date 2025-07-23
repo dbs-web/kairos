@@ -5,10 +5,11 @@ import { UserRoles } from '@/domain/entities/user';
 import { Status } from '@/domain/entities/status';
 
 // Use Cases
-import { getUserDifyAgentUseCase } from '@/use-cases/UserUseCases';
 import { createBriefingsUseCase } from '@/use-cases/BriefingUseCases';
 import { updateNewsStatusUseCase } from '@/use-cases/NewsUseCases';
-import { sendContentCreationRequestsUseCase } from '@/use-cases/DifyUseCases';
+
+// Services
+import { sendToN8nWebhook } from '@/services/client/webhook/sendToN8nWebhook';
 import { withAuthorization } from '@/adapters/withAuthorization';
 
 export const POST = withAuthorization(
@@ -17,9 +18,6 @@ export const POST = withAuthorization(
         const userId = user.id;
 
         try {
-            // Check if user has dify token set before any operation
-            const difyAgentToken = await getUserDifyAgentUseCase.execute({ userId });
-
             const { news, approaches } = await request.json();
 
             if (!Array.isArray(news) || news.length === 0) {
@@ -41,12 +39,28 @@ export const POST = withAuthorization(
                 userId,
             });
 
-            sendContentCreationRequestsUseCase.execute({
-                difyAgentToken,
-                dataArr: updatedNews,
-                briefings: createdBriefings,
-                approaches: approaches || {},
-            });
+            // Send webhooks for all news with approaches when going to production
+            if (approaches) {
+                const webhookPromises = updatedNews.map(async (newsItem) => {
+                    const approach = approaches[newsItem.id];
+                    if (approach) {
+                        try {
+                            await sendToN8nWebhook({
+                                tema: newsItem.title,
+                                abordagem: approach,
+                                briefingId: createdBriefings.find(b => b.newsId === newsItem.id)?.id?.toString() || "",
+                                userId: userId.toString(),
+                            });
+                            console.log(`News ${newsItem.id} sent to N8N webhook`);
+                        } catch (error) {
+                            console.error(`Error sending news ${newsItem.id} to webhook:`, error);
+                            // Don't fail the entire operation if webhook fails
+                        }
+                    }
+                });
+
+                await Promise.allSettled(webhookPromises);
+            }
 
             return NextResponse.json({
                 message: `${createdBriefings.length} briefings created and requests sent successfully.`,
