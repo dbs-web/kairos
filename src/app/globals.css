@@ -423,7 +423,12 @@ a[class*='bg-primary']:hover,
 
 /* Social Media Icons Styling */
 .social-icon-instagram {
-    /* Keep Instagram's original colors - no filter */
+    /* Keep Instagram's colored logo - no filter */
+    filter: none;
+}
+
+.social-icon-tiktok {
+    /* Keep TikTok's white logo - no filter */
     filter: none;
 }
 
@@ -438,8 +443,14 @@ a[class*='bg-primary']:hover,
     backdrop-filter: blur(4px);
 }
 
-/* Instagram specific overlay for better contrast */
+/* Instagram specific overlay - lighter background for colored logo */
 .social-icon-overlay.instagram {
     background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(4px);
+}
+
+/* TikTok specific overlay - keep black background for white logo */
+.social-icon-overlay.tiktok {
+    background: rgba(0, 0, 0, 0.9);
     backdrop-filter: blur(4px);
 }

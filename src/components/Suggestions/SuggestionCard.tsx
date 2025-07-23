@@ -41,9 +41,13 @@ export default function SuggestionCard({ suggestion, onApproachClick }: Suggesti
     };
 
     const getSocialIcon = () => {
-        return suggestion.socialmedia_name === 'instagram'
-            ? 'https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg'
-            : 'https://upload.wikimedia.org/wikipedia/commons/5/53/X_logo_2023_original.svg';
+        if (suggestion.socialmedia_name === 'instagram') {
+            return 'https://kairosimgs.blob.core.windows.net/images/kairos/instagram_logo_color.svg';
+        } else if (suggestion.socialmedia_name === 'tiktok') {
+            return 'https://kairosimgs.blob.core.windows.net/images/kairos/tiktok_logo_white.svg';
+        } else {
+            return 'https://upload.wikimedia.org/wikipedia/commons/5/53/X_logo_2023_original.svg';
+        }
     };
     const getSocialIconStyle = () => {
         if (suggestion.socialmedia_name === 'instagram') {
@@ -135,14 +139,19 @@ export default function SuggestionCard({ suggestion, onApproachClick }: Suggesti
 
                     {/* Social Media Icon Overlay */}
                     <div className={`social-icon-overlay absolute top-1.5 right-1.5 rounded-full p-1.5 sm:top-2 sm:right-2 sm:p-2 ${
-                        suggestion.socialmedia_name === 'instagram' ? 'instagram' : ''
+                        suggestion.socialmedia_name === 'instagram' ? 'instagram' : 
+                        suggestion.socialmedia_name === 'tiktok' ? 'tiktok' : ''
                     }`}>
                         <Image
                             src={getSocialIcon()}
                             alt={suggestion.socialmedia_name}
                             width={16}
                             height={16}
-                            className={`sm:w-5 sm:h-5 ${suggestion.socialmedia_name === 'instagram' ? 'social-icon-instagram' : 'social-icon-x'}`}
+                            className={`sm:w-5 sm:h-5 ${
+                                suggestion.socialmedia_name === 'instagram' ? 'social-icon-instagram' : 
+                                suggestion.socialmedia_name === 'tiktok' ? 'social-icon-tiktok' :
+                                'social-icon-x'
+                            }`}
                         />
                     </div>
                 </div>
