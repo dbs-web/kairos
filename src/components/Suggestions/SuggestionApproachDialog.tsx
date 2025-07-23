@@ -11,28 +11,28 @@ import { ISuggestion } from '@/domain/entities/suggestion';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '../ui/button';
 import { Textarea } from '../ui/textarea';
-import { MdSave, MdThumbUp, MdThumbDown, MdClose } from 'react-icons/md';
+import { MdSend, MdThumbUp, MdThumbDown, MdClose } from 'react-icons/md';
 
 interface SuggestionApproachDialogProps {
     suggestion: ISuggestion;
     open: boolean;
     onOpenChange: (open: boolean) => void;
-    onSave: (suggestionId: number, approach: string, stance?: 'APOIAR' | 'REFUTAR') => void;
+    onSendToProduction: (suggestionId: number, approach: string, stance?: 'APOIAR' | 'REFUTAR') => Promise<void>;
     initialApproach?: string;
     initialStance?: 'APOIAR' | 'REFUTAR';
 }
 
-export default function SuggestionApproachDialog({ 
-    suggestion, 
-    open, 
-    onOpenChange, 
-    onSave, 
+export default function SuggestionApproachDialog({
+    suggestion,
+    open,
+    onOpenChange,
+    onSendToProduction,
     initialApproach = '',
     initialStance
 }: SuggestionApproachDialogProps) {
     const [approach, setApproach] = useState<string>(initialApproach);
     const [stance, setStance] = useState<'APOIAR' | 'REFUTAR' | null>(initialStance || null);
-    const [isSaving, setIsSaving] = useState(false);
+    const [isSending, setIsSending] = useState(false);
     const { toast } = useToast();
 
     const handleSubmit = async () => {
@@ -45,24 +45,24 @@ export default function SuggestionApproachDialog({
             return;
         }
 
-        setIsSaving(true);
+        setIsSending(true);
         try {
-            onSave(suggestion.id, approach.trim(), stance || undefined);
+            await onSendToProduction(suggestion.id, approach.trim(), stance || undefined);
             toast({
-                title: 'Abordagem salva com sucesso!',
+                title: 'Enviado para produção com sucesso!',
                 description: stance
-                    ? `A abordagem foi definida para ${stance === 'APOIAR' ? 'apoiar' : 'refutar'} esta sugestão.`
-                    : 'A abordagem foi definida para esta sugestão.',
+                    ? `A sugestão foi enviada para produção para ${stance === 'APOIAR' ? 'apoiar' : 'refutar'} este conteúdo. Você receberá o resultado na página de Aprovações em breve.`
+                    : 'A sugestão foi enviada para produção. Você receberá o resultado na página de Aprovações em breve.',
             });
             onOpenChange(false);
         } catch (e) {
             toast({
-                title: 'Erro ao salvar abordagem',
+                title: 'Erro ao enviar para produção',
                 description: e instanceof Error ? e.message : 'Ocorreu um erro inesperado',
                 variant: 'destructive',
             });
         } finally {
-            setIsSaving(false);
+            setIsSending(false);
         }
     };
 
@@ -168,22 +168,22 @@ export default function SuggestionApproachDialog({
                     <Button
                         variant="outline"
                         onClick={handleCancel}
-                        disabled={isSaving}
+                        disabled={isSending}
                         className="border-border text-foreground hover:bg-muted"
                     >
                         Cancelar
                     </Button>
                     <Button
                         onClick={handleSubmit}
-                        disabled={isSaving || !approach.trim()}
+                        disabled={isSending || !approach.trim()}
                         className="gap-2 bg-gradient-to-r from-[#0085A3] to-primary text-white transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-primary/30 hover:text-white"
                     >
-                        {isSaving ? (
-                            <span className="text-white">Salvando...</span>
+                        {isSending ? (
+                            <span className="text-white">Enviando...</span>
                         ) : (
                             <>
-                                <MdSave className="text-lg text-white" />
-                                <span className="text-white">Salvar</span>
+                                <MdSend className="text-lg text-white" />
+                                <span className="text-white">Enviar para Produção</span>
                             </>
                         )}
                     </Button>

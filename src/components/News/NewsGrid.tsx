@@ -37,12 +37,6 @@ export default function NewsGrid() {
     const {
         news,
         isLoading,
-        selectedNews,
-        toggleSelectNews,
-        saveNewsApproach,
-        getNewsApproach,
-        hasApproach,
-        sendToProduction,
         page,
         setPage,
         totalPages,
@@ -59,21 +53,31 @@ export default function NewsGrid() {
         setStatuses(statuses);
     }, []);
 
-    const handleSubmit = () => {
-        sendToProduction();
-        toast({
-            title: 'Notícia aprovada com sucesso!',
-            description:
-                "O briefing para seu vídeo será gerado e enviado para você na aba de 'Aprovações'",
-        });
-    };
-
     const handleApproachClick = (news: INews) => {
         setApproachDialog({ open: true, news });
     };
 
-    const handleApproachSave = (newsId: number, approach: string) => {
-        saveNewsApproach(newsId, approach);
+    const handleSendToProduction = async (newsId: number, approach: string) => {
+        // Create a single news payload and send directly to production
+        const payload = {
+            news: [newsId],
+            approaches: {
+                [newsId]: approach
+            }
+        };
+
+        const response = await fetch('/api/news/aprovar', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload),
+        });
+
+        if (!response.ok) {
+            throw new Error('Erro ao enviar para produção');
+        }
+
         setApproachDialog({ open: false, news: null });
     };
 
@@ -93,9 +97,6 @@ export default function NewsGrid() {
                                 <NewsCard
                                     key={news.id}
                                     news={news}
-                                    isSelected={selectedNews.includes(news.id)}
-                                    hasApproach={hasApproach(news.id)}
-                                    onSelect={toggleSelectNews}
                                     onApproachClick={handleApproachClick}
                                 />
                             ))}
@@ -122,33 +123,7 @@ export default function NewsGrid() {
                 </div>
             </div>
 
-            {/* Botão flutuante aprimorado para enviar para produção */}
-            {selectedNews.length > 0 && (
-                <div className="fixed bottom-4 left-0 right-0 z-50 flex items-center justify-center">
-                    <div className="relative">
-                        {/* Animation dots - arrow pointing DOWN */}
-                        <div className="absolute -top-6 left-1/2 -translate-x-1/2">
-                            <MdOutlineArrowUpward className="animate-bounce-arrow text-2xl text-primary" />
-                        </div>
 
-                        {/* Main button container */}
-                        <div className="rounded-full border border-primary/30 bg-card px-4 py-3 shadow-lg shadow-primary/20">
-                            <button
-                                onClick={handleSubmit}
-                                className="group flex items-center gap-2 rounded-full bg-gradient-to-r from-[#0085A3] to-primary px-6 py-3 font-medium text-card-foreground transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-primary/30"
-                            >
-                                <MdSend className="text-lg transition-transform group-hover:translate-x-1" />
-                                <span>Enviar para Produção</span>
-                            </button>
-                        </div>
-
-                        {/* Number of selected items badge */}
-                        <div className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-secondary text-xs font-bold text-white">
-                            {selectedNews.length}
-                        </div>
-                    </div>
-                </div>
-            )}
 
             {/* Approach Dialog */}
             {approachDialog.news && (
@@ -156,8 +131,8 @@ export default function NewsGrid() {
                     news={approachDialog.news}
                     open={approachDialog.open}
                     onOpenChange={handleApproachDialogClose}
-                    onSave={handleApproachSave}
-                    initialApproach={getNewsApproach(approachDialog.news.id) || ''}
+                    onSendToProduction={handleSendToProduction}
+                    initialApproach=""
                 />
             )}
         </div>

@@ -30,24 +30,41 @@ export const sendToN8nWebhook = async (data: WebhookRequestData): Promise<{ ok: 
             BRIEFINGID: data.briefingId || ""
         }];
 
+        // Send the webhook request with a shorter timeout for immediate response
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+
         const response = await fetch(N8N_WEBHOOK_URL, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(payload),
+            signal: controller.signal
         });
+
+        clearTimeout(timeoutId);
 
         if (!response.ok) {
             throw new Error(`Webhook request failed with status: ${response.status}`);
         }
 
+        // Return immediately after confirming the workflow started
         return {
             ok: true,
-            message: 'Conteúdo enviado com sucesso para produção!'
+            message: 'Conteúdo enviado para produção! Você receberá o resultado na página de Aprovações em breve.'
         };
     } catch (error) {
         console.error('Error sending to n8n webhook:', error);
+
+        // If it's a timeout, still consider it successful since the request was sent
+        if (error instanceof Error && error.name === 'AbortError') {
+            return {
+                ok: true,
+                message: 'Conteúdo enviado para produção! Você receberá o resultado na página de Aprovações em breve.'
+            };
+        }
+
         return {
             ok: false,
             message: error instanceof Error ? error.message : 'Erro ao enviar para produção'

@@ -11,28 +11,28 @@ import { INews } from '@/domain/entities/news';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '../ui/button';
 import { Textarea } from '../ui/textarea';
-import { MdSave } from 'react-icons/md';
+import { MdSend } from 'react-icons/md';
 
 interface NewsApproachDialogProps {
     news: INews;
     open: boolean;
     onOpenChange: (open: boolean) => void;
-    onSave: (newsId: number, approach: string) => void;
+    onSendToProduction: (newsId: number, approach: string) => Promise<void>;
     initialApproach?: string;
 }
 
-export default function NewsApproachDialog({ 
-    news, 
-    open, 
-    onOpenChange, 
-    onSave, 
-    initialApproach = '' 
+export default function NewsApproachDialog({
+    news,
+    open,
+    onOpenChange,
+    onSendToProduction,
+    initialApproach = ''
 }: NewsApproachDialogProps) {
     const [approach, setApproach] = useState<string>(initialApproach);
-    const [isSaving, setIsSaving] = useState(false);
+    const [isSending, setIsSending] = useState(false);
     const { toast } = useToast();
 
-    const handleSubmit = async () => {
+    const handleSendToProduction = async () => {
         if (!approach.trim()) {
             toast({
                 title: 'A abordagem não pode estar vazia',
@@ -42,22 +42,22 @@ export default function NewsApproachDialog({
             return;
         }
 
-        setIsSaving(true);
+        setIsSending(true);
         try {
-            onSave(news.id, approach.trim());
+            await onSendToProduction(news.id, approach.trim());
             toast({
-                title: 'Abordagem salva com sucesso!',
-                description: 'A abordagem foi definida para esta notícia.',
+                title: 'Enviado para produção com sucesso!',
+                description: 'A notícia foi enviada para produção. Você receberá o resultado na página de Aprovações em breve.',
             });
             onOpenChange(false);
         } catch (e) {
             toast({
-                title: 'Erro ao salvar abordagem',
+                title: 'Erro ao enviar para produção',
                 description: e instanceof Error ? e.message : 'Ocorreu um erro inesperado',
                 variant: 'destructive',
             });
         } finally {
-            setIsSaving(false);
+            setIsSending(false);
         }
     };
 
@@ -93,22 +93,22 @@ export default function NewsApproachDialog({
                     <Button
                         variant="outline"
                         onClick={handleCancel}
-                        disabled={isSaving}
+                        disabled={isSending}
                         className="border-border text-foreground hover:bg-muted"
                     >
                         Cancelar
                     </Button>
                     <Button
-                        onClick={handleSubmit}
-                        disabled={isSaving || !approach.trim()}
+                        onClick={handleSendToProduction}
+                        disabled={isSending || !approach.trim()}
                         className="gap-2 bg-gradient-to-r from-[#0085A3] to-primary text-white transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-primary/30 hover:text-white"
                     >
-                        {isSaving ? (
-                            <span className="text-white">Salvando...</span>
+                        {isSending ? (
+                            <span className="text-white">Enviando...</span>
                         ) : (
                             <>
-                                <MdSave className="text-lg text-white" />
-                                <span className="text-white">Salvar</span>
+                                <MdSend className="text-lg text-white" />
+                                <span className="text-white">Enviar para Produção</span>
                             </>
                         )}
                     </Button>

@@ -39,13 +39,20 @@ export const sendSuggestionToN8nWebhook = async (data: SuggestionWebhookRequestD
             payload: JSON.stringify(payload, null, 2)
         });
 
+        // Send the webhook request with a shorter timeout for immediate response
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+
         const response = await fetch(SUGGESTION_N8N_WEBHOOK_URL, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(payload),
+            signal: controller.signal
         });
+
+        clearTimeout(timeoutId);
 
         if (!response.ok) {
             console.error(`Suggestion webhook failed with status: ${response.status}`);
@@ -61,10 +68,19 @@ export const sendSuggestionToN8nWebhook = async (data: SuggestionWebhookRequestD
 
         return {
             ok: true,
-            message: 'Sugestão enviada com sucesso para o webhook!'
+            message: 'Sugestão enviada para produção! Você receberá o resultado na página de Aprovações em breve.'
         };
     } catch (error) {
         console.error('Error sending suggestion to n8n webhook:', error);
+
+        // If it's a timeout, still consider it successful since the request was sent
+        if (error instanceof Error && error.name === 'AbortError') {
+            return {
+                ok: true,
+                message: 'Sugestão enviada para produção! Você receberá o resultado na página de Aprovações em breve.'
+            };
+        }
+
         return {
             ok: false,
             message: error instanceof Error ? error.message : 'Erro ao enviar sugestão para o webhook'

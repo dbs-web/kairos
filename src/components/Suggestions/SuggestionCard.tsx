@@ -8,29 +8,16 @@ import { ISuggestion } from '@/domain/entities/suggestion';
 
 interface SuggestionCardProps {
     suggestion: ISuggestion;
-    isSelected: boolean;
-    hasApproach: boolean;
-    savedStance?: 'APOIAR' | 'REFUTAR';
-    onSelect: (id: number) => void;
     onApproachClick: (suggestion: ISuggestion, preselectedStance?: 'APOIAR' | 'REFUTAR') => void;
 }
 
-export default function SuggestionCard({ suggestion, isSelected, hasApproach, savedStance, onSelect, onApproachClick }: SuggestionCardProps) {
+export default function SuggestionCard({ suggestion, onApproachClick }: SuggestionCardProps) {
     const [imageError, setImageError] = useState(false);
     const [userPhotoError, setUserPhotoError] = useState(false);
 
     const handleCardClick = () => {
         if (suggestion.status === 'EM_ANALISE') {
-            if (isSelected && hasApproach) {
-                // If already selected and has approach, deselect
-                onSelect(suggestion.id);
-            } else if (!isSelected) {
-                // If not selected, open approach dialog
-                onApproachClick(suggestion);
-            } else {
-                // If selected but no approach, open approach dialog
-                onApproachClick(suggestion);
-            }
+            onApproachClick(suggestion);
         }
     };
 
@@ -53,11 +40,6 @@ export default function SuggestionCard({ suggestion, isSelected, hasApproach, sa
         }
     };
 
-    const handleApproachClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-        e.stopPropagation();
-        onApproachClick(suggestion);
-    };
-
     const getSocialIcon = () => {
         return suggestion.socialmedia_name === 'instagram'
             ? 'https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg'
@@ -74,25 +56,13 @@ export default function SuggestionCard({ suggestion, isSelected, hasApproach, sa
     return (
         <div
             onClick={handleCardClick}
-            className={`relative w-full cursor-pointer rounded-lg bg-card transition-all duration-300 ${
+            className={`relative w-full rounded-lg bg-card transition-all duration-300 ${
                 suggestion.status === 'EM_ANALISE'
-                    ? 'card-glow hover:-translate-y-2 hover:shadow-lg hover:shadow-primary/10'
+                    ? 'cursor-pointer card-glow hover:-translate-y-2 hover:shadow-lg hover:shadow-primary/10'
                     : 'cursor-not-allowed opacity-75'
-            } ${isSelected ? 'card-glow selected' : ''}`}
+            }`}
         >
-            <>
-                <div
-                    className={`absolute inset-0 rounded-lg transition-all duration-100 ${
-                        isSelected ? 'border-2 border-primary' : 'border border-border'
-                    }`}
-                />
-                {isSelected && (
-                    <>
-                        <div className="absolute left-0 top-0 h-8 w-8 rounded-tl-lg border-l-2 border-t-2 border-primary" />
-                        <div className="absolute bottom-0 right-0 h-8 w-8 rounded-br-lg border-b-2 border-r-2 border-primary" />
-                    </>
-                )}
-            </>
+            <div className="absolute inset-0 rounded-lg border border-border" />
 
             <div className="relative flex flex-col min-h-0">
                 {/* Profile Section - Top */}
@@ -190,11 +160,7 @@ export default function SuggestionCard({ suggestion, isSelected, hasApproach, sa
                         <button
                             onClick={handleApoiarClick}
                             disabled={suggestion.status !== 'EM_ANALISE'}
-                            className={`flex-1 flex items-center justify-center gap-1.5 rounded-lg border-2 px-2 py-1.5 text-xs font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed sm:gap-2 sm:px-3 sm:py-2 sm:text-sm ${
-                                savedStance === 'APOIAR'
-                                    ? 'border-teal-500 bg-teal-500/10 text-teal-500'
-                                    : 'border-slate-600 bg-transparent text-slate-400 hover:bg-teal-500/10 hover:border-teal-500 hover:text-teal-500'
-                            }`}
+                            className="flex-1 flex items-center justify-center gap-1.5 rounded-lg border-2 px-2 py-1.5 text-xs font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed sm:gap-2 sm:px-3 sm:py-2 sm:text-sm border-slate-600 bg-transparent text-slate-400 hover:bg-teal-500/10 hover:border-teal-500 hover:text-teal-500"
                         >
                             <MdThumbUp className="text-sm sm:text-base" />
                             Apoiar
@@ -202,11 +168,7 @@ export default function SuggestionCard({ suggestion, isSelected, hasApproach, sa
                         <button
                             onClick={handleRefutarClick}
                             disabled={suggestion.status !== 'EM_ANALISE'}
-                            className={`flex-1 flex items-center justify-center gap-1.5 rounded-lg border-2 px-2 py-1.5 text-xs font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed sm:gap-2 sm:px-3 sm:py-2 sm:text-sm ${
-                                savedStance === 'REFUTAR'
-                                    ? 'border-amber-600 bg-amber-600/10 text-amber-600'
-                                    : 'border-slate-600 bg-transparent text-slate-400 hover:bg-amber-600/10 hover:border-amber-600 hover:text-amber-600'
-                            }`}
+                            className="flex-1 flex items-center justify-center gap-1.5 rounded-lg border-2 px-2 py-1.5 text-xs font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed sm:gap-2 sm:px-3 sm:py-2 sm:text-sm border-slate-600 bg-transparent text-slate-400 hover:bg-amber-600/10 hover:border-amber-600 hover:text-amber-600"
                         >
                             <MdThumbDown className="text-sm sm:text-base" />
                             Refutar
@@ -232,18 +194,7 @@ export default function SuggestionCard({ suggestion, isSelected, hasApproach, sa
                     </button>
                 </div>
 
-                {/* Approach button for selected cards with saved approach */}
-                {isSelected && hasApproach && (
-                    <div className="px-3 pb-3 sm:px-4 sm:pb-4">
-                        <button
-                            onClick={handleApproachClick}
-                            className="w-full flex items-center justify-center gap-1.5 rounded-md bg-primary/10 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-primary/20 hover:text-white"
-                        >
-                            <MdArticle className="text-sm text-white" />
-                            <span className="text-white">Trocar abordagem</span>
-                        </button>
-                    </div>
-                )}
+
             </div>
         </div>
     );
