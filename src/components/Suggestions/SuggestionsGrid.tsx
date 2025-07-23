@@ -92,7 +92,7 @@ export default function SuggestionsGrid() {
             <div className="grid grid-cols-1 gap-6 px-6 lg:grid-cols-12">
                 {/* Coluna principal - sugestões */}
                 <div className="lg:col-span-9">
-                    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
+                    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3 auto-rows-fr">
                         {!isLoading &&
                             suggestions.map((suggestion: ISuggestion) => (
                                 <SuggestionCard

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import { MdImageNotSupported, MdThumbUp, MdThumbDown, MdOpenInNew, MdArticle } from 'react-icons/md';
+import { MdImageNotSupported, MdThumbUp, MdThumbDown, MdOpenInNew, MdArticle, MdPerson } from 'react-icons/md';
 import StatusBadge from '../ui/status-badge';
 import { ISuggestion } from '@/domain/entities/suggestion';
 
@@ -64,13 +64,13 @@ export default function SuggestionCard({ suggestion, onApproachClick }: Suggesti
         >
             <div className="absolute inset-0 rounded-lg border border-border" />
 
-            <div className="relative flex flex-col min-h-0">
+            <div className="relative flex flex-col min-h-0 h-full">
                 {/* Profile Section - Top */}
                 <div className="flex items-center gap-2 p-3 pb-2 sm:gap-3 sm:p-4 sm:pb-2">
                     <div className="relative h-8 w-8 flex-shrink-0 overflow-hidden rounded-full sm:h-10 sm:w-10">
                         {userPhotoError || !suggestion.user_photo ? (
-                            <div className="flex h-full w-full items-center justify-center bg-muted text-xs text-muted-foreground">
-                                ?
+                            <div className="flex h-full w-full items-center justify-center bg-muted text-muted-foreground">
+                                <MdPerson className="text-lg sm:text-xl" />
                             </div>
                         ) : (
                             <Image
@@ -148,14 +148,14 @@ export default function SuggestionCard({ suggestion, onApproachClick }: Suggesti
                 </div>
 
                 {/* Post Text */}
-                <div className="px-3 mb-3 sm:px-4 sm:mb-4">
+                <div className="px-3 mb-3 sm:px-4 sm:mb-4 flex-grow">
                     <p className="line-clamp-3 text-xs leading-relaxed text-foreground/80 sm:text-sm">
                         {suggestion.post_text}
                     </p>
                 </div>
 
                 {/* Action Buttons - Hybrid: Gray default, Thematic hover */}
-                <div className="flex flex-col gap-2 p-3 pt-0 sm:flex-row sm:p-4 sm:pt-0">
+                <div className="flex flex-col gap-2 p-3 pt-0 sm:flex-row sm:p-4 sm:pt-0 mt-auto">
                     <div className="flex gap-2">
                         <button
                             onClick={handleApoiarClick}
