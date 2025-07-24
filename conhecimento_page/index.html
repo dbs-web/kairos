@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sistema de Análise Política João Santana</title>
+    <title>Formulário para Análise Estratégica Política</title>
     <style>
       * {
         margin: 0;
@@ -15,7 +15,8 @@
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
           'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
           sans-serif;
-        background-color: #f5f5f5;
+        background-color: hsl(220, 25%, 10%);
+        color: hsl(210, 20%, 98%);
         line-height: 1.6;
       }
 
@@ -29,10 +30,10 @@
         text-align: center;
         margin-bottom: 40px;
         padding: 30px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(to right, hsl(191, 65%, 53%), #0085A3);
         color: white;
         border-radius: 10px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
       }
 
       .header h1 {
@@ -47,41 +48,44 @@
       }
 
       .form-container {
-        background: white;
+        background: hsl(220, 30%, 13%);
+        border: 1px solid hsl(220, 15%, 20%);
         border-radius: 10px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
         overflow: hidden;
       }
 
       .form-header {
         padding: 20px;
-        background: #f8f9fa;
-        border-bottom: 1px solid #e9ecef;
+        background: hsl(220, 15%, 20%);
+        border-bottom: 1px solid hsl(220, 15%, 20%);
         text-align: center;
       }
 
       .form-header h2 {
-        color: #333;
+        color: hsl(210, 20%, 98%);
         font-size: 1.8rem;
         margin-bottom: 10px;
       }
 
       .form-header p {
-        color: #666;
+        color: hsl(220, 10%, 70%);
         font-size: 1rem;
       }
 
       .tabs {
         display: flex;
-        background: #f8f9fa;
-        border-bottom: 1px solid #e9ecef;
+        background: hsl(220, 15%, 20%);
+        border-bottom: 1px solid hsl(220, 15%, 20%);
         overflow-x: auto;
+        padding: 4px;
+        gap: 8px;
       }
 
       .tab {
         flex: 1;
         min-width: 120px;
-        padding: 15px 10px;
+        padding: 12px 16px;
         border: none;
         background: transparent;
         cursor: pointer;
@@ -92,24 +96,32 @@
         gap: 5px;
         font-size: 0.9rem;
         text-decoration: none;
-        color: #333;
+        color: hsl(210, 20%, 98%);
+        border-radius: 6px;
+        opacity: 0.7;
       }
 
       .tab:hover {
-        background: #e9ecef;
+        background: hsl(220, 15%, 25%);
+        opacity: 0.9;
       }
 
       .tab.active {
-        background: #667eea;
+        background: linear-gradient(to right, hsl(191, 65%, 53%), #0085A3);
         color: white;
+        opacity: 1;
+        font-weight: 500;
+        box-shadow: 0 2px 4px rgba(0, 133, 163, 0.3);
       }
 
       .tab-icon {
         font-size: 1.2rem;
+        margin-bottom: 4px;
       }
 
       .tab-label {
-        font-weight: 500;
+        font-weight: inherit;
+        font-size: 0.85rem;
       }
 
       .form-content {
@@ -117,10 +129,10 @@
       }
 
       .form-section h3 {
-        color: #333;
+        color: hsl(210, 20%, 98%);
         margin: 0 0 20px 0;
         padding-bottom: 10px;
-        border-bottom: 2px solid #667eea;
+        border-bottom: 2px solid hsl(191, 100%, 50%);
         font-size: 1.3rem;
       }
 
@@ -143,7 +155,7 @@
       .form-group label {
         margin-bottom: 5px;
         font-weight: 600;
-        color: #333;
+        color: hsl(210, 20%, 98%);
         font-size: 0.9rem;
       }
 
@@ -151,18 +163,31 @@
       .form-group select,
       .form-group textarea {
         padding: 12px;
-        border: 2px solid #e9ecef;
+        border: 1px solid hsl(220, 15%, 20%);
         border-radius: 6px;
         font-size: 1rem;
-        transition: border-color 0.3s ease;
+        transition: all 0.3s ease;
         font-family: inherit;
+        background-color: hsl(220, 30%, 13%);
+        color: hsl(210, 20%, 98%);
       }
 
       .form-group input:focus,
       .form-group select:focus,
       .form-group textarea:focus {
         outline: none;
-        border-color: #667eea;
+        border-color: hsl(191, 100%, 50%);
+        box-shadow: 0 0 0 2px hsl(191, 100%, 50%, 0.2);
+      }
+
+      .form-group input::placeholder,
+      .form-group textarea::placeholder {
+        color: hsl(220, 10%, 50%);
+      }
+
+      .form-group select option {
+        background-color: hsl(220, 30%, 13%);
+        color: hsl(210, 20%, 98%);
       }
 
       .form-group textarea {
@@ -173,11 +198,11 @@
       .placeholder-content {
         text-align: center;
         padding: 40px;
-        color: #666;
+        color: hsl(220, 10%, 70%);
       }
 
       .placeholder-content h3 {
-        color: #333;
+        color: hsl(210, 20%, 98%);
         margin-bottom: 20px;
       }
 
@@ -197,7 +222,7 @@
         justify-content: center;
         margin-top: 30px;
         padding-top: 20px;
-        border-top: 1px solid #e9ecef;
+        border-top: 1px solid hsl(220, 15%, 20%);
       }
 
       .btn {
@@ -214,25 +239,48 @@
       }
 
       .btn-primary {
-        background: #667eea;
+        background: linear-gradient(to right, hsl(191, 65%, 53%), #0085A3);
         color: white;
+        box-shadow: 0 2px 4px rgba(0, 133, 163, 0.3);
       }
 
       .btn-primary:hover {
-        background: #5a6fd8;
+        background: linear-gradient(to right, hsl(191, 75%, 58%), hsl(191, 100%, 38%));
+        box-shadow: 0 0 15px rgba(0, 133, 163, 0.3);
+        transform: translateY(-1px);
       }
 
       .btn-secondary {
-        background: #6c757d;
-        color: white;
+        background: hsl(220, 15%, 25%);
+        color: hsl(210, 20%, 98%);
+        border: 1px solid hsl(220, 15%, 20%);
       }
 
       .btn-secondary:hover {
-        background: #5a6268;
+        background: hsl(220, 15%, 30%);
       }
 
       .hidden {
         display: none;
+      }
+
+      /* Custom scrollbar for dark theme */
+      ::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: hsl(220, 25%, 10%);
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: hsl(220, 15%, 20%);
+        border-radius: 5px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: hsl(191, 100%, 50%);
       }
 
       @media (max-width: 768px) {
@@ -242,11 +290,17 @@
 
         .tabs {
           flex-wrap: wrap;
+          gap: 4px;
         }
 
         .tab {
           min-width: 100px;
           font-size: 0.8rem;
+          padding: 10px 12px;
+        }
+
+        .tab-label {
+          font-size: 0.75rem;
         }
 
         .form-actions {
@@ -266,8 +320,8 @@
   <body>
     <div class="container">
       <div class="header">
-        <h1>Sistema de Análise Política João Santana</h1>
-        <p>Formulário de Coleta de Dados para Análise Estratégica</p>
+        <h1>Formulário para Análise Estratégica Política</h1>
+        <p>Coleta de Dados para Análise Estratégica</p>
       </div>
 
       <div class="form-container">
@@ -278,31 +332,77 @@
 
         <div class="tabs">
           <a href="#candidato" class="tab active" onclick="showTab('candidato', this)">
-            <span class="tab-icon">👤</span>
+            <span class="tab-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+            </span>
             <span class="tab-label">Candidato</span>
           </a>
           <a href="#comunicacao" class="tab" onclick="showTab('comunicacao', this)">
-            <span class="tab-icon">📢</span>
+            <span class="tab-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M7 8h10"></path>
+                <path d="M7 12h4"></path>
+                <path d="M10 16v-4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v4"></path>
+                <path d="M9 16v-4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v4"></path>
+              </svg>
+            </span>
             <span class="tab-label">Comunicação</span>
           </a>
           <a href="#trajetoria" class="tab" onclick="showTab('trajetoria', this)">
-            <span class="tab-icon">📈</span>
+            <span class="tab-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="22,6 12,16 2,6"></polyline>
+                <path d="M16 16v4a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-4"></path>
+                <path d="M22 16v4a2 2 0 0 1-2 2h-4"></path>
+                <path d="M2 16v4a2 2 0 0 0 2 2h4"></path>
+              </svg>
+            </span>
             <span class="tab-label">Trajetória</span>
           </a>
           <a href="#plataforma" class="tab" onclick="showTab('plataforma', this)">
-            <span class="tab-icon">📋</span>
+            <span class="tab-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14,2 14,8 20,8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10,9 9,9 8,9"></polyline>
+              </svg>
+            </span>
             <span class="tab-label">Plataforma</span>
           </a>
           <a href="#eleitorado" class="tab" onclick="showTab('eleitorado', this)">
-            <span class="tab-icon">👥</span>
+            <span class="tab-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+              </svg>
+            </span>
             <span class="tab-label">Eleitorado</span>
           </a>
           <a href="#cenario" class="tab" onclick="showTab('cenario', this)">
-            <span class="tab-icon">🗺️</span>
+            <span class="tab-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon>
+                <line x1="8" y1="2" x2="8" y2="18"></line>
+                <line x1="16" y1="6" x2="16" y2="22"></line>
+              </svg>
+            </span>
             <span class="tab-label">Cenário</span>
           </a>
           <a href="#vulnerabilidades" class="tab" onclick="showTab('vulnerabilidades', this)">
-            <span class="tab-icon">⚠️</span>
+            <span class="tab-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                <line x1="12" y1="9" x2="12" y2="13"></line>
+                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+              </svg>
+            </span>
             <span class="tab-label">Vulnerabilidades</span>
           </a>
         </div>
