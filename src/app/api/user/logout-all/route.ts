@@ -1,15 +1,14 @@
 import { NextResponse } from 'next/server';
 import { withAuthorization } from '@/adapters/withAuthorization';
 import { UserRoles } from '@/domain/entities/user';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import db from '@/infrastructure/database/DatabaseFactory';
 
 export const POST = withAuthorization([UserRoles.ADMIN], async (request: Request) => {
     try {
         // Increment sessionVersion for ALL users
-        await prisma.user.updateMany({
-            data: { sessionVersion: { increment: 1 } }
+        await db.updateMany('user', {
+            criteria: {},
+            data: { sessionVersion: { increment: 1 } } as any
         });
 
         return NextResponse.json({ 

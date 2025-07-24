@@ -140,9 +140,18 @@ export default class PrismaDatabaseClient implements IDatabaseClient {
         }
     }
 
-    async updateMany<T>(model: string, args: UpdateManyArgs<T>): Promise<T[]> {
+    async updateMany<T>(model: string, args: UpdateManyArgs<T> | { criteria: any; data: any }): Promise<T[] | any> {
         try {
-            const operations = args.records.map((record) =>
+            // Handle the new signature for bulk updates
+            if ('criteria' in args && 'data' in args) {
+                return (this.prisma as any)[model].updateMany({
+                    where: args.criteria,
+                    data: args.data,
+                });
+            }
+
+            // Handle the original signature for individual record updates
+            const operations = (args as UpdateManyArgs<T>).records.map((record) =>
                 (this.prisma as any)[model].update({
                     where: { id: record.id },
                     data: record,
