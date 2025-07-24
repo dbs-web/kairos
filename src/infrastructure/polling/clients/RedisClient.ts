@@ -55,4 +55,22 @@ export class RedisPollingClient implements IPollingClient {
 
         return false;
     }
+
+    // Add notification counter methods
+    async incrementNotificationCount(userId: string, type: 'briefings' | 'videos'): Promise<void> {
+        const key = `notifications:${userId}:${type}`;
+        await this.redis.incr(key);
+        await this.redis.expire(key, 86400); // 24h expiration
+    }
+
+    async getNotificationCount(userId: string, type: 'briefings' | 'videos'): Promise<number> {
+        const key = `notifications:${userId}:${type}`;
+        const count = await this.redis.get(key);
+        return count ? parseInt(count, 10) : 0;
+    }
+
+    async clearNotificationCount(userId: string, type: 'briefings' | 'videos'): Promise<void> {
+        const key = `notifications:${userId}:${type}`;
+        await this.redis.del(key);
+    }
 }

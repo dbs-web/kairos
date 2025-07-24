@@ -11,6 +11,7 @@ import {
     videoService,
 } from '@/use-cases/VideoUseCases';
 import { createSubtitlesUseCase } from '@/use-cases/DifyUseCases';
+import pollingClient from '@/infrastructure/polling/PollingClientSingleton';
 
 export async function POST(request: Request) {
     const body = await request.json();
@@ -113,6 +114,11 @@ export async function POST(request: Request) {
                 id: video.id,
                 subtitle,
             });
+
+            // Get the user ID from the video to send notification
+            if (video?.userId) {
+                await pollingClient.incrementNotificationCount(video.userId.toString(), 'videos');
+            }
 
             return createApiResponseUseCase.SUCCESS({
                 route,

@@ -10,6 +10,7 @@ import { IoPlaySkipForwardOutline } from 'react-icons/io5';
 import { HiOutlineShare } from 'react-icons/hi'; // Social media icon
 import NavLink from '../ui/Nav/nav-link';
 import { ScrollArea, ScrollBar } from '../ui/scroll-area';
+import { TabWithCounter } from '../Navigation/TabWithCounter';
 
 const tabs = [
     {
@@ -40,15 +41,43 @@ export default function StudioTabs() {
         <ScrollArea className="w-full lg:w-2/3">
             <ul className="flex w-full flex-nowrap items-center justify-between gap-2 md:gap-x-4 lg:w-2/3 lg:justify-start">
                 {tabs?.length > 0 &&
-                    tabs.map((tab, index) => (
-                        <NavLink
-                            Icon={tab.Icon}
-                            text={tab.text}
-                            href={tab.href}
-                            key={`tab-${index}`}
-                            active={path === tab.href}
-                        />
-                    ))}
+                    tabs.map((tab, index) => {
+                        // Wrap Aprovações and Finalizados tabs with counter
+                        if (tab.text === 'Aprovações') {
+                            return (
+                                <TabWithCounter key={`tab-${index}`} type="briefings">
+                                    <NavLink
+                                        Icon={tab.Icon}
+                                        text={tab.text}
+                                        href={tab.href}
+                                        active={path === tab.href}
+                                    />
+                                </TabWithCounter>
+                            );
+                        }
+                        if (tab.text === 'Finalizados') {
+                            return (
+                                <TabWithCounter key={`tab-${index}`} type="videos">
+                                    <NavLink
+                                        Icon={tab.Icon}
+                                        text={tab.text}
+                                        href={tab.href}
+                                        active={path === tab.href}
+                                    />
+                                </TabWithCounter>
+                            );
+                        }
+                        // Regular tabs without counter
+                        return (
+                            <NavLink
+                                Icon={tab.Icon}
+                                text={tab.text}
+                                href={tab.href}
+                                key={`tab-${index}`}
+                                active={path === tab.href}
+                            />
+                        );
+                    })}
             </ul>
             <ScrollBar orientation="horizontal" />
         </ScrollArea>

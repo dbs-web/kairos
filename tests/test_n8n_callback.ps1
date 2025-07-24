@@ -8,30 +8,19 @@ Write-Host ""
 $baseUrl = "https://api.dbsweb.com.br"
 $callbackUrl = "$baseUrl/n8n-callback"
 
-# Test 1: Check if API server is responding
-Write-Host "Test 1: Checking API server health..." -ForegroundColor Yellow
-try {
-    $healthResponse = Invoke-WebRequest -Uri $baseUrl -Method GET -UseBasicParsing
-    Write-Host "[SUCCESS] API server is responding" -ForegroundColor Green
-    Write-Host "Status Code: $($healthResponse.StatusCode)" -ForegroundColor Green
-} catch {
-    Write-Host "[ERROR] API server not responding: $($_.Exception.Message)" -ForegroundColor Red
-    Write-Host "Stopping tests..." -ForegroundColor Red
-    exit 1
-}
+# Test 1: Test N8N callback endpoint directly
+Write-Host "Test 1: Testing N8N callback endpoint..." -ForegroundColor Yellow
 
 Write-Host ""
 
-# Test 2: Test N8N callback endpoint with valid data
-Write-Host "Test 2: Testing N8N callback with valid data..." -ForegroundColor Yellow
-
+# Using the exact same format as your N8N template
 $validPayload = @(
     @{
         "cliente" = "10"
         "rede_social" = "instagram"
-        "post_url" = "https://www.instagram.com/p/TEST123/"
-        "briefingid" = "1583"
-        "texto" = "🎯 **Teste de Callback N8N**`n`nEste é um teste do novo endpoint de callback do N8N.`n`n**Dados do teste:**`n• Cliente: 10`n• Rede Social: Instagram`n• Briefing ID: 1583`n`n**Status:** Funcionando perfeitamente! ✅`n`n#Teste #N8N #Callback #API"
+        "post_url" = "https://www.instagram.com/reel/DMfT8hduki2/"
+        "briefingid" = "1599"
+        "texto" = "Teste de Callback N8N"
     }
 )
 
@@ -46,6 +35,8 @@ try {
     Write-Host "[SUCCESS] N8N callback endpoint responded!" -ForegroundColor Green
     Write-Host "Status Code: $($callbackResponse.StatusCode)" -ForegroundColor Green
     Write-Host "Response: $($callbackResponse.Content)" -ForegroundColor Green
+    Write-Host ""
+    Write-Host "🎯 Now check your local Kairos app (localhost:3000) for notifications!" -ForegroundColor Yellow
 } catch {
     Write-Host "[ERROR] N8N callback failed: $($_.Exception.Message)" -ForegroundColor Red
     if ($_.Exception.Response) {
@@ -58,34 +49,10 @@ try {
 
 Write-Host ""
 
-# Test 3: Test with different social media
-Write-Host "Test 3: Testing with different social media (X/Twitter)..." -ForegroundColor Yellow
-
-$twitterPayload = @(
-    @{
-        "cliente" = "10"
-        "rede_social" = "x"
-        "post_url" = "https://x.com/example/status/1234567890"
-        "briefingid" = "1584"
-        "texto" = "📊 **Análise de Tendências - Teste X/Twitter**`n`nTeste do endpoint N8N com dados do X (Twitter).`n`n**Insights:**`n🔍 Endpoint funcionando corretamente`n📈 Integração N8N → API → Kairos operacional`n🎯 Callback sendo processado com sucesso`n`n**Próximos passos:**`n1. Verificar atualização no briefing`n2. Confirmar polling automático`n3. Validar exibição na interface`n`n#TesteAPI #N8N #Twitter #Integração"
-    }
-)
-
-$twitterJson = $twitterPayload | ConvertTo-Json -Depth 3
-
-try {
-    $twitterResponse = Invoke-WebRequest -Uri $callbackUrl -Method POST -Body $twitterJson -ContentType "application/json" -UseBasicParsing
-    Write-Host "[SUCCESS] Twitter/X test successful!" -ForegroundColor Green
-    Write-Host "Status Code: $($twitterResponse.StatusCode)" -ForegroundColor Green
-    Write-Host "Response: $($twitterResponse.Content)" -ForegroundColor Green
-} catch {
-    Write-Host "[ERROR] Twitter/X test failed: $($_.Exception.Message)" -ForegroundColor Red
-}
-
 Write-Host ""
 
-# Test 4: Test with invalid data (missing required fields)
-Write-Host "Test 4: Testing with invalid data (missing briefingid)..." -ForegroundColor Yellow
+# Test 3: Test with invalid data (missing required fields)
+Write-Host "Test 3: Testing with invalid data (missing briefingid)..." -ForegroundColor Yellow
 
 $invalidPayload = @(
     @{
@@ -109,8 +76,8 @@ try {
 
 Write-Host ""
 
-# Test 5: Test endpoint availability
-Write-Host "Test 5: Testing endpoint availability..." -ForegroundColor Yellow
+# Test 4: Test endpoint availability
+Write-Host "Test 4: Testing endpoint availability..." -ForegroundColor Yellow
 
 $endpoints = @(
     "/chat",

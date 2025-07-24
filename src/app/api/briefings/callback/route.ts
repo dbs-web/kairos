@@ -5,27 +5,44 @@ import { Status } from '@/domain/entities/status';
 // Use Cases
 import { createApiResponseUseCase } from '@/use-cases/ApiLogUseCases';
 import { updateBriefingUseCase } from '@/use-cases/BriefingUseCases';
+import { getBriefingUseCase } from '@/use-cases/BriefingUseCases';
 import { DifyStatus } from '@prisma/client';
 
 interface CallbackBody {
     briefingId?: number;
+    briefingid?: number; // Support lowercase version
     sources?: string;
     text?: string;
+    texto?: string; // Support Portuguese version
+    cliente?: string;
+    rede_social?: string;
+    post_url?: string;
 }
 
 const route = '/api/briefings/callback';
 
-export const POST = withExternalRequestValidation(async (request: Request) => {
-    const body = await request.json();
+import { NextRequest, NextResponse } from 'next/server';
+import pollingClient from '@/infrastructure/polling/PollingClientSingleton';
 
+export async function POST(request: NextRequest) {
     try {
-        const { briefingId, sources, text }: CallbackBody = body;
+        let body = await request.json();
+
+        // Handle array format - take first item
+        if (Array.isArray(body) && body.length > 0) {
+            body = body[0];
+        }
+
+        // Support both field name formats
+        const briefingId = body.briefingId || body.briefingid;
+        const text = body.text || body.texto;
+        const sources = body.sources;
 
         if (!briefingId) {
             return createApiResponseUseCase.USER_NOT_ALLOWED({
                 route,
                 body: body,
-                message: 'You should provide the briefingId',
+                message: 'You should provide the briefingId or briefingid',
                 error: 'Missing briefingId',
             });
         }
@@ -56,17 +73,15 @@ export const POST = withExternalRequestValidation(async (request: Request) => {
             poll: true,
         });
 
-        return createApiResponseUseCase.SUCCESS({
-            route,
-            body: body,
-            message: 'Briefing atualizado',
-        });
+        // Get the user ID from the briefing to send notification
+        const briefing = await getBriefingUseCase.byId({ id: briefingId });
+        if (briefing?.userId) {
+            await pollingClient.incrementNotificationCount(briefing.userId.toString(), 'briefings');
+        }
+
+        return NextResponse.json({ success: true });
     } catch (error) {
-        return createApiResponseUseCase.INTERNAL_SERVER_ERROR({
-            route,
-            body: body,
-            message: 'Internal Server Error',
-            error: `Internal server error: ${error instanceof Error ? error.message : error}`,
-        });
+        console.error('Callback error:', error);
+        return NextResponse.json({ error: 'Failed' }, { status: 500 });
     }
-});
+}
