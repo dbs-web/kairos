@@ -2,6 +2,7 @@
 import { useEffect } from 'react';
 import { VideoGrid } from '@/components/Video/VideoGrid';
 import { VideoProvider } from '@/hooks/use-video';
+import { SearchDataProvider } from '@/hooks/use-search-data';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 const queryClient = new QueryClient();
@@ -14,9 +15,11 @@ export default function Finalizados() {
 
     return (
         <QueryClientProvider client={queryClient}>
-            <VideoProvider>
-                <VideoGrid />
-            </VideoProvider>
+            <SearchDataProvider>
+                <VideoProvider>
+                    <VideoGrid />
+                </VideoProvider>
+            </SearchDataProvider>
         </QueryClientProvider>
     );
 }

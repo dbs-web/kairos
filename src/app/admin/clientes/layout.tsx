@@ -1,5 +1,6 @@
 'use client';
 import ClientTools from '@/components/Admin/Clients/ClientTools';
+import { SearchDataProvider } from '@/hooks/use-search-data';
 
 export default function RootLayout({
     children,
@@ -7,10 +8,12 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <section className="grid h-full w-full grid-rows-[100px_1fr] gap-y-4 px-12">
-            <ClientTools />
-            {children}
-        </section>
+        <SearchDataProvider>
+            <section className="grid h-full w-full grid-rows-[100px_1fr] gap-y-4 px-12">
+                <ClientTools />
+                {children}
+            </section>
+        </SearchDataProvider>
     );
 }
 
