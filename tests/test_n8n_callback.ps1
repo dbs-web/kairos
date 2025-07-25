@@ -90,7 +90,7 @@ foreach ($endpoint in $endpoints) {
     $testUrl = "$baseUrl$endpoint"
     try {
         # Use HEAD request to check if endpoint exists
-        $headResponse = Invoke-WebRequest -Uri $testUrl -Method HEAD -UseBasicParsing -ErrorAction SilentlyContinue
+        $null = Invoke-WebRequest -Uri $testUrl -Method HEAD -UseBasicParsing -ErrorAction SilentlyContinue
         Write-Host "[AVAILABLE] $endpoint" -ForegroundColor Green
     } catch {
         if ($_.Exception.Response.StatusCode -eq 405) {

@@ -5,7 +5,7 @@ import { Status } from '@/domain/entities/status';
 // Use Cases
 import { createApiResponseUseCase } from '@/use-cases/ApiLogUseCases';
 import { updateBriefingUseCase } from '@/use-cases/BriefingUseCases';
-import { getBriefingUseCase } from '@/use-cases/BriefingUseCases';
+
 import { DifyStatus } from '@prisma/client';
 
 interface CallbackBody {
@@ -67,14 +67,13 @@ export async function POST(request: NextRequest) {
             updateData.sources = sources;
         }
 
-        await updateBriefingUseCase.dangerousUpdate({
+        const briefing = await updateBriefingUseCase.dangerousUpdate({
             id: briefingId,
             data: updateData,
             poll: true,
         });
 
-        // Get the user ID from the briefing to send notification
-        const briefing = await getBriefingUseCase.byId({ id: briefingId });
+        // Send notification using the userId from the updated briefing
         if (briefing?.userId) {
             await pollingClient.incrementNotificationCount(briefing.userId.toString(), 'briefings');
         }
