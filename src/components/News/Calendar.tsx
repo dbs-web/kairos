@@ -3,7 +3,7 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import ptLocale from '@fullcalendar/core/locales/pt-br';
 import { useCalendar } from '@/hooks/use-calendar';
-import { EventClickArg } from '@fullcalendar/core/index.js';
+import { EventClickArg, EventInput } from '@fullcalendar/core/index.js';
 import { MdCalendarMonth } from 'react-icons/md';
 
 type Event = {
@@ -29,6 +29,12 @@ export default function Calendar() {
     const containerRef = useRef<HTMLDivElement>(null);
 
     const { events, activeEvent, setActiveEvent, clearActiveEvent } = useCalendar();
+
+    // Convert events to FullCalendar format
+    const calendarEvents: EventInput[] = events.map(event => ({
+        title: event.title,
+        start: event.date,
+    }));
 
     const [hoverPosition, setHoverPosition] = useState<{ x: number; y: number }>({
         x: 0,
@@ -82,8 +88,7 @@ export default function Calendar() {
                     ref={calendarRef}
                     locale={ptLocale}
                     plugins={[dayGridPlugin]}
-                    // @ts-expect-error Eventos são apenas marcadores neste momento
-                    events={events}
+                    events={calendarEvents}
                     fixedWeekCount={false}
                     initialView="dayGridMonth"
                     eventClick={setActiveEvent}
