@@ -179,13 +179,43 @@ export default class PrismaDatabaseClient implements IDatabaseClient {
         }
     }
 
-    async deleteMany<T>(model: string, args: DeleteManyArgs): Promise<T> {
+    async deleteMany<T>(model: string, args: DeleteManyArgs | { where: any }): Promise<T> {
         try {
+            // Handle new signature with where clause
+            if ('where' in args) {
+                return (this.prisma as any)[model].deleteMany({
+                    where: args.where,
+                });
+            }
+
+            // Handle original signature with ids
             return (this.prisma as any)[model].deleteMany({
                 where: { id: { in: args.ids } },
             });
         } catch (error) {
             throw new DatabaseError('Error on database deleteMany method', error as Error);
+        }
+    }
+
+    async upsert<T>(model: string, args: { where: any; update: any; create: any; include?: any }): Promise<T> {
+        try {
+            return this.executeQuery<T>(
+                model,
+                (this.prisma as any)[model].upsert(args)
+            );
+        } catch (error) {
+            throw new DatabaseError('Error on database upsert method', error as Error);
+        }
+    }
+
+    async findFirst<T>(model: string, args: { where?: any; orderBy?: any; include?: any }): Promise<T | null> {
+        try {
+            return this.executeQuery<T>(
+                model,
+                (this.prisma as any)[model].findFirst(args)
+            );
+        } catch (error) {
+            throw new DatabaseError('Error on database findFirst method', error as Error);
         }
     }
 }

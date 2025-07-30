@@ -23,6 +23,11 @@ model User {
   news                News[]
   suggestions         Suggestion[]
   videos              Video[]
+  socialTokens        UserSocialToken[]
+  instagramDailySnapshots InstagramDailySnapshot[]
+  instagramMediaSnapshots InstagramMediaSnapshot[]
+  instagramDemographics InstagramDemographics[]
+  instagramInsightsCache InstagramInsightsCache[]
   @@index([role])
 }
 
@@ -131,4 +136,99 @@ enum DifyStatus {
   EM_PRODUCAO
   PRONTO
   ERROR
+}
+
+// Instagram Integration Models
+
+model UserSocialToken {
+  id                  Int      @id @default(autoincrement())
+  userId              Int
+  platform            SocialPlatform
+  accessToken         String   @db.Text // Encrypted token
+  instagramAccountId  String?  @db.VarChar(255) // Instagram Business Account ID
+  expiresAt           DateTime?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, platform])
+  @@index([userId])
+}
+
+model InstagramDailySnapshot {
+  id                  Int      @id @default(autoincrement())
+  userId              Int
+  instagramAccountId  String   @db.VarChar(255)
+  snapshotDate        DateTime @db.Date
+  snapshotTimestamp   DateTime
+  reach               Int      @default(0)
+  followerChange      Int      @default(0)
+  profileViews        Int      @default(0)
+  accountsEngaged     Int      @default(0)
+  createdAt           DateTime @default(now())
+  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, instagramAccountId, snapshotDate])
+  @@index([userId])
+  @@index([snapshotDate])
+}
+
+model InstagramMediaSnapshot {
+  id                  Int      @id @default(autoincrement())
+  userId              Int
+  mediaId             String   @db.VarChar(255)
+  snapshotTimestamp   DateTime
+  totalInteractions   Int      @default(0)
+  reach               Int      @default(0)
+  saved               Int      @default(0)
+  likes               Int      @default(0)
+  comments            Int      @default(0)
+  shares              Int      @default(0)
+  views               Int      @default(0)
+  createdAt           DateTime @default(now())
+  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([mediaId])
+  @@index([snapshotTimestamp])
+}
+
+model InstagramDemographics {
+  id                  Int      @id @default(autoincrement())
+  userId              Int
+  instagramAccountId  String   @db.VarChar(255)
+  genderAgeData       Json     // Store F_25-34, M_35-44 format
+  citiesData          Json     // Store city distribution
+  lastUpdated         DateTime
+  createdAt           DateTime @default(now())
+  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, instagramAccountId])
+  @@index([userId])
+}
+
+model InstagramInsightsCache {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  metricType  InstagramMetricType
+  data        Json
+  period      String?  @db.VarChar(20)
+  cachedAt    DateTime @default(now())
+  expiresAt   DateTime
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+enum SocialPlatform {
+  INSTAGRAM
+  TIKTOK
+  TWITTER
+}
+
+enum InstagramMetricType {
+  ACCOUNT
+  MEDIA
+  AUDIENCE
 }

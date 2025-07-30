@@ -64,6 +64,11 @@
   - Generate and run migrations
   - Update TypeScript types for new data structures
 
+- [ ] **Task 1.1.4**: Test database setup
+  - Verify all tables created correctly
+  - Test basic CRUD operations
+  - Validate foreign key relationships
+
 ### 1.2 Instagram Token Management System
 - [ ] **Task 1.2.1**: Create `InstagramTokenService`
   - Token encryption/decryption
@@ -115,6 +120,40 @@
   - Manual collection triggers from admin panel
   - Error handling and retry logic for failed collections
 
+---
+
+## 🧪 **MILESTONE 1: Foundation Testing**
+
+### **Test Dashboard Creation**
+- [ ] **Task M1.1**: Create simple test page `/panel/instagram-test`
+  - Basic Instagram connection status display
+  - "Connect Instagram" button
+  - Token status indicator
+
+- [ ] **Task M1.2**: Test OAuth flow completely
+  - Click "Connect Instagram" → Redirect to Instagram
+  - Complete Instagram authorization
+  - Verify callback handling and token storage
+  - Confirm connection status updates
+
+- [ ] **Task M1.3**: Create basic data fetching test
+  - Fetch and display user profile data
+  - Show basic account metrics (follower count, etc.)
+  - Test error handling for invalid tokens
+
+- [ ] **Task M1.4**: Admin panel basic test
+  - View connected Instagram accounts in admin
+  - Monitor token status and expiration
+  - Test manual token refresh
+
+**✅ Success Criteria for Milestone 1:**
+- User can connect Instagram account successfully
+- Basic profile data displays correctly
+- Admin can see and manage connections
+- No errors in OAuth flow
+
+**🚫 Proceed to Phase 2 ONLY if all Milestone 1 tests pass**
+
 ### 1.3 OAuth Integration in Web App
 - [ ] **Task 1.3.1**: Create Instagram connection UI
   - Add "Connect Instagram" button to user settings
@@ -130,6 +169,12 @@
   - Social media connections section
   - Privacy controls
   - Connection management interface
+
+- [ ] **Task 1.3.4**: Test OAuth flow end-to-end
+  - Test authorization URL generation
+  - Test callback handling and token storage
+  - Verify token encryption and database storage
+  - Test connection status checking
 
 ---
 
@@ -203,6 +248,43 @@
 
 ---
 
+## 🧪 **MILESTONE 2: Dashboard Testing**
+
+### **Core Dashboard Validation**
+- [ ] **Task M2.1**: Test complete dashboard functionality
+  - All KPI cards display real data from Instagram API
+  - Time series charts show actual user data
+  - Demographics display correctly
+  - Platform switching works (Instagram active, others placeholder)
+
+- [ ] **Task M2.2**: Test data collection and storage
+  - Manual trigger of daily snapshot collection
+  - Verify data stored in database correctly
+  - Test media snapshots collection
+  - Confirm data matches colleague's BASE 1 & 2 format
+
+- [ ] **Task M2.3**: Performance and error testing
+  - Test with rate limit scenarios
+  - Handle expired tokens gracefully
+  - Test with accounts that have no data
+  - Verify caching works correctly
+
+- [ ] **Task M2.4**: Admin monitoring validation
+  - Rate limit dashboard shows accurate data
+  - Token management functions work
+  - Data collection controls operate correctly
+  - System health monitoring is accurate
+
+**✅ Success Criteria for Milestone 2:**
+- Complete dashboard displays real Instagram data
+- Data collection and storage works reliably
+- Admin panel provides effective monitoring
+- Performance is acceptable (< 3 second load times)
+
+**🚫 Proceed to Phase 3 ONLY if all Milestone 2 tests pass**
+
+---
+
 ## Phase 3: Advanced Features & Visualizations (Weeks 5-6)
 
 ### 3.1 Engagement Charts and Visualizations
@@ -253,6 +335,35 @@
   - Export time series data (BASE 1 format)
   - Export media performance data (BASE 2 format)
   - Generate performance reports
+
+---
+
+## 🧪 **MILESTONE 3: Advanced Features Testing**
+
+### **Advanced Analytics Validation**
+- [ ] **Task M3.1**: Test advanced visualizations
+  - Engagement charts display correctly with real data
+  - Top posts analysis shows accurate rankings
+  - Performance comparisons work properly
+  - Predictive insights provide valuable recommendations
+
+- [ ] **Task M3.2**: Test data export and reporting
+  - Export functions generate correct BASE 1 & 2 format
+  - Performance reports are accurate and useful
+  - Data integrity maintained across all operations
+
+- [ ] **Task M3.3**: Load testing and optimization
+  - Test with large amounts of historical data
+  - Verify performance with multiple concurrent users
+  - Confirm caching strategies work effectively
+
+**✅ Success Criteria for Milestone 3:**
+- All advanced features work with real data
+- Performance remains good with complex operations
+- Data export matches required formats exactly
+- User experience is smooth and intuitive
+
+**🚫 Proceed to Phase 4 ONLY if all Milestone 3 tests pass**
 
 ### 3.3 Performance Comparisons
 - [ ] **Task 3.3.1**: Add comparison features
@@ -345,8 +456,51 @@
 ### Current Phase: **Not Started**
 ### Next Task: **Task 1.1.1 - Create user_social_tokens table**
 
-### Completed Tasks: 0/41
+### Completed Tasks: 0/53
 ### Progress: 0%
+
+---
+
+## 🧪 **Testing Strategy Overview**
+
+### **Incremental Development with Validation**
+
+**Phase 1 → Milestone 1 Testing → Phase 2 → Milestone 2 Testing → Phase 3 → Milestone 3 Testing → Phase 4**
+
+### **Testing Approach:**
+1. **Build Foundation** → Test OAuth and basic connectivity
+2. **Build Dashboard** → Test real data display and collection
+3. **Build Advanced Features** → Test complex analytics and performance
+4. **Polish & Deploy** → Final testing and optimization
+
+### **Key Testing Components:**
+
+#### **Test Page Structure:**
+```
+/panel/instagram-test (Milestone 1)
+├── Connection Status
+├── OAuth Flow Test
+├── Basic Data Display
+└── Error Handling
+
+/panel/redes-sociais (Milestone 2)
+├── Full Dashboard
+├── Data Collection Test
+├── Admin Monitoring
+└── Performance Validation
+
+/admin/instagram (All Milestones)
+├── Rate Limit Monitoring
+├── Token Management
+├── System Health
+└── User Overview
+```
+
+#### **Success Criteria Per Milestone:**
+- **Milestone 1**: OAuth works, basic data displays
+- **Milestone 2**: Full dashboard with real data
+- **Milestone 3**: Advanced features and exports work
+- **Final**: Production-ready with all features
 
 ---
 

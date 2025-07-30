@@ -21,11 +21,13 @@ class InstagramClient:
         if not all([self.app_id, self.app_secret, self.redirect_uri]):
             raise ValueError("Instagram credentials must be set in environment variables")
 
-        # Instagram Graph API endpoints
+        # Instagram Graph API endpoints (Business/Creator accounts)
         self.graph_url = "https://graph.instagram.com"
         self.facebook_graph_url = "https://graph.facebook.com/v18.0"
-        self.auth_url = "https://www.instagram.com/oauth/authorize"
-        self.token_url = "https://api.instagram.com/oauth/access_token"
+        # Use Facebook OAuth for Instagram Graph API (Business/Creator accounts)
+        self.auth_url = f"{self.facebook_graph_url}/dialog/oauth"
+        # Use Facebook Graph API for Instagram Business token exchange
+        self.token_url = f"{self.facebook_graph_url}/oauth/access_token"
         
         # Kairos callback configuration
         self.kairos_callback_url = os.getenv("CONTENT_CALLBACK_URL")
@@ -44,7 +46,7 @@ class InstagramClient:
         params = {
             'client_id': self.app_id,
             'redirect_uri': self.redirect_uri,
-            'scope': 'instagram_business_basic,instagram_business_manage_messages,instagram_business_manage_comments,instagram_business_content_publish,instagram_business_manage_insights',
+            'scope': 'instagram_graph_user_profile,instagram_graph_user_media,pages_show_list,pages_read_engagement',
             'response_type': 'code'
         }
 
