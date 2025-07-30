@@ -12,22 +12,22 @@ export async function GET(request: NextRequest) {
         if (error) {
             const errorDescription = searchParams.get('error_description') || error;
             console.error('Instagram OAuth error:', error, errorDescription);
-            
-            // Redirect to callback page with error
-            const callbackUrl = new URL('/panel/instagram-test/callback', request.url);
+
+            // Redirect to Desempenho page with error
+            const callbackUrl = new URL('/panel/estudio/redes-sociais/desempenho', request.url);
             callbackUrl.searchParams.set('error', error);
             callbackUrl.searchParams.set('error_description', errorDescription);
-            
+
             return NextResponse.redirect(callbackUrl);
         }
-        
+
         if (!code) {
             console.error('No authorization code received from Instagram');
-            
-            const callbackUrl = new URL('/panel/instagram-test/callback', request.url);
+
+            const callbackUrl = new URL('/panel/estudio/redes-sociais/desempenho', request.url);
             callbackUrl.searchParams.set('error', 'no_code');
             callbackUrl.searchParams.set('error_description', 'No authorization code received from Instagram');
-            
+
             return NextResponse.redirect(callbackUrl);
         }
         
@@ -42,11 +42,11 @@ export async function GET(request: NextRequest) {
         
         if (!userId) {
             console.error('Invalid or missing user ID in state parameter:', state);
-            
-            const callbackUrl = new URL('/panel/instagram-test/callback', request.url);
+
+            const callbackUrl = new URL('/panel/estudio/redes-sociais/desempenho', request.url);
             callbackUrl.searchParams.set('error', 'invalid_state');
             callbackUrl.searchParams.set('error_description', 'Invalid state parameter');
-            
+
             return NextResponse.redirect(callbackUrl);
         }
         
@@ -81,33 +81,33 @@ export async function GET(request: NextRequest) {
             });
             
             console.log(`Instagram token stored successfully for user ${userId}`);
-            
-            // Redirect to callback page with success
-            const callbackUrl = new URL('/panel/instagram-test/callback', request.url);
+
+            // Redirect to Desempenho page with success
+            const callbackUrl = new URL('/panel/estudio/redes-sociais/desempenho', request.url);
             callbackUrl.searchParams.set('success', 'true');
             callbackUrl.searchParams.set('username', tokenData.user_profile?.username || '');
             callbackUrl.searchParams.set('account_type', tokenData.user_profile?.account_type || '');
             callbackUrl.searchParams.set('account_id', tokenData.user_profile?.id || '');
-            
+
             return NextResponse.redirect(callbackUrl);
             
         } catch (tokenError) {
             console.error('Error exchanging code for token:', tokenError);
-            
-            const callbackUrl = new URL('/panel/instagram-test/callback', request.url);
+
+            const callbackUrl = new URL('/panel/estudio/redes-sociais/desempenho', request.url);
             callbackUrl.searchParams.set('error', 'token_exchange_failed');
             callbackUrl.searchParams.set('error_description', tokenError instanceof Error ? tokenError.message : 'Failed to exchange code for token');
-            
+
             return NextResponse.redirect(callbackUrl);
         }
-        
+
     } catch (error) {
         console.error('Unexpected error in Instagram OAuth callback:', error);
-        
-        const callbackUrl = new URL('/panel/instagram-test/callback', request.url);
+
+        const callbackUrl = new URL('/panel/estudio/redes-sociais/desempenho', request.url);
         callbackUrl.searchParams.set('error', 'unexpected_error');
         callbackUrl.searchParams.set('error_description', error instanceof Error ? error.message : 'An unexpected error occurred');
-        
+
         return NextResponse.redirect(callbackUrl);
     }
 }

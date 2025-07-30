@@ -24,10 +24,10 @@ class InstagramClient:
         # Instagram Graph API endpoints (Business/Creator accounts)
         self.graph_url = "https://graph.instagram.com"
         self.facebook_graph_url = "https://graph.facebook.com/v18.0"
-        # Use Facebook OAuth for Instagram Graph API (Business/Creator accounts)
-        self.auth_url = f"{self.facebook_graph_url}/dialog/oauth"
-        # Use Facebook Graph API for Instagram Business token exchange
-        self.token_url = f"{self.facebook_graph_url}/oauth/access_token"
+        # Use Instagram OAuth for Instagram Business API
+        self.auth_url = "https://www.instagram.com/oauth/authorize"
+        # Use Instagram API for token exchange
+        self.token_url = "https://api.instagram.com/oauth/access_token"
         
         # Kairos callback configuration
         self.kairos_callback_url = os.getenv("CONTENT_CALLBACK_URL")
@@ -46,7 +46,7 @@ class InstagramClient:
         params = {
             'client_id': self.app_id,
             'redirect_uri': self.redirect_uri,
-            'scope': 'instagram_graph_user_profile,instagram_graph_user_media,pages_show_list,pages_read_engagement',
+            'scope': 'instagram_business_basic,instagram_business_manage_messages,instagram_business_manage_comments,instagram_business_content_publish,instagram_business_manage_insights',
             'response_type': 'code'
         }
 
@@ -192,33 +192,64 @@ class InstagramClient:
                 'error': str(e)
             }
 
-    def get_user_media(self, access_token: str, limit: int = 25) -> Dict[str, Any]:
+    def get_user_media(self, access_token: str, limit: int = 25, user_id: str = None) -> Dict[str, Any]:
         """
         Get user's media posts
 
         Args:
             access_token: Instagram access token
             limit: Number of media items to retrieve
+            user_id: Instagram user ID (optional)
 
         Returns:
             User media data
         """
-        url = f"{self.graph_url}/me/media"
-        params = {
-            'fields': 'id,caption,media_type,media_url,permalink,thumbnail_url,timestamp',
-            'limit': limit,
-            'access_token': access_token
-        }
+        try:
+            # Try with specific user ID first if provided
+            if user_id:
+                url = f"{self.graph_url}/{user_id}/media"
+                params = {
+                    'fields': 'id,caption,media_type,media_url,permalink,thumbnail_url,timestamp',
+                    'limit': limit,
+                    'access_token': access_token
+                }
 
-        response = requests.get(url, params=params)
+                response = requests.get(url, params=params)
+                print(f"Instagram media API response for user {user_id}: {response.status_code} - {response.text}")
 
-        if response.status_code != 200:
-            raise HTTPException(
-                status_code=400,
-                detail=f"Failed to get user media: {response.text}"
-            )
+                if response.status_code == 200:
+                    return response.json()
 
-        return response.json()
+            # Fallback to /me/media endpoint
+            url = f"{self.graph_url}/me/media"
+            params = {
+                'fields': 'id,caption,media_type,media_url,permalink,thumbnail_url,timestamp',
+                'limit': limit,
+                'access_token': access_token
+            }
+
+            response = requests.get(url, params=params)
+            print(f"Instagram media API fallback response: {response.status_code} - {response.text}")
+
+            if response.status_code != 200:
+                # Return empty media list instead of failing
+                print(f"Failed to get user media: {response.text}")
+                return {
+                    'data': [],
+                    'paging': {},
+                    'note': 'No media available or access restricted'
+                }
+
+            return response.json()
+
+        except Exception as e:
+            print(f"Error in get_user_media: {str(e)}")
+            # Return empty media list instead of failing
+            return {
+                'data': [],
+                'paging': {},
+                'error': str(e)
+            }
 
     def get_media_insights(self, media_id: str, access_token: str) -> Dict[str, Any]:
         """
@@ -247,7 +278,7 @@ class InstagramClient:
 
         return response.json()
 
-    def get_account_insights(self, access_token: str, period: str = "day", since: str = None, until: str = None) -> Dict[str, Any]:
+    def get_account_insights(self, access_token: str, period: str = "day", since: str = None, until: str = None, user_id: str = None) -> Dict[str, Any]:
         """
         Get Instagram Business account insights
 
@@ -256,11 +287,16 @@ class InstagramClient:
             period: Time period for insights ('day', 'week', 'days_28')
             since: Start date (YYYY-MM-DD format)
             until: End date (YYYY-MM-DD format)
+            user_id: Instagram user ID (optional)
 
         Returns:
             Account insights data
         """
-        url = f"{self.graph_url}/me/insights"
+        # Try with specific user ID first if provided
+        if user_id:
+            url = f"{self.graph_url}/{user_id}/insights"
+        else:
+            url = f"{self.graph_url}/me/insights"
 
         # Available account metrics (updated based on Instagram API response)
         metrics = [
@@ -298,18 +334,23 @@ class InstagramClient:
 
         return response.json()
 
-    def get_audience_insights(self, access_token: str, period: str = "lifetime") -> Dict[str, Any]:
+    def get_audience_insights(self, access_token: str, period: str = "lifetime", user_id: str = None) -> Dict[str, Any]:
         """
         Get Instagram Business audience insights
 
         Args:
             access_token: Instagram Business access token
             period: Time period for insights ('lifetime', 'day', 'week', 'days_28')
+            user_id: Instagram user ID (optional)
 
         Returns:
             Audience insights data
         """
-        url = f"{self.graph_url}/me/insights"
+        # Try with specific user ID first if provided
+        if user_id:
+            url = f"{self.graph_url}/{user_id}/insights"
+        else:
+            url = f"{self.graph_url}/me/insights"
 
         # Audience demographic metrics (updated based on Instagram API response)
         metrics = [

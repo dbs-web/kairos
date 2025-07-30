@@ -86,11 +86,15 @@ export class InstagramService {
      */
     static async getUserProfile(userId: number): Promise<any> {
         const accessToken = await InstagramTokenService.getToken(userId);
+        const accountId = await InstagramTokenService.getAccountId(userId);
+
         if (!accessToken) {
             throw new Error('No Instagram token found for user');
         }
 
-        return this.makeInstagramAPIRequest('/user/profile', accessToken);
+        return this.makeInstagramAPIRequest('/user/profile', accessToken, 'POST', {
+            user_id: accountId
+        });
     }
 
     /**
@@ -98,11 +102,15 @@ export class InstagramService {
      */
     static async getUserMedia(userId: number, limit: number = 25): Promise<any> {
         const accessToken = await InstagramTokenService.getToken(userId);
+        const accountId = await InstagramTokenService.getAccountId(userId);
+
         if (!accessToken) {
             throw new Error('No Instagram token found for user');
         }
 
-        return this.makeInstagramAPIRequest(`/user/media?limit=${limit}`, accessToken);
+        return this.makeInstagramAPIRequest(`/user/media?limit=${limit}`, accessToken, 'POST', {
+            user_id: accountId
+        });
     }
 
     /**
@@ -110,23 +118,29 @@ export class InstagramService {
      */
     static async getMediaInsights(userId: number, mediaId: string): Promise<any> {
         const accessToken = await InstagramTokenService.getToken(userId);
+        const accountId = await InstagramTokenService.getAccountId(userId);
+
         if (!accessToken) {
             throw new Error('No Instagram token found for user');
         }
 
-        return this.makeInstagramAPIRequest(`/media/${mediaId}/insights`, accessToken);
+        return this.makeInstagramAPIRequest(`/media/${mediaId}/insights`, accessToken, 'POST', {
+            user_id: accountId
+        });
     }
 
     /**
      * Get account-level insights
      */
     static async getAccountInsights(
-        userId: number, 
+        userId: number,
         period: string = 'day',
         since?: string,
         until?: string
     ): Promise<any> {
         const accessToken = await InstagramTokenService.getToken(userId);
+        const accountId = await InstagramTokenService.getAccountId(userId);
+
         if (!accessToken) {
             throw new Error('No Instagram token found for user');
         }
@@ -135,7 +149,9 @@ export class InstagramService {
         if (since) endpoint += `&since=${since}`;
         if (until) endpoint += `&until=${until}`;
 
-        return this.makeInstagramAPIRequest(endpoint, accessToken);
+        return this.makeInstagramAPIRequest(endpoint, accessToken, 'POST', {
+            user_id: accountId
+        });
     }
 
     /**
@@ -143,11 +159,15 @@ export class InstagramService {
      */
     static async getAudienceInsights(userId: number, period: string = 'lifetime'): Promise<any> {
         const accessToken = await InstagramTokenService.getToken(userId);
+        const accountId = await InstagramTokenService.getAccountId(userId);
+
         if (!accessToken) {
             throw new Error('No Instagram token found for user');
         }
 
-        return this.makeInstagramAPIRequest(`/audience/insights?period=${period}`, accessToken);
+        return this.makeInstagramAPIRequest(`/audience/insights?period=${period}`, accessToken, 'POST', {
+            user_id: accountId
+        });
     }
 
     /**

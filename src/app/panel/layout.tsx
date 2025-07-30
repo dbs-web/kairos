@@ -5,6 +5,7 @@ import { authOptions } from '@/lib/auth';
 import { IoIosPlayCircle } from 'react-icons/io';
 import { BiBook } from 'react-icons/bi';
 import { IoHelpCircleOutline } from 'react-icons/io5';
+import { FaInstagram } from 'react-icons/fa';
 import { redirect } from 'next/navigation';
 import PanelLayoutClient from './PanelLayoutClient';
 
@@ -19,6 +20,7 @@ const navLinks = [
         text: 'Conhecimento',
         href: '/panel/conhecimento',
     },
+
     {
         Icon: <IoHelpCircleOutline className="mb-1 text-xl" />,
         text: 'Ajuda',

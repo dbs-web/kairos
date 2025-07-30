@@ -9,34 +9,44 @@ export interface InstagramTokenData {
 
 export class InstagramTokenService {
     private static readonly ENCRYPTION_KEY = process.env.INSTAGRAM_TOKEN_ENCRYPTION_KEY || 'default-key-change-in-production';
-    private static readonly ALGORITHM = 'aes-256-gcm';
 
     /**
-     * Encrypt access token for secure storage
+     * Simple base64 encoding for token storage (for development)
+     * In production, you should use proper encryption
      */
     private static encryptToken(token: string): string {
-        const iv = crypto.randomBytes(16);
-        const cipher = crypto.createCipher(this.ALGORITHM, this.ENCRYPTION_KEY);
-        
-        let encrypted = cipher.update(token, 'utf8', 'hex');
-        encrypted += cipher.final('hex');
-        
-        return iv.toString('hex') + ':' + encrypted;
+        // Simple base64 encoding with a basic XOR cipher
+        const key = this.ENCRYPTION_KEY;
+        let encrypted = '';
+
+        for (let i = 0; i < token.length; i++) {
+            const keyChar = key.charCodeAt(i % key.length);
+            const tokenChar = token.charCodeAt(i);
+            encrypted += String.fromCharCode(tokenChar ^ keyChar);
+        }
+
+        return Buffer.from(encrypted).toString('base64');
     }
 
     /**
-     * Decrypt access token from storage
+     * Simple base64 decoding for token storage (for development)
      */
     private static decryptToken(encryptedToken: string): string {
-        const parts = encryptedToken.split(':');
-        const iv = Buffer.from(parts[0], 'hex');
-        const encrypted = parts[1];
-        
-        const decipher = crypto.createDecipher(this.ALGORITHM, this.ENCRYPTION_KEY);
-        let decrypted = decipher.update(encrypted, 'hex', 'utf8');
-        decrypted += decipher.final('utf8');
-        
-        return decrypted;
+        try {
+            const encrypted = Buffer.from(encryptedToken, 'base64').toString();
+            const key = this.ENCRYPTION_KEY;
+            let decrypted = '';
+
+            for (let i = 0; i < encrypted.length; i++) {
+                const keyChar = key.charCodeAt(i % key.length);
+                const encryptedChar = encrypted.charCodeAt(i);
+                decrypted += String.fromCharCode(encryptedChar ^ keyChar);
+            }
+
+            return decrypted;
+        } catch (error) {
+            throw new Error('Failed to decrypt token');
+        }
     }
 
     /**

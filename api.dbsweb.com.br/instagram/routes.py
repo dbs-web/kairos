@@ -44,38 +44,30 @@ async def auth_callback_get(
     state: Optional[str] = Query(None, description="State parameter for security")
 ):
     """
-    Handle Instagram OAuth callback (GET request) and exchange code for tokens
+    Handle Instagram OAuth callback (GET request) and redirect to Next.js app
     """
+    from fastapi.responses import RedirectResponse
+
     try:
-        instagram_client = InstagramClient()
+        # Get the Kairos app base URL from environment
+        kairos_app_base = os.getenv('KAIROS_APP_BASE_URL', 'https://kairos.dbsweb.com.br')
 
-        # Exchange code for access token
-        token_response = instagram_client.exchange_code_for_token(code)
-        access_token = token_response.get('access_token')
-        user_id = token_response.get('user_id')
+        # Redirect to Next.js OAuth callback with the code and state
+        callback_url = f"{kairos_app_base}/api/instagram/oauth-callback"
+        redirect_url = f"{callback_url}?code={code}"
 
-        if not access_token:
-            raise HTTPException(
-                status_code=400,
-                detail="Failed to get access token from Instagram"
-            )
+        if state:
+            redirect_url += f"&state={state}"
 
-        # For Instagram Business API, the token is already long-lived
-        long_lived_response = instagram_client.get_long_lived_token(access_token)
-
-        # Get user profile using the access token and user_id
-        user_profile = instagram_client.get_user_profile(access_token, str(user_id) if user_id else None)
-
-        return JSONResponse(content={
-            "access_token": long_lived_response['access_token'],
-            "token_type": long_lived_response.get('token_type', 'bearer'),
-            "expires_in": long_lived_response.get('expires_in'),
-            "user_profile": user_profile,
-            "message": "Instagram authentication successful"
-        })
+        print(f"Redirecting Instagram OAuth callback to: {redirect_url}")
+        return RedirectResponse(url=redirect_url, status_code=302)
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        print(f"Error in Instagram OAuth callback: {e}")
+        # Redirect to error page
+        kairos_app_base = os.getenv('KAIROS_APP_BASE_URL', 'https://kairos.dbsweb.com.br')
+        error_url = f"{kairos_app_base}/api/instagram/oauth-callback?error=callback_error&error_description={str(e)}"
+        return RedirectResponse(url=error_url, status_code=302)
 
 @router.post("/auth/callback")
 async def auth_callback_post(request: AuthCallbackRequest):
@@ -206,13 +198,13 @@ async def get_user_media(request: UserTokenRequest, limit: int = Query(25, ge=1,
     """
     try:
         instagram_client = InstagramClient()
-        media = instagram_client.get_user_media(request.access_token, limit)
-        
+        media = instagram_client.get_user_media(request.access_token, limit, request.user_id)
+
         return JSONResponse(content={
             "media": media,
             "message": "Media retrieved successfully"
         })
-        
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -254,7 +246,8 @@ async def get_account_insights(
             request.access_token,
             period,
             since,
-            until
+            until,
+            request.user_id
         )
 
         return JSONResponse(content={
@@ -279,7 +272,7 @@ async def get_audience_insights(
     """
     try:
         instagram_client = InstagramClient()
-        insights = instagram_client.get_audience_insights(request.access_token, period)
+        insights = instagram_client.get_audience_insights(request.access_token, period, request.user_id)
 
         return JSONResponse(content={
             "insights": insights,

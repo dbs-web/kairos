@@ -21,7 +21,7 @@ const tabs = [
     {
         Icon: <HiOutlineShare className="mb-1 text-xl lg:text-2xl" />,
         text: 'Redes Sociais',
-        href: '/panel/estudio/planejamento',
+        href: '/panel/estudio/redes-sociais',
     },
     {
         Icon: <CiCircleCheck className="mb-1 text-xl lg:text-2xl" />,
@@ -74,7 +74,7 @@ export default function StudioTabs() {
                                 text={tab.text}
                                 href={tab.href}
                                 key={`tab-${index}`}
-                                active={path === tab.href}
+                                active={path.startsWith(tab.href)}
                             />
                         );
                     })}
