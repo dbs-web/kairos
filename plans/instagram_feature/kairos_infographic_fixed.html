@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KAIRÓS - Infográfico do Fluxo de Agentes</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0d1117;
+            color: #c9d1d9;
+            position: relative;
+        }
+        .card {
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            position: relative;
+            z-index: 10;
+            transition: all 0.3s ease;
+        }
+        .agent-card {
+            background-color: #1a222c;
+            border: 1px solid #444c56;
+            transition: transform 0.2s, box-shadow 0.2s, opacity 0.3s;
+        }
+        .agent-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(88, 166, 255, 0.1), 0 4px 6px -2px rgba(88, 166, 255, 0.05);
+        }
+        .swarm-card {
+            background-color: rgba(31, 111, 235, 0.05);
+            border: 1px solid rgba(31, 111, 235, 0.2);
+            background-image: 
+                radial-gradient(circle at 25% 25%, rgba(31, 111, 235, 0.1) 1px, transparent 1px),
+                radial-gradient(circle at 75% 75%, rgba(31, 111, 235, 0.1) 1px, transparent 1px),
+                linear-gradient(45deg, rgba(31, 111, 235, 0.03) 25%, transparent 25%, transparent 75%, rgba(31, 111, 235, 0.03) 75%);
+            background-size: 20px 20px, 20px 20px, 40px 40px;
+            position: relative;
+        }
+        .swarm-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(31, 111, 235, 0.1) 0%, rgba(88, 166, 255, 0.05) 100%);
+            border-radius: inherit;
+            pointer-events: none;
+        }
+        .icon-bg {
+            color: white;
+            border-radius: 0.5rem;
+            padding: 0.5rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .icon-bg.strategy { background-color: #1f6feb; }
+        .icon-bg.data { background-color: #238636; }
+        .icon-bg.structure { background-color: #8b5cf6; }
+        
+        .agent-card.strategy { border-left: 3px solid #1f6feb; }
+        .agent-card.data { border-left: 3px solid #238636; }
+        .agent-card.structure { border-left: 3px solid #8b5cf6; }
+        
+        #connector-svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+        .connector-path {
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+            animation: dash 2s linear forwards;
+            transition: stroke 0.3s ease, stroke-width 0.3s ease;
+        }
+
+        @keyframes dash {
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
+        
+        .highlight-text {
+            color: #58a6ff;
+            font-weight: 600;
+        }
+        
+        .tooltip {
+            position: absolute;
+            background: #21262d;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-size: 12px;
+            max-width: 200px;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+        }
+        
+        .tooltip.show {
+            opacity: 1;
+        }
+        
+        .step-controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .step-btn {
+            background: #21262d;
+            border: 1px solid #30363d;
+            color: #c9d1d9;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .step-btn:hover {
+            background: #30363d;
+        }
+        
+        .step-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .section-dimmed {
+            opacity: 0.3;
+            transition: opacity 0.5s ease;
+        }
+        
+        .section-focused {
+            opacity: 1;
+            transition: opacity 0.5s ease;
+        }
+        
+        .info-icon:hover {
+            color: #79c0ff;
+        }
+        
+        .lucide {
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <!-- Controles de navegação -->
+    <div class="step-controls">
+        <button id="prevBtn" class="step-btn" onclick="previousStep()">← Anterior</button>
+        <span id="stepIndicator" class="step-btn">Etapa 1 de 5</span>
+        <button id="nextBtn" class="step-btn" onclick="nextStep()">Próximo →</button>
+    </div>
+
+    <div id="infographic-container" class="container mx-auto p-4 md:p-8 relative">
+        <header class="text-center mb-16">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-white">KAIRÓS</h1>
+            <p class="text-xl text-gray-400 mt-2">O Ecossistema de Agentes para Criação de Conteúdo Estratégico</p>
+        </header>
+
+        <div class="flex flex-col items-center space-y-16">
+
+            <!-- ETAPA 1: INPUTS -->
+            <section id="inputs-section" class="w-full max-w-4xl text-center section-focused" data-step="1">
+                <h2 class="text-2xl font-bold text-white mb-6">1. Pontos de Partida (Gatilhos)</h2>
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div id="input-noticia" class="card agent-card structure">
+                        <div class="icon-bg structure mx-auto mb-4"><i data-lucide="newspaper"></i></div>
+                        <h3 class="font-bold text-white">Notícia</h3>
+                        <p class="text-sm text-gray-400 mt-2">Fonte de <span class="highlight-text">informação externa</span></p>
+                    </div>
+                    <div id="input-post" class="card agent-card structure">
+                        <div class="icon-bg structure mx-auto mb-4"><i data-lucide="at-sign"></i></div>
+                        <h3 class="font-bold text-white">Post de Terceiros</h3>
+                        <p class="text-sm text-gray-400 mt-2">Conteúdo de <span class="highlight-text">referência</span></p>
+                    </div>
+                    <div id="input-tema" class="card agent-card structure">
+                        <div class="icon-bg structure mx-auto mb-4"><i data-lucide="file-text"></i></div>
+                        <h3 class="font-bold text-white">Tema Personalizado</h3>
+                        <p class="text-sm text-gray-400 mt-2">Tópico <span class="highlight-text">específico</span></p>
+                    </div>
+                </div>
+                <p class="text-center mt-4 font-semibold text-blue-400">+ Instrução Específica do Usuário</p>
+            </section>
+
+            <!-- ETAPA 2: COLETA E CONTEXTO -->
+            <section id="coleta-section" class="w-full max-w-4xl section-dimmed" data-step="2">
+                <h2 class="text-2xl font-bold text-white mb-6 text-center">2. Coleta e Contexto</h2>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div id="agente-recuperacao" class="card agent-card data">
+                        <div class="flex items-center space-x-4">
+                            <div class="icon-bg data"><i data-lucide="database"></i></div>
+                            <div>
+                                <h3 class="text-lg font-bold text-white">Agente de Recuperação Semântica</h3>
+                                <p class="text-sm text-gray-400">Busca na base de dados do cliente por <span class="highlight-text">pautas e posicionamentos relevantes</span>.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="agente-pesquisa" class="card agent-card data">
+                        <div class="flex items-center space-x-4">
+                            <div class="icon-bg data"><i data-lucide="search"></i></div>
+                            <div>
+                                <h3 class="text-lg font-bold text-white">Agente de Pesquisa</h3>
+                                <p class="text-sm text-gray-400">Busca <span class="highlight-text">contexto externo</span>: dados, notícias e stakeholders.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ETAPA 3: BRIEFING -->
+            <section id="briefing-section" class="w-full max-w-2xl section-dimmed" data-step="3">
+                <h2 class="text-2xl font-bold text-white mb-6 text-center">3. Síntese</h2>
+                <div id="agente-briefer" class="card agent-card structure">
+                    <div class="flex items-center space-x-4">
+                        <div class="icon-bg structure"><i data-lucide="clipboard-list"></i></div>
+                        <div>
+                            <h3 class="text-lg font-bold text-white">Agente Briefer</h3>
+                            <p class="text-sm text-gray-400">Sintetiza todos os inputs em um <span class="highlight-text">briefing coeso e estruturado</span>.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ETAPA 4: ESTRATÉGIA E CRIAÇÃO -->
+            <section id="estrategia-section" class="w-full max-w-4xl card swarm-card p-8 section-dimmed" data-step="4">
+                <h2 class="text-2xl font-bold text-center text-white mb-2">4. Gestor de Conteúdo (Cérebro Estratégico)</h2>
+                <p class="text-center text-blue-300 mb-8">Orquestra um enxame de agentes especializados para desenhar a estratégia narrativa.</p>
+                
+                <div class="flex flex-col items-center space-y-8 relative z-10">
+                    <div id="agente-criativo" class="w-full max-w-2xl card agent-card strategy">
+                        <div class="flex items-start space-x-4">
+                            <div class="icon-bg strategy mt-1"><i data-lucide="lightbulb"></i></div>
+                            <div class="flex-1">
+                                <div class="flex items-center space-x-2">
+                                    <h3 class="text-lg font-bold text-white">Agente Criativo</h3>
+                                    <i data-lucide="repeat-2" class="w-4 h-4 text-blue-400" title="Processo de revisão interna"></i>
+                                    <i data-lucide="info" class="w-4 h-4 info-icon cursor-pointer" data-tooltip="Este agente possui um sub-processo de autoavaliação que compara o resultado gerado com os objetivos do briefing, refinando o texto em ciclos."></i>
+                                </div>
+                                <p class="text-sm text-gray-400 mt-1">Gera múltiplas abordagens e ângulos, dialogando com um <span class="highlight-text">revisor interno</span> para refinar e selecionar a <span class="highlight-text">abordagem ótima</span>.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="agente-redator" class="w-full max-w-2xl card agent-card strategy">
+                        <div class="flex items-start space-x-4">
+                            <div class="icon-bg strategy mt-1"><i data-lucide="pen-square"></i></div>
+                            <div class="flex-1">
+                                <div class="flex items-center space-x-2">
+                                    <h3 class="text-lg font-bold text-white">Agente Redator</h3>
+                                    <i data-lucide="repeat-2" class="w-4 h-4 text-blue-400" title="Processo de revisão interna"></i>
+                                    <i data-lucide="info" class="w-4 h-4 info-icon cursor-pointer" data-tooltip="Este agente possui um sub-processo de autoavaliação que compara o resultado gerado com os objetivos do briefing, refinando o texto em ciclos."></i>
+                                </div>
+                                <p class="text-sm text-gray-400 mt-1">Aplica técnicas de copywriting e storytelling, seguindo a abordagem definida e refinando com seu <span class="highlight-text">revisor interno</span> para criar <span class="highlight-text">conteúdo persuasivo</span>.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="agente-fact-checker" class="w-full max-w-2xl card agent-card data">
+                         <div class="flex items-center space-x-4">
+                            <div class="icon-bg data"><i data-lucide="shield-check"></i></div>
+                            <div>
+                                <h3 class="text-lg font-bold text-white">Agente Fact-Checker</h3>
+                                <p class="text-sm text-gray-400">Valida a <span class="highlight-text">precisão factual</span> do texto, comparando-o com os dados da pesquisa.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ETAPA 5: FORMATAÇÃO -->
+            <section id="formatacao-section" class="w-full max-w-4xl section-dimmed" data-step="5">
+                <h2 class="text-2xl font-bold text-center text-white mb-6">5. Formatação e Finalização</h2>
+                <div class="flex flex-col md:flex-row items-center justify-center gap-6">
+                    <div id="agente-formatador" class="card agent-card structure flex-1 w-full">
+                        <div class="flex items-center space-x-4">
+                            <div class="icon-bg structure"><i data-lucide="layout-template"></i></div>
+                            <div>
+                                <h3 class="text-lg font-bold text-white">Agente Formatador</h3>
+                                <p class="text-sm text-gray-400">Analisa <span class="highlight-text">zonas de impacto</span> e envia metadados ao seletor.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="agente-seletor" class="card agent-card structure flex-1 w-full">
+                        <div class="flex items-center space-x-4">
+                            <div class="icon-bg structure"><i data-lucide="file-check-2"></i></div>
+                            <div>
+                                <h3 class="text-lg font-bold text-white">Agente Seletor de Templates</h3>
+                                <p class="text-sm text-gray-400">Com base nos metadados, escolhe o <span class="highlight-text">template ideal</span>.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="agente-adaptacao" class="w-full max-w-2xl card agent-card structure mx-auto mt-8">
+                    <div class="flex items-center space-x-4">
+                        <div class="icon-bg structure"><i data-lucide="wand-2"></i></div>
+                        <div>
+                            <h3 class="text-lg font-bold text-white">Adaptação Final</h3>
+                            <p class="text-sm text-gray-400">O Formatador adapta o conteúdo ao template, criando o <span class="highlight-text">roteiro final</span>.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <svg id="connector-svg"></svg>
+    
+    <!-- Tooltip -->
+    <div id="tooltip" class="tooltip"></div>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide-icons@latest/dist/lucide.min.js"></script>
+    <script>
+        let currentStep = 1;
+        const totalSteps = 5;
+        let connections = [];
+        let activeConnections = [];
+        
+        function getElCenter(el) {
+            const rect = el.getBoundingClientRect();
+            const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            return {
+                x: rect.left + rect.width / 2 + scrollLeft,
+                y: rect.top + rect.height / 2 + scrollTop,
+                top: { x: rect.left + rect.width / 2 + scrollLeft, y: rect.top + scrollTop },
+                bottom: { x: rect.left + rect.width / 2 + scrollLeft, y: rect.bottom + scrollTop },
+                left: { x: rect.left + scrollLeft, y: rect.top + rect.height / 2 + scrollTop },
+                right: { x: rect.right + scrollLeft, y: rect.top + rect.height / 2 + scrollTop }
+            };
+        }
+
+        function drawConnector(startEl, endEl, color = "#444c56", width = 2) {
+            const svg = document.getElementById("connector-svg");
+            const start = getElCenter(startEl);
+            const end = getElCenter(endEl);
+
+            const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+            path.setAttribute("d", `M${start.x} ${start.y} L${end.x} ${end.y}`);
+            path.setAttribute("stroke", color);
+            path.setAttribute("stroke-width", width);
+            path.setAttribute("fill", "none");
+            path.setAttribute("class", "connector-path");
+            path.setAttribute("marker-end", "url(#arrowhead)");
+            svg.appendChild(path);
+            return path;
+        }
+
+        function clearConnectors() {
+            const svg = document.getElementById("connector-svg");
+            while (svg.firstChild) {
+                svg.removeChild(svg.firstChild);
+            }
+            activeConnections = [];
+        }
+
+        function drawAllConnectors() {
+            clearConnectors();
+            const connectionsToDraw = [];
+
+            // ETAPA 1 -> ETAPA 2
+            connectionsToDraw.push({
+                start: document.getElementById("input-noticia"),
+                end: document.getElementById("agente-recuperacao"),
+                delay: 0
+            });
+            connectionsToDraw.push({
+                start: document.getElementById("input-post"),
+                end: document.getElementById("agente-pesquisa"),
+                delay: 0.5
+            });
+            connectionsToDraw.push({
+                start: document.getElementById("input-tema"),
+                end: document.getElementById("agente-pesquisa"),
+                delay: 1
+            });
+
+            // ETAPA 2 -> ETAPA 3
+            connectionsToDraw.push({
+                start: document.getElementById("agente-recuperacao"),
+                end: document.getElementById("agente-briefer"),
+                delay: 1.5
+            });
+            connectionsToDraw.push({
+                start: document.getElementById("agente-pesquisa"),
+                end: document.getElementById("agente-briefer"),
+                delay: 2
+            });
+
+            // ETAPA 3 -> ETAPA 4
+            connectionsToDraw.push({
+                start: document.getElementById("agente-briefer"),
+                end: document.getElementById("agente-criativo"),
+                delay: 2.5
+            });
+            connectionsToDraw.push({
+                start: document.getElementById("agente-briefer"),
+                end: document.getElementById("agente-redator"),
+                delay: 3
+            });
+
+            // ETAPA 4 -> ETAPA 5
+            connectionsToDraw.push({
+                start: document.getElementById("agente-criativo"),
+                end: document.getElementById("agente-formatador"),
+                delay: 3.5
+            });
+            connectionsToDraw.push({
+                start: document.getElementById("agente-redator"),
+                end: document.getElementById("agente-formatador"),
+                delay: 4
+            });
+            connectionsToDraw.push({
+                start: document.getElementById("agente-fact-checker"),
+                end: document.getElementById("agente-formatador"),
+                delay: 4.5
+            });
+
+            // ETAPA 5 Interno
+            connectionsToDraw.push({
+                start: document.getElementById("agente-formatador"),
+                end: document.getElementById("agente-seletor"),
+                delay: 5
+            });
+            connectionsToDraw.push({
+                start: document.getElementById("agente-seletor"),
+                end: document.getElementById("agente-adaptacao"),
+                delay: 5.5
+            });
+
+            connections = connectionsToDraw.map(conn => {
+                const path = drawConnector(conn.start, conn.end);
+                path.style.animationDelay = `${conn.delay}s`;
+                return { path, startEl: conn.start, endEl: conn.end };
+            });
+        }
+
+        function setupInteractivity() {
+            const tooltip = document.getElementById("tooltip");
+
+            document.querySelectorAll(".agent-card").forEach(card => {
+                card.addEventListener("mouseenter", () => {
+                    const cardId = card.id;
+                    activeConnections.forEach(conn => {
+                        if (conn.startEl.id === cardId || conn.endEl.id === cardId) {
+                            conn.path.setAttribute("stroke", "#58a6ff");
+                            conn.path.setAttribute("stroke-width", "4");
+                        }
+                    });
+                });
+
+                card.addEventListener("mouseleave", () => {
+                    activeConnections.forEach(conn => {
+                        conn.path.setAttribute("stroke", "#444c56");
+                        conn.path.setAttribute("stroke-width", "2");
+                    });
+                });
+            });
+
+            document.querySelectorAll(".info-icon").forEach(icon => {
+                icon.addEventListener("mouseenter", (e) => {
+                    const tooltipText = icon.getAttribute("data-tooltip");
+                    tooltip.textContent = tooltipText;
+                    tooltip.classList.add("show");
+                    
+                    const iconRect = icon.getBoundingClientRect();
+                    tooltip.style.left = `${iconRect.left + window.pageXOffset + iconRect.width / 2 - tooltip.offsetWidth / 2}px`;
+                    tooltip.style.top = `${iconRect.top + window.pageYOffset - tooltip.offsetHeight - 10}px`;
+                });
+
+                icon.addEventListener("mouseleave", () => {
+                    tooltip.classList.remove("show");
+                });
+            });
+        }
+
+        function updateStepDisplay() {
+            document.getElementById("stepIndicator").textContent = `Etapa ${currentStep} de ${totalSteps}`;
+            document.getElementById("prevBtn").disabled = currentStep === 1;
+            document.getElementById("nextBtn").disabled = currentStep === totalSteps;
+
+            document.querySelectorAll("section[data-step]").forEach(section => {
+                const step = parseInt(section.getAttribute("data-step"));
+                if (step === currentStep) {
+                    section.classList.remove("section-dimmed");
+                    section.classList.add("section-focused");
+                } else {
+                    section.classList.remove("section-focused");
+                    section.classList.add("section-dimmed");
+                }
+            });
+
+            // Redraw connectors for the current step
+            clearConnectors();
+            const svg = document.getElementById("connector-svg");
+
+            // Add marker definition for arrowheads
+            if (!document.getElementById("arrowhead")) {
+                const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
+                const marker = document.createElementNS("http://www.w3.org/2000/svg", "marker");
+                marker.setAttribute("id", "arrowhead");
+                marker.setAttribute("viewBox", "0 0 10 10");
+                marker.setAttribute("refX", "9");
+                marker.setAttribute("refY", "5");
+                marker.setAttribute("markerUnits", "strokeWidth");
+                marker.setAttribute("markerWidth", "6");
+                marker.setAttribute("markerHeight", "6");
+                marker.setAttribute("orient", "auto");
+                const polygon = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+                polygon.setAttribute("points", "0 0, 10 5, 0 10");
+                polygon.setAttribute("fill", "#444c56");
+                marker.appendChild(polygon);
+                defs.appendChild(marker);
+                svg.appendChild(defs);
+            }
+
+            // Filter connections based on current step
+            const connectionsForCurrentStep = connections.filter(conn => {
+                const startSection = conn.startEl.closest("section[data-step]");
+                const endSection = conn.endEl.closest("section[data-step]");
+                return (startSection && parseInt(startSection.getAttribute("data-step")) === currentStep) ||
+                       (endSection && parseInt(endSection.getAttribute("data-step")) === currentStep);
+            });
+
+            connectionsForCurrentStep.forEach(conn => {
+                const path = drawConnector(conn.startEl, conn.endEl, conn.path.getAttribute("stroke"), conn.path.getAttribute("stroke-width"));
+                path.style.animation = "none";
+                activeConnections.push({ path, startEl: conn.startEl, endEl: conn.endEl });
+            });
+
+            // Redraw all connections if on step 0 (initial load or overview)
+            if (currentStep === 0) {
+                drawAllConnectors();
+            }
+        }
+
+        function nextStep() {
+            if (currentStep < totalSteps) {
+                currentStep++;
+                updateStepDisplay();
+            }
+        }
+
+        function previousStep() {
+            if (currentStep > 1) {
+                currentStep--;
+                updateStepDisplay();
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            lucide.createIcons();
+            drawAllConnectors();
+            setupInteractivity();
+            updateStepDisplay();
+        });
+
+        window.addEventListener("resize", () => {
+            drawAllConnectors();
+            updateStepDisplay();
+        });
+    </script>
+</body>
+</html>
+

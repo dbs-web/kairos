@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KAIRÓS - Radar de Tendências</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide-react@latest/dist/umd/lucide-react.js"></script>
+    <script src="https://unpkg.com/lucide-icons@latest/dist/lucide.min.js"></script>
+
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* Estilos customizados para o tema KAIRÓS */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0d1117;
+        }
+        .main-bg {
+            background-color: #0d1117;
+        }
+        .card-bg {
+            background-color: #161b22;
+            border: 1px solid #30363d;
+        }
+        .nav-active {
+            color: #58a6ff;
+            border-bottom: 2px solid #58a6ff;
+        }
+        .btn-primary {
+            background-color: #238636;
+            color: white;
+            transition: background-color 0.2s;
+        }
+        .btn-primary:hover {
+            background-color: #2ea043;
+        }
+        .subnav-active {
+            background-color: #1f6feb;
+            color: white;
+        }
+        .trends-nav-active {
+            background-color: #30363d;
+            color: #58a6ff;
+        }
+    </style>
+</head>
+<body class="text-gray-200">
+
+    <div class="flex flex-col h-screen main-bg">
+        <!-- Header Principal -->
+        <header class="card-bg flex items-center justify-between p-3 px-6 border-b border-gray-700">
+            <div class="flex items-center space-x-8">
+                <h1 class="text-2xl font-bold text-white">KAIRÓS</h1>
+                <nav class="hidden md:flex items-center space-x-6 text-gray-400">
+                    <a href="#" class="hover:text-white transition-colors"><i data-lucide="layout-dashboard" class="inline-block w-5 h-5 mr-1"></i>Estúdio</a>
+                    <a href="#" class="hover:text-white transition-colors"><i data-lucide="book-open" class="inline-block w-5 h-5 mr-1"></i>Conhecimento</a>
+                    <a href="#" class="hover:text-white transition-colors"><i data-lucide="life-buoy" class="inline-block w-5 h-5 mr-1"></i>Ajuda</a>
+                </nav>
+            </div>
+            <div class="flex items-center space-x-4">
+                <div class="relative hidden sm:block">
+                    <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500"></i>
+                    <input type="text" placeholder="Buscar..." class="bg-[#0d1117] border border-gray-700 rounded-md py-1.5 pl-9 pr-3 w-48 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <img src="https://placehold.co/40x40/6366f1/white?text=U" alt="Avatar do Usuário" class="w-9 h-9 rounded-full">
+            </div>
+        </header>
+
+        <!-- Navegação Principal das Seções -->
+        <nav class="flex items-center space-x-6 px-6 border-b border-gray-700 bg-[#161b22]">
+            <a href="#" class="py-3 px-2 text-gray-400 hover:text-white transition-colors"><i data-lucide="newspaper" class="inline-block w-5 h-5 mr-1"></i>Notícias</a>
+            <a href="#" class="py-3 px-2 font-semibold nav-active"><i data-lucide="users" class="inline-block w-5 h-5 mr-1"></i>Redes Sociais</a>
+            <a href="#" class="py-3 px-2 text-gray-400 hover:text-white transition-colors"><i data-lucide="check-square" class="inline-block w-5 h-5 mr-1"></i>Aprovações</a>
+            <a href="#" class="py-3 px-2 text-gray-400 hover:text-white transition-colors"><i data-lucide="archive" class="inline-block w-5 h-5 mr-1"></i>Finalizados</a>
+        </nav>
+
+        <!-- Conteúdo da Página -->
+        <main class="flex-1 p-4 md:p-6 overflow-y-auto">
+            
+            <!-- Sub-navegação de Redes Sociais -->
+            <div class="mb-6">
+                <div class="inline-flex rounded-md shadow-sm" role="group">
+                    <button type="button" class="px-4 py-2 text-sm font-medium text-gray-300 bg-[#21262d] border border-gray-600 rounded-l-lg hover:bg-gray-700">
+                        Monitoramento
+                    </button>
+                    <button type="button" class="px-4 py-2 text-sm font-medium text-gray-300 bg-[#21262d] border-t border-b border-gray-600 hover:bg-gray-700">
+                        Meu Desempenho
+                    </button>
+                    <button type="button" class="px-4 py-2 text-sm font-medium subnav-active border border-blue-500 rounded-r-md">
+                        Radar de Tendências
+                    </button>
+                </div>
+            </div>
+
+            <!-- Navegação das Abas de Tendências -->
+            <div class="mb-6 border-b border-gray-700">
+                <nav class="flex space-x-1" aria-label="Tabs">
+                    <button class="trends-nav-active px-4 py-2 text-sm font-medium rounded-t-md">
+                        <i data-lucide="globe" class="inline-block w-4 h-4 mr-1"></i>
+                        Geral
+                    </button>
+                    <button class="text-gray-400 hover:text-white hover:bg-[#161b22] px-4 py-2 text-sm font-medium rounded-t-md">
+                        <i data-lucide="map-pin" class="inline-block w-4 h-4 mr-1"></i>
+                        Relevante na sua Região
+                    </button>
+                    <button class="text-gray-400 hover:text-white hover:bg-[#161b22] px-4 py-2 text-sm font-medium rounded-t-md">
+                        <i data-lucide="target" class="inline-block w-4 h-4 mr-1"></i>
+                        Relevante para Você
+                    </button>
+                </nav>
+            </div>
+
+            <!-- Grid de Tendências -->
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                <!-- Card de Tendência 1 -->
+                <div class="card-bg p-5 rounded-lg flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-start">
+                            <h3 class="text-xl font-bold text-white">#ReformaTributaria</h3>
+                            <span class="bg-blue-900 text-blue-300 text-xs font-medium px-2.5 py-0.5 rounded-full">Política</span>
+                        </div>
+                        <p class="text-sm text-gray-400 mt-2">A discussão sobre a nova fase da Reforma Tributária ganha força no Congresso, com foco na taxação de dividendos e unificação de impostos de consumo.</p>
+                    </div>
+                    <div class="mt-4">
+                        <div class="flex items-center space-x-2 text-sm text-gray-400">
+                            <i data-lucide="bar-chart-3" class="w-4 h-4 text-green-400"></i>
+                            <span>Volume de Menções: <span class="font-semibold text-white">Alto</span></span>
+                        </div>
+                        <button class="w-full btn-primary font-semibold py-2 rounded-md mt-4">
+                            <i data-lucide="edit" class="inline-block w-4 h-4 mr-1"></i>
+                            Abordar Tema
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Card de Tendência 2 -->
+                <div class="card-bg p-5 rounded-lg flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-start">
+                            <h3 class="text-xl font-bold text-white">Crise Climática</h3>
+                             <span class="bg-orange-900 text-orange-300 text-xs font-medium px-2.5 py-0.5 rounded-full">Meio Ambiente</span>
+                        </div>
+                        <p class="text-sm text-gray-400 mt-2">Novos relatórios indicam recordes de temperatura e eventos climáticos extremos, pautando debates sobre políticas de sustentabilidade e energia limpa.</p>
+                    </div>
+                    <div class="mt-4">
+                        <div class="flex items-center space-x-2 text-sm text-gray-400">
+                            <i data-lucide="bar-chart-3" class="w-4 h-4 text-green-400"></i>
+                            <span>Volume de Menções: <span class="font-semibold text-white">Alto</span></span>
+                        </div>
+                        <button class="w-full btn-primary font-semibold py-2 rounded-md mt-4">
+                            <i data-lucide="edit" class="inline-block w-4 h-4 mr-1"></i>
+                            Abordar Tema
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Card de Tendência 3 (Personalizada) -->
+                <div class="card-bg p-5 rounded-lg flex flex-col justify-between border-2 border-amber-500/50">
+                    <div>
+                        <div class="flex justify-between items-start">
+                            <h3 class="text-xl font-bold text-white">Segurança Digital</h3>
+                            <span class="bg-purple-900 text-purple-300 text-xs font-medium px-2.5 py-0.5 rounded-full">Tecnologia</span>
+                        </div>
+                        <p class="text-sm text-gray-400 mt-2">Aumento nos casos de phishing e golpes online reacende o debate sobre a legislação de proteção de dados e a responsabilidade das plataformas.</p>
+                    </div>
+                    <div class="mt-4">
+                        <div class="flex items-center space-x-2 text-sm text-amber-400 mb-2">
+                            <i data-lucide="target" class="w-4 h-4"></i>
+                            <span>Alta ressonância com suas pautas</span>
+                        </div>
+                        <div class="flex items-center space-x-2 text-sm text-gray-400">
+                            <i data-lucide="bar-chart-3" class="w-4 h-4 text-yellow-400"></i>
+                            <span>Volume de Menções: <span class="font-semibold text-white">Médio</span></span>
+                        </div>
+                        <button class="w-full btn-primary font-semibold py-2 rounded-md mt-4">
+                            <i data-lucide="edit" class="inline-block w-4 h-4 mr-1"></i>
+                            Abordar Tema
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Card de Tendência 4 -->
+                <div class="card-bg p-5 rounded-lg flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-start">
+                            <h3 class="text-xl font-bold text-white">Inteligência Artificial</h3>
+                            <span class="bg-purple-900 text-purple-300 text-xs font-medium px-2.5 py-0.5 rounded-full">Tecnologia</span>
+                        </div>
+                        <p class="text-sm text-gray-400 mt-2">Novas ferramentas de IA generativa para vídeo e texto estão sendo discutidas quanto ao seu impacto no mercado de trabalho e na criação de conteúdo.</p>
+                    </div>
+                    <div class="mt-4">
+                        <div class="flex items-center space-x-2 text-sm text-gray-400">
+                            <i data-lucide="bar-chart-3" class="w-4 h-4 text-yellow-400"></i>
+                            <span>Volume de Menções: <span class="font-semibold text-white">Médio</span></span>
+                        </div>
+                        <button class="w-full btn-primary font-semibold py-2 rounded-md mt-4">
+                            <i data-lucide="edit" class="inline-block w-4 h-4 mr-1"></i>
+                            Abordar Tema
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Card de Tendência 5 (Regional) -->
+                <div class="card-bg p-5 rounded-lg flex flex-col justify-between border-2 border-cyan-500/50">
+                    <div>
+                        <div class="flex justify-between items-start">
+                            <h3 class="text-xl font-bold text-white">Saneamento Básico</h3>
+                            <span class="bg-teal-900 text-teal-300 text-xs font-medium px-2.5 py-0.5 rounded-full">Infraestrutura</span>
+                        </div>
+                        <p class="text-sm text-gray-400 mt-2">Debates sobre a expansão da rede de esgoto e o novo marco do saneamento estão em alta na mídia local, após recentes anúncios do governo estadual.</p>
+                    </div>
+                    <div class="mt-4">
+                        <div class="flex items-center space-x-2 text-sm text-cyan-400 mb-2">
+                            <i data-lucide="map-pin" class="w-4 h-4"></i>
+                            <span>Em alta em Maceió</span>
+                        </div>
+                        <div class="flex items-center space-x-2 text-sm text-gray-400">
+                            <i data-lucide="bar-chart-3" class="w-4 h-4 text-yellow-400"></i>
+                            <span>Volume de Menções: <span class="font-semibold text-white">Médio</span></span>
+                        </div>
+                        <button class="w-full btn-primary font-semibold py-2 rounded-md mt-4">
+                            <i data-lucide="edit" class="inline-block w-4 h-4 mr-1"></i>
+                            Abordar Tema
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Card de Tendência 6 -->
+                <div class="card-bg p-5 rounded-lg flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-start">
+                            <h3 class="text-xl font-bold text-white">Educação e Tecnologia</h3>
+                            <span class="bg-pink-900 text-pink-300 text-xs font-medium px-2.5 py-0.5 rounded-full">Educação</span>
+                        </div>
+                        <p class="text-sm text-gray-400 mt-2">O uso de plataformas digitais no ensino fundamental e a capacitação de professores para novas tecnologias são temas recorrentes em portais de educação.</p>
+                    </div>
+                    <div class="mt-4">
+                        <div class="flex items-center space-x-2 text-sm text-gray-400">
+                           <i data-lucide="bar-chart-3" class="w-4 h-4 text-red-400"></i>
+                            <span>Volume de Menções: <span class="font-semibold text-white">Baixo</span></span>
+                        </div>
+                        <button class="w-full btn-primary font-semibold py-2 rounded-md mt-4">
+                            <i data-lucide="edit" class="inline-block w-4 h-4 mr-1"></i>
+                            Abordar Tema
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Inicializa os ícones do Lucide
+        lucide.createIcons();
+    </script>
+</body>
+</html>

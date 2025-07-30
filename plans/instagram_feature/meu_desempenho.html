@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KAIRÓS - Meu Desempenho</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide-react@latest/dist/umd/lucide-react.js"></script>
+    <script src="https://unpkg.com/lucide-icons@latest/dist/lucide.min.js"></script>
+
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* Estilos customizados para o tema KAIRÓS */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0d1117;
+        }
+        .main-bg {
+            background-color: #0d1117;
+        }
+        .card-bg {
+            background-color: #161b22;
+            border: 1px solid #30363d;
+        }
+        .nav-active {
+            color: #58a6ff;
+            border-bottom: 2px solid #58a6ff;
+        }
+        .btn-primary {
+            background-color: #238636;
+            color: white;
+            transition: background-color 0.2s;
+        }
+        .btn-primary:hover {
+            background-color: #2ea043;
+        }
+        .subnav-active {
+            background-color: #1f6feb;
+            color: white;
+        }
+        .social-nav-active {
+            color: #c9d1d9;
+            background-color: #161b22;
+            border-bottom: 2px solid #f78166; /* Laranja para destacar a aba ativa */
+        }
+    </style>
+</head>
+<body class="text-gray-200">
+
+    <div class="flex flex-col h-screen main-bg">
+        <!-- Header Principal -->
+        <header class="card-bg flex items-center justify-between p-3 px-6 border-b border-gray-700">
+            <div class="flex items-center space-x-8">
+                <h1 class="text-2xl font-bold text-white">KAIRÓS</h1>
+                <nav class="hidden md:flex items-center space-x-6 text-gray-400">
+                    <a href="#" class="hover:text-white transition-colors"><i data-lucide="layout-dashboard" class="inline-block w-5 h-5 mr-1"></i>Estúdio</a>
+                    <a href="#" class="hover:text-white transition-colors"><i data-lucide="book-open" class="inline-block w-5 h-5 mr-1"></i>Conhecimento</a>
+                    <a href="#" class="hover:text-white transition-colors"><i data-lucide="life-buoy" class="inline-block w-5 h-5 mr-1"></i>Ajuda</a>
+                </nav>
+            </div>
+            <div class="flex items-center space-x-4">
+                <div class="relative hidden sm:block">
+                    <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500"></i>
+                    <input type="text" placeholder="Buscar..." class="bg-[#0d1117] border border-gray-700 rounded-md py-1.5 pl-9 pr-3 w-48 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <img src="https://placehold.co/40x40/6366f1/white?text=U" alt="Avatar do Usuário" class="w-9 h-9 rounded-full">
+            </div>
+        </header>
+
+        <!-- Navegação Principal das Seções -->
+        <nav class="flex items-center space-x-6 px-6 border-b border-gray-700 bg-[#161b22]">
+            <a href="#" class="py-3 px-2 text-gray-400 hover:text-white transition-colors"><i data-lucide="newspaper" class="inline-block w-5 h-5 mr-1"></i>Notícias</a>
+            <a href="#" class="py-3 px-2 font-semibold nav-active"><i data-lucide="users" class="inline-block w-5 h-5 mr-1"></i>Redes Sociais</a>
+            <a href="#" class="py-3 px-2 text-gray-400 hover:text-white transition-colors"><i data-lucide="check-square" class="inline-block w-5 h-5 mr-1"></i>Aprovações</a>
+            <a href="#" class="py-3 px-2 text-gray-400 hover:text-white transition-colors"><i data-lucide="archive" class="inline-block w-5 h-5 mr-1"></i>Finalizados</a>
+        </nav>
+
+        <!-- Conteúdo da Página -->
+        <main class="flex-1 p-4 md:p-6 overflow-y-auto">
+            
+            <!-- Sub-navegação de Redes Sociais -->
+            <div class="mb-6">
+                <div class="inline-flex rounded-md shadow-sm" role="group">
+                    <button type="button" class="px-4 py-2 text-sm font-medium text-gray-300 bg-[#21262d] border border-gray-600 rounded-l-lg hover:bg-gray-700">
+                        Monitoramento
+                    </button>
+                    <button type="button" class="px-4 py-2 text-sm font-medium subnav-active border-t border-b border-blue-500">
+                        Meu Desempenho
+                    </button>
+                    <button type="button" class="px-4 py-2 text-sm font-medium text-gray-300 bg-[#21262d] border border-gray-600 rounded-r-md hover:bg-gray-700">
+                        Radar de Tendências
+                    </button>
+                </div>
+            </div>
+            
+            <!-- NOVA NAVEGAÇÃO POR REDE SOCIAL -->
+            <div class="mb-6 border-b border-gray-700">
+                <nav class="-mb-px flex space-x-4" aria-label="Tabs">
+                    <!-- Tab Instagram (Ativa) -->
+                    <button class="social-nav-active group inline-flex items-center py-3 px-3 text-sm font-medium">
+                        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12.315 2c-4.05.055-5.655.22-7.635 1.01C2.9 3.7,1.7 4.9,1.01 6.685.22 8.665.055 10.265 0 14.315c-.055 4.05-.22 5.655-1.01 7.635.7 1.78 1.9 2.98 3.685 3.675 1.98.79 3.585.955 7.635 1.01 4.05-.055 5.655-.22 7.635-1.01 1.78-.7 2.98-1.9 3.675-3.685.79-1.98.955-3.585 1.01-7.635.055-4.05.22-5.655 1.01-7.635-.7-1.78-1.9-2.98-3.685-3.675C17.97.275 16.37.11 12.315.06 12.21 0 12.105 0 12 0h.315zM12 4.865A7.135 7.135 0 1012 19.135 7.135 7.135 0 0012 4.865zM12 16a4 4 0 110-8 4 4 0 010 8zm6.405-11.25a1.44 1.44 0 11-2.88 0 1.44 1.44 0 012.88 0z" clip-rule="evenodd" /></svg>
+                        <span>Instagram</span>
+                    </button>
+                    <!-- Tab TikTok -->
+                    <button class="text-gray-400 hover:text-white hover:border-gray-500 border-b-2 border-transparent group inline-flex items-center py-3 px-3 text-sm font-medium">
+                        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
+                        <span>TikTok</span>
+                    </button>
+                    <!-- Tab Twitter/X -->
+                    <button class="text-gray-400 hover:text-white hover:border-gray-500 border-b-2 border-transparent group inline-flex items-center py-3 px-3 text-sm font-medium">
+                        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                        <span>Twitter</span>
+                    </button>
+                </nav>
+            </div>
+
+            <!-- Grid Principal -->
+            <div class="grid grid-cols-1 gap-6">
+                <!-- Seção de KPIs -->
+                <section>
+                    <h2 class="text-lg font-semibold text-white mb-3">Desempenho Geral - Instagram</h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <!-- Card KPI: Média de Curtidas -->
+                        <div class="card-bg p-5 rounded-lg">
+                            <h3 class="text-sm font-medium text-gray-400">Média de Curtidas</h3>
+                            <div class="flex items-baseline space-x-2 mt-2">
+                                <p class="text-3xl font-semibold text-white">1,284</p>
+                                <span class="flex items-center text-sm font-medium text-green-400"><i data-lucide="arrow-up-right" class="w-4 h-4 mr-1"></i>12.5%</span>
+                            </div>
+                        </div>
+                        <!-- Card KPI: Média de Comentários -->
+                        <div class="card-bg p-5 rounded-lg">
+                            <h3 class="text-sm font-medium text-gray-400">Média de Comentários</h3>
+                            <div class="flex items-baseline space-x-2 mt-2">
+                                <p class="text-3xl font-semibold text-white">97</p>
+                                <span class="flex items-center text-sm font-medium text-red-400"><i data-lucide="arrow-down-right" class="w-4 h-4 mr-1"></i>-2.1%</span>
+                            </div>
+                        </div>
+                        <!-- Card KPI: Taxa de Engajamento -->
+                        <div class="card-bg p-5 rounded-lg">
+                            <h3 class="text-sm font-medium text-gray-400">Taxa de Engajamento</h3>
+                            <div class="flex items-baseline space-x-2 mt-2">
+                                <p class="text-3xl font-semibold text-white">4.72%</p>
+                                <span class="flex items-center text-sm font-medium text-green-400"><i data-lucide="arrow-up-right" class="w-4 h-4 mr-1"></i>0.8%</span>
+                            </div>
+                        </div>
+                        <!-- Card KPI: Crescimento de Seguidores -->
+                        <div class="card-bg p-5 rounded-lg">
+                            <h3 class="text-sm font-medium text-gray-400">Novos Seguidores (30d)</h3>
+                            <div class="flex items-baseline space-x-2 mt-2">
+                                <p class="text-3xl font-semibold text-white">+2,109</p>
+                                <span class="text-sm font-medium text-gray-400">Total: 157k</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Seção do Gráfico -->
+                <section class="card-bg p-5 rounded-lg">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-semibold text-white">Evolução do Engajamento (Instagram)</h3>
+                        <div class="flex items-center space-x-2">
+                            <select class="bg-[#0d1117] border border-gray-700 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block w-full p-1.5">
+                                <option>Últimos 30 dias</option>
+                                <option>Últimos 3 meses</option>
+                                <option>Este ano</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="h-64 md:h-80 w-full text-gray-500 flex items-center justify-center">
+                        <svg class="w-full h-full" viewBox="0 0 400 200" preserveAspectRatio="none"><path d="M 20 180 C 80 20, 120 150, 200 100 S 280 -20, 380 120" fill="none" stroke="#3b82f6" stroke-width="2"/><circle cx="20" cy="180" r="3" fill="#3b82f6" /><circle cx="200" cy="100" r="3" fill="#3b82f6" /><circle cx="380" cy="120" r="3" fill="#3b82f6" /></svg>
+                    </div>
+                </section>
+
+                <!-- Seção de Posts com Melhor Desempenho -->
+                <section>
+                    <h3 class="text-lg font-semibold text-white mb-4">Posts com Melhor Desempenho (Instagram)</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Post Card -->
+                        <div class="card-bg rounded-lg overflow-hidden">
+                            <img src="https://placehold.co/600x400/0d1117/white?text=Post+Instagram+1" alt="Thumbnail do Post" class="w-full h-48 object-cover">
+                            <div class="p-4"><p class="text-sm text-gray-400 mb-2 line-clamp-2">Inauguração do novo centro de saúde na comunidade. Um marco para a nossa gestão!</p><div class="flex items-center space-x-4 text-sm text-gray-300 my-3"><span><i data-lucide="heart" class="inline-block w-4 h-4 mr-1 text-red-500"></i> 3.1k</span><span><i data-lucide="message-square" class="inline-block w-4 h-4 mr-1 text-blue-400"></i> 245</span><span><i data-lucide="bar-chart-2" class="inline-block w-4 h-4 mr-1 text-green-400"></i> 8.2% Engaj.</span></div><button class="w-full btn-primary font-semibold py-2 rounded-md mt-2"><i data-lucide="copy-plus" class="inline-block w-4 h-4 mr-1"></i>Replicar Sucesso</button></div>
+                        </div>
+                        <!-- Post Card -->
+                        <div class="card-bg rounded-lg overflow-hidden">
+                            <img src="https://placehold.co/600x400/161b22/white?text=Post+Instagram+2" alt="Thumbnail do Post" class="w-full h-48 object-cover">
+                            <div class="p-4"><p class="text-sm text-gray-400 mb-2 line-clamp-2">#TBT de um dia importante de votação na câmara. Defendendo nossos valores sempre.</p><div class="flex items-center space-x-4 text-sm text-gray-300 my-3"><span><i data-lucide="heart" class="inline-block w-4 h-4 mr-1 text-red-500"></i> 2.8k</span><span><i data-lucide="message-square" class="inline-block w-4 h-4 mr-1 text-blue-400"></i> 198</span><span><i data-lucide="bar-chart-2" class="inline-block w-4 h-4 mr-1 text-green-400"></i> 7.5% Engaj.</span></div><button class="w-full btn-primary font-semibold py-2 rounded-md mt-2"><i data-lucide="copy-plus" class="inline-block w-4 h-4 mr-1"></i>Replicar Sucesso</button></div>
+                        </div>
+                        <!-- Post Card -->
+                        <div class="card-bg rounded-lg overflow-hidden">
+                            <img src="https://placehold.co/600x400/0d1117/white?text=Post+Instagram+3" alt="Thumbnail do Post" class="w-full h-48 object-cover">
+                            <div class="p-4"><p class="text-sm text-gray-400 mb-2 line-clamp-2">Bastidores da nossa última entrevista. Falamos sobre economia e o futuro da nossa cidade.</p><div class="flex items-center space-x-4 text-sm text-gray-300 my-3"><span><i data-lucide="heart" class="inline-block w-4 h-4 mr-1 text-red-500"></i> 2.5k</span><span><i data-lucide="message-square" class="inline-block w-4 h-4 mr-1 text-blue-400"></i> 150</span><span><i data-lucide="bar-chart-2" class="inline-block w-4 h-4 mr-1 text-green-400"></i> 7.1% Engaj.</span></div><button class="w-full btn-primary font-semibold py-2 rounded-md mt-2"><i data-lucide="copy-plus" class="inline-block w-4 h-4 mr-1"></i>Replicar Sucesso</button></div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Inicializa os ícones do Lucide
+        lucide.createIcons();
+    </script>
+</body>
+</html>

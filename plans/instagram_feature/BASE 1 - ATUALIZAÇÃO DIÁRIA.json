@@ -1,0 +1,95 @@
+[
+  {
+    "instagramAccountId": "17841403767503692",
+    "snapshotTimestamp": "2025-07-30T14:31:40.765Z",
+    "timeSeriesData": [
+      {
+        "date": "2025-07-29",
+        "reach": 76,
+        "followerChange": 0
+      },
+      {
+        "date": "2025-07-30",
+        "reach": 7,
+        "followerChange": 0
+      }
+    ],
+    "latestDailySummary": {
+      "date": "2025-07-30",
+      "profileViews": 5,
+      "accountsEngaged": 0
+    },
+    "lifetimeDemographics": {
+      "genderAge": {
+        "F_13-17": 6,
+        "F_18-24": 153,
+        "F_25-34": 664,
+        "F_35-44": 470,
+        "F_45-54": 209,
+        "F_55-64": 68,
+        "F_65+": 19,
+        "M_13-17": 2,
+        "M_18-24": 38,
+        "M_25-34": 139,
+        "M_35-44": 82,
+        "M_45-54": 42,
+        "M_55-64": 8,
+        "M_65+": 3,
+        "U_13-17": 1,
+        "U_18-24": 19,
+        "U_25-34": 43,
+        "U_35-44": 40,
+        "U_45-54": 21,
+        "U_55-64": 6,
+        "U_65+": 1
+      },
+      "cities": {
+        "Ribeirão Prêto, São Paulo (state)": 10,
+        "São Paulo, São Paulo (state)": 128,
+        "Anápolis, Goiás": 6,
+        "São Luís, Maranhão": 17,
+        "Rio de Janeiro, Rio de Janeiro (state)": 68,
+        "Contagem, Minas Gerais": 8,
+        "Osasco, São Paulo (state)": 6,
+        "Maceió, Alagoas": 24,
+        "Uberlândia, Minas Gerais": 11,
+        "Porto Alegre, Rio Grande do Sul": 7,
+        "Campo Grande, Mato Grosso do Sul": 8,
+        "Águas Lindas de Goiás, Goiás": 7,
+        "Duque de Caxias, Rio de Janeiro (state)": 16,
+        "Ceilândia, Federal District": 10,
+        "Vitória da Conquista, Bahia": 9,
+        "Londrina, Paraná": 9,
+        "São Sebastião, Federal District": 10,
+        "João Pessoa, Paraíba": 20,
+        "Teresina, Piauí": 12,
+        "Feira de Santana, Bahia": 7,
+        "Aparecida de Goiânia, Goiás": 10,
+        "Recife, Pernambuco": 21,
+        "Brasília, Federal District": 41,
+        "Valparaíso de Goiás, Goiás": 6,
+        "Guará, Federal District": 21,
+        "Guarulhos, São Paulo (state)": 11,
+        "Sobradinho, Federal District": 12,
+        "Rio Claro, São Paulo (state)": 6,
+        "Natal, Rio Grande do Norte": 6,
+        "São Bernardo do Campo, São Paulo (state)": 7,
+        "Belford Roxo, Rio de Janeiro (state)": 7,
+        "Pôrto Velho, Rondônia": 7,
+        "Salvador, Bahia": 40,
+        "Rondonópolis, Mato Grosso": 9,
+        "Jaboatão dos Guararapes, Pernambuco": 7,
+        "Goiânia, Goiás": 20,
+        "Fortaleza, Ceará": 31,
+        "Manaus, Amazonas": 32,
+        "Nova Iguaçu, Rio de Janeiro (state)": 11,
+        "Belo Horizonte, Minas Gerais": 21,
+        "Campos dos Goytacazes, Rio de Janeiro (state)": 7,
+        "Curitiba, Paraná": 9,
+        "Taguatinga, Federal District": 82,
+        "Belém, Pará": 10,
+        "Campinas, São Paulo (state)": 13
+      }
+    }
+  }
+]

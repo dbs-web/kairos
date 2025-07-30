@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KAIRÓS - Roadmap da Base de Dados</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide-icons@latest/dist/lucide.min.js"></script>
+
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0d1117;
+            color: #c9d1d9;
+        }
+        .timeline-container {
+            position: relative;
+            padding-left: 2.5rem; /* Space for the timeline line */
+        }
+        .timeline-line {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background-color: #30363d;
+            border-radius: 2px;
+        }
+        .timeline-milestone {
+            position: absolute;
+            left: -1.25rem; /* (2.5rem / 2) - (width / 2) */
+            top: 0;
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            background-color: #0d1117;
+            border: 4px solid #30363d;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .milestone-icon {
+            color: #444c56;
+        }
+        .milestone-active .timeline-milestone {
+            border-color: #1f6feb;
+        }
+        .milestone-active .milestone-icon {
+            color: #1f6feb;
+        }
+        .milestone-active .milestone-title {
+            color: #58a6ff;
+        }
+        .module-card {
+            background-color: #161b22;
+            border: 1px dashed #444c56;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            transition: border-color 0.2s, background-color 0.2s;
+        }
+        .module-card:hover {
+            border-color: #1f6feb;
+            background-color: #1a222c;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="container mx-auto p-4 md:p-8">
+        <header class="text-center mb-12">
+            <h1 class="text-3xl md:text-4xl font-extrabold text-white">Roadmap de Desenvolvimento</h1>
+            <p class="text-lg text-gray-400 mt-2">Base de Dados KAIRÓS</p>
+        </header>
+
+        <div class="max-w-3xl mx-auto">
+            <!-- Estágio Atual -->
+            <div class="relative mb-12 milestone-active">
+                <div class="timeline-container">
+                    <div class="timeline-line"></div>
+                    <div class="timeline-milestone">
+                        <i data-lucide="loader-2" class="w-6 h-6 milestone-icon animate-spin"></i>
+                    </div>
+                    <div class="pl-8">
+                        <h2 class="text-sm font-semibold uppercase tracking-wider text-blue-400">ESTÁGIO ATUAL (EM ANDAMENTO)</h2>
+                        <h3 class="text-2xl font-bold text-white mt-1">Ajuste e Teste da Base de Dados</h3>
+                        <div class="mt-4 p-5 rounded-lg bg-[#161b22] border border-blue-500/50">
+                            <div class="flex items-center space-x-4">
+                                <div class="flex-shrink-0">
+                                    <i data-lucide="database" class="w-8 h-8 text-blue-300"></i>
+                                </div>
+                                <div>
+                                    <p class="font-semibold text-white">Atividade Principal:</p>
+                                    <p class="text-gray-300">Testes de desempenho com dados reais para validação da estrutura.</p>
+                                </div>
+                            </div>
+                            <div class="mt-4 pt-4 border-t border-gray-700 flex items-center space-x-4">
+                                <div class="flex-shrink-0">
+                                    <i data-lucide="user-check" class="w-8 h-8 text-blue-300"></i>
+                                </div>
+                                <div>
+                                    <p class="font-semibold text-white">Colaboração:</p>
+                                    <p class="text-gray-300">Validação técnica e de negócio em conjunto com <span class="font-bold">Lia Bastos</span>.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Próximo Passo -->
+            <div class="relative mb-12">
+                <div class="timeline-container">
+                    <div class="timeline-line"></div>
+                    <div class="timeline-milestone">
+                        <i data-lucide="arrow-right-circle" class="w-6 h-6 milestone-icon"></i>
+                    </div>
+                    <div class="pl-8">
+                        <h2 class="text-sm font-semibold uppercase tracking-wider text-gray-500">PRÓXIMO PASSO</h2>
+                        <h3 class="text-2xl font-bold text-white mt-1">Lógica de Interpretação de Leis</h3>
+                         <div class="mt-4 p-5 rounded-lg bg-[#161b22] border border-gray-700">
+                            <div class="flex items-center space-x-4">
+                                <div class="flex-shrink-0">
+                                    <i data-lucide="scale" class="w-8 h-8 text-gray-400"></i>
+                                </div>
+                                <div>
+                                    <p class="font-semibold text-white">Objetivo:</p>
+                                    <p class="text-gray-300">Desenvolver um módulo para extrair e interpretar dados de <span class="font-bold">Emendas e Projetos de Lei</span>.</p>
+                                </div>
+                            </div>
+                         </div>
+                         <div class="mt-4 text-center">
+                            <i data-lucide="arrow-down" class="w-6 h-6 text-gray-600 mx-auto"></i>
+                         </div>
+                         <div class="mt-4 p-4 rounded-lg bg-green-900/40 border border-green-500/50 text-center">
+                            <p class="font-bold text-green-300">Resultado Esperado: V1 da Base de Dados</p>
+                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Futuro -->
+            <div class="relative">
+                <div class="timeline-container">
+                    <div class="timeline-milestone">
+                        <i data-lucide="layers" class="w-6 h-6 milestone-icon"></i>
+                    </div>
+                    <div class="pl-8">
+                        <h2 class="text-sm font-semibold uppercase tracking-wider text-gray-500">ROADMAP FUTURO</h2>
+                        <h3 class="text-2xl font-bold text-white mt-1">Expansão com Módulos Externos</h3>
+                        <p class="text-gray-400 mt-2">Cada fonte de dados externa será integrada como um módulo independente, enriquecendo a capacidade de análise da plataforma.</p>
+                        <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- Módulo QEdu -->
+                            <div class="module-card">
+                                <div class="flex items-center space-x-3">
+                                    <i data-lucide="graduation-cap" class="w-6 h-6 text-gray-500"></i>
+                                    <h4 class="font-bold text-white">QEdu</h4>
+                                </div>
+                                <p class="text-sm text-gray-400 mt-2">Análise de dados educacionais por município e estado.</p>
+                            </div>
+                            <!-- Módulo DataSUS -->
+                            <div class="module-card">
+                                <div class="flex items-center space-x-3">
+                                    <i data-lucide="heart-pulse" class="w-6 h-6 text-gray-500"></i>
+                                    <h4 class="font-bold text-white">DataSUS</h4>
+                                </div>
+                                <p class="text-sm text-gray-400 mt-2">Informações sobre saúde pública e indicadores sanitários.</p>
+                            </div>
+                            <!-- Módulo API Congresso -->
+                            <div class="module-card">
+                                <div class="flex items-center space-x-3">
+                                    <i data-lucide="landmark" class="w-6 h-6 text-gray-500"></i>
+                                    <h4 class="font-bold text-white">API do Congresso</h4>
+                                </div>
+                                <p class="text-sm text-gray-400 mt-2">Acesso em tempo real a votações e atividades parlamentares.</p>
+                            </div>
+                            <!-- Módulo TSE -->
+                            <div class="module-card">
+                                <div class="flex items-center space-x-3">
+                                    <i data-lucide="vote" class="w-6 h-6 text-gray-500"></i>
+                                    <h4 class="font-bold text-white">Dados do TSE</h4>
+                                </div>
+                                <p class="text-sm text-gray-400 mt-2">Análises demográficas de votos e resultados eleitorais.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
