@@ -13,14 +13,14 @@ Write-Host "Test 1: Testing N8N callback endpoint..." -ForegroundColor Yellow
 
 Write-Host ""
 
-# Using the exact same format as your N8N template
+# Using the exact same format as your N8N template with briefing ID 1612
 $validPayload = @(
     @{
         "cliente" = "10"
         "rede_social" = "instagram"
-        "post_url" = "https://www.instagram.com/reel/DMfT8hduki2/"
-        "briefingid" = "1599"
-        "texto" = "Teste de Callback N8N"
+        "post_url" = "https://www.instagram.com/reel/DMq9PVbOrCn/"
+        "briefingid" = "1612"
+        "texto" = "Cliente: Lia Bastos`nFormato: Kairós`nFoco narrativo: Educar`nIntenção Comunicacional: Ensinar`nTom emocional: Didático`n`n1.⁠ ⁠Conteúdo (Texto)`nO Brasil saiu do Mapa da Fome da FAO em 2025. A marca de menos de 2,5% da população em subalimentação crônica foi atingida graças ao retorno e fortalecimento de políticas públicas eficazes."
     }
 )
 
@@ -48,6 +48,52 @@ try {
 }
 
 Write-Host ""
+
+Write-Host ""
+
+# Test 2: Debug Kairos callback directly
+Write-Host "Test 2: Testing Kairos callback endpoint directly..." -ForegroundColor Yellow
+
+$kairosCallbackUrl = "https://kairos.dbsweb.com.br/api/briefings/callback"
+$apiSecret = "6Kh8bBoBilUCUypzKD3Lftj15oQJOaFIBHLTFImAKDA1y2YBQdlFK43raubOfKDp"
+
+$kairosPayload = @{
+    "briefingId" = 1612
+    "text" = "Cliente: Lia Bastos - Teste direto do Kairos callback"
+    "sources" = "instagram, https://www.instagram.com/reel/DMq9PVbOrCn/"
+}
+
+$kairosJson = $kairosPayload | ConvertTo-Json -Depth 3
+$kairosHeaders = @{
+    "Content-Type" = "application/json"
+    "x-api-key" = $apiSecret
+}
+
+Write-Host "Testing Kairos callback directly:"
+Write-Host "URL: $kairosCallbackUrl" -ForegroundColor Gray
+Write-Host "Payload: $kairosJson" -ForegroundColor Gray
+Write-Host ""
+
+try {
+    $kairosResponse = Invoke-WebRequest -Uri $kairosCallbackUrl -Method POST -Body $kairosJson -Headers $kairosHeaders -UseBasicParsing
+    Write-Host "[SUCCESS] Kairos callback worked!" -ForegroundColor Green
+    Write-Host "Status Code: $($kairosResponse.StatusCode)" -ForegroundColor Green
+    Write-Host "Response: $($kairosResponse.Content)" -ForegroundColor Green
+} catch {
+    Write-Host "[ERROR] Kairos callback failed: $($_.Exception.Message)" -ForegroundColor Red
+    if ($_.Exception.Response) {
+        $statusCode = $_.Exception.Response.StatusCode.value__
+        Write-Host "Status Code: $statusCode" -ForegroundColor Red
+        try {
+            $errorResponse = $_.Exception.Response.GetResponseStream()
+            $reader = New-Object System.IO.StreamReader($errorResponse)
+            $errorContent = $reader.ReadToEnd()
+            Write-Host "Error Response: $errorContent" -ForegroundColor Red
+        } catch {
+            Write-Host "Could not read error response" -ForegroundColor Red
+        }
+    }
+}
 
 Write-Host ""
 

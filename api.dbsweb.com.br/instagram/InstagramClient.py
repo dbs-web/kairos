@@ -115,6 +115,9 @@ class InstagramClient:
 
         Returns:
             User profile data
+
+        Raises:
+            HTTPException: When Instagram API calls fail or token is invalid
         """
         try:
             # If we have a user_id, use it directly
@@ -126,10 +129,22 @@ class InstagramClient:
                 }
 
                 response = requests.get(url, params=params)
-                print(f"Instagram API response for user {user_id}: {response.text}")
+                print(f"Instagram API response for user {user_id}: {response.status_code} - {response.text}")
 
                 if response.status_code == 200:
                     return response.json()
+                elif response.status_code == 401:
+                    raise HTTPException(
+                        status_code=401,
+                        detail="Instagram token is invalid or expired. Please reconnect your Instagram account."
+                    )
+                elif response.status_code == 403:
+                    raise HTTPException(
+                        status_code=403,
+                        detail="Access denied to Instagram account. Please check your account permissions."
+                    )
+                else:
+                    print(f"Instagram API error for user {user_id}: {response.status_code} - {response.text}")
 
             # Try to get user info directly from Instagram Graph API (fallback)
             url = f"{self.graph_url}/me"
@@ -139,7 +154,20 @@ class InstagramClient:
             }
 
             response = requests.get(url, params=params)
-            print(f"Direct Instagram API failed: {response.text}")
+            print(f"Direct Instagram API response: {response.status_code} - {response.text}")
+
+            if response.status_code == 200:
+                return response.json()
+            elif response.status_code == 401:
+                raise HTTPException(
+                    status_code=401,
+                    detail="Instagram token is invalid or expired. Please reconnect your Instagram account."
+                )
+            elif response.status_code == 403:
+                raise HTTPException(
+                    status_code=403,
+                    detail="Access denied to Instagram account. Please check your account permissions."
+                )
 
             # Try to get user ID from token introspection or debug
             debug_url = f"{self.facebook_graph_url}/debug_token"
@@ -149,13 +177,23 @@ class InstagramClient:
             }
 
             debug_response = requests.get(debug_url, params=debug_params)
+            print(f"Token debug response: {debug_response.status_code} - {debug_response.text}")
 
             if debug_response.status_code == 200:
                 debug_data = debug_response.json()
                 print(f"Token debug info: {debug_data}")
 
-                # Extract user ID from debug info
+                # Check if token is valid
                 token_data = debug_data.get('data', {})
+                is_valid = token_data.get('is_valid', False)
+
+                if not is_valid:
+                    raise HTTPException(
+                        status_code=401,
+                        detail="Instagram token is invalid or expired. Please reconnect your Instagram account."
+                    )
+
+                # Extract user ID from debug info
                 extracted_user_id = token_data.get('user_id')
 
                 if extracted_user_id:
@@ -167,30 +205,37 @@ class InstagramClient:
                     }
 
                     profile_response = requests.get(profile_url, params=profile_params)
-                    print(f"Profile response for extracted user {extracted_user_id}: {profile_response.text}")
+                    print(f"Profile response for extracted user {extracted_user_id}: {profile_response.status_code} - {profile_response.text}")
 
                     if profile_response.status_code == 200:
                         return profile_response.json()
+                    elif profile_response.status_code == 401:
+                        raise HTTPException(
+                            status_code=401,
+                            detail="Instagram token is invalid or expired. Please reconnect your Instagram account."
+                        )
+                    elif profile_response.status_code == 403:
+                        raise HTTPException(
+                            status_code=403,
+                            detail="Access denied to Instagram account. Please check your account permissions."
+                        )
 
-            # Final fallback - return minimal info
-            return {
-                'id': user_id or 'unknown',
-                'username': 'instagram_user',
-                'account_type': 'BUSINESS',
-                'media_count': 0,
-                'note': 'Limited profile info available'
-            }
+            # If all attempts failed, raise an error instead of returning fallback data
+            raise HTTPException(
+                status_code=400,
+                detail="Failed to retrieve Instagram profile. Please check your Instagram account connection and try again."
+            )
 
+        except HTTPException:
+            # Re-raise HTTP exceptions
+            raise
         except Exception as e:
             print(f"Error in get_user_profile: {str(e)}")
-            # Return minimal info instead of failing
-            return {
-                'id': user_id or 'unknown',
-                'username': 'instagram_user',
-                'account_type': 'BUSINESS',
-                'media_count': 0,
-                'error': str(e)
-            }
+            # Raise HTTP exception instead of returning fallback data
+            raise HTTPException(
+                status_code=500,
+                detail=f"Instagram API error: {str(e)}"
+            )
 
     def get_user_media(self, access_token: str, limit: int = 25, user_id: str = None) -> Dict[str, Any]:
         """
@@ -203,6 +248,9 @@ class InstagramClient:
 
         Returns:
             User media data
+
+        Raises:
+            HTTPException: When Instagram API calls fail or token is invalid
         """
         try:
             # Try with specific user ID first if provided
@@ -219,6 +267,18 @@ class InstagramClient:
 
                 if response.status_code == 200:
                     return response.json()
+                elif response.status_code == 401:
+                    raise HTTPException(
+                        status_code=401,
+                        detail="Instagram token is invalid or expired. Please reconnect your Instagram account."
+                    )
+                elif response.status_code == 403:
+                    raise HTTPException(
+                        status_code=403,
+                        detail="Access denied to Instagram media. Please check your account permissions."
+                    )
+                else:
+                    print(f"Instagram media API error for user {user_id}: {response.status_code} - {response.text}")
 
             # Fallback to /me/media endpoint
             url = f"{self.graph_url}/me/media"
@@ -231,25 +291,35 @@ class InstagramClient:
             response = requests.get(url, params=params)
             print(f"Instagram media API fallback response: {response.status_code} - {response.text}")
 
-            if response.status_code != 200:
-                # Return empty media list instead of failing
-                print(f"Failed to get user media: {response.text}")
-                return {
-                    'data': [],
-                    'paging': {},
-                    'note': 'No media available or access restricted'
-                }
+            if response.status_code == 200:
+                return response.json()
+            elif response.status_code == 401:
+                raise HTTPException(
+                    status_code=401,
+                    detail="Instagram token is invalid or expired. Please reconnect your Instagram account."
+                )
+            elif response.status_code == 403:
+                raise HTTPException(
+                    status_code=403,
+                    detail="Access denied to Instagram media. Please check your account permissions."
+                )
+            else:
+                # If all attempts failed, raise an error instead of returning empty data
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"Failed to retrieve Instagram media: {response.text}"
+                )
 
-            return response.json()
-
+        except HTTPException:
+            # Re-raise HTTP exceptions
+            raise
         except Exception as e:
             print(f"Error in get_user_media: {str(e)}")
-            # Return empty media list instead of failing
-            return {
-                'data': [],
-                'paging': {},
-                'error': str(e)
-            }
+            # Raise HTTP exception instead of returning empty data
+            raise HTTPException(
+                status_code=500,
+                detail=f"Instagram media API error: {str(e)}"
+            )
 
     def get_media_insights(self, media_id: str, access_token: str) -> Dict[str, Any]:
         """
