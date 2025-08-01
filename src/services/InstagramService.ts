@@ -1,5 +1,7 @@
 import { InstagramTokenService } from './InstagramTokenService';
-import db from '@/infrastructure/database/DatabaseFactory';
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
 
 // Types based on colleague's BASE 1 & 2 structure
 export interface TimeSeriesData {
@@ -260,7 +262,7 @@ export class InstagramService {
         const today = new Date().toISOString().split('T')[0];
 
         // Store daily snapshot
-        await db.upsert('instagramDailySnapshot', {
+        await prisma.instagramDailySnapshot.upsert({
             where: {
                 userId_instagramAccountId_snapshotDate: {
                     userId,
@@ -286,7 +288,7 @@ export class InstagramService {
         });
 
         // Store demographics
-        await db.upsert('instagramDemographics', {
+        await prisma.instagramDemographics.upsert({
             where: {
                 userId_instagramAccountId: {
                     userId,
@@ -315,7 +317,7 @@ export class InstagramService {
         const startDate = new Date();
         startDate.setDate(startDate.getDate() - days);
 
-        const snapshots = await db.findMany('instagramDailySnapshot', {
+        const snapshots = await prisma.instagramDailySnapshot.findMany({
             where: {
                 userId,
                 snapshotDate: {
@@ -338,7 +340,7 @@ export class InstagramService {
      * Get latest daily summary from database
      */
     static async getLatestDailySummary(userId: number): Promise<DailySummary | null> {
-        const latestSnapshot = await db.findFirst('instagramDailySnapshot', {
+        const latestSnapshot = await prisma.instagramDailySnapshot.findFirst({
             where: { userId },
             orderBy: { snapshotDate: 'desc' }
         });
@@ -356,7 +358,7 @@ export class InstagramService {
      * Get lifetime demographics from database
      */
     static async getLifetimeDemographics(userId: number): Promise<Demographics | null> {
-        const demographics = await db.findFirst('instagramDemographics', {
+        const demographics = await prisma.instagramDemographics.findFirst({
             where: { userId },
             orderBy: { lastUpdated: 'desc' }
         });

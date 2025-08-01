@@ -1,5 +1,7 @@
 import crypto from 'crypto';
-import db from '@/infrastructure/database/DatabaseFactory';
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
 
 export interface InstagramTokenData {
     accessToken: string;
@@ -58,7 +60,7 @@ export class InstagramTokenService {
     ): Promise<void> {
         const encryptedToken = this.encryptToken(tokenData.accessToken);
 
-        await db.upsert('userSocialToken', {
+        await prisma.userSocialToken.upsert({
             where: {
                 userId_platform: {
                     userId,
@@ -85,7 +87,7 @@ export class InstagramTokenService {
      * Get Instagram access token for a user
      */
     static async getToken(userId: number): Promise<string | null> {
-        const tokenRecord = await db.findFirst('userSocialToken', {
+        const tokenRecord = await prisma.userSocialToken.findFirst({
             where: {
                 userId,
                 platform: 'INSTAGRAM'
@@ -110,7 +112,7 @@ export class InstagramTokenService {
      * Get Instagram Business Account ID for a user
      */
     static async getAccountId(userId: number): Promise<string | null> {
-        const tokenRecord = await db.findFirst('userSocialToken', {
+        const tokenRecord = await prisma.userSocialToken.findFirst({
             where: {
                 userId,
                 platform: 'INSTAGRAM'
@@ -132,7 +134,7 @@ export class InstagramTokenService {
      * Get token expiration date
      */
     static async getTokenExpiration(userId: number): Promise<Date | null> {
-        const tokenRecord = await db.findFirst('userSocialToken', {
+        const tokenRecord = await prisma.userSocialToken.findFirst({
             where: {
                 userId,
                 platform: 'INSTAGRAM'
@@ -146,7 +148,7 @@ export class InstagramTokenService {
      * Revoke Instagram token for a user
      */
     static async revokeToken(userId: number): Promise<void> {
-        await db.deleteMany('userSocialToken', {
+        await prisma.userSocialToken.deleteMany({
             where: {
                 userId,
                 platform: 'INSTAGRAM'
@@ -165,7 +167,7 @@ export class InstagramTokenService {
         expiresAt: Date | null;
         createdAt: Date;
     }>> {
-        const tokens = await db.findMany('userSocialToken', {
+        const tokens = await prisma.userSocialToken.findMany({
             where: {
                 platform: 'INSTAGRAM'
             },
@@ -199,7 +201,7 @@ export class InstagramTokenService {
         const expiryThreshold = new Date();
         expiryThreshold.setDate(expiryThreshold.getDate() + daysBeforeExpiry);
 
-        const tokens = await db.findMany('userSocialToken', {
+        const tokens = await prisma.userSocialToken.findMany({
             where: {
                 platform: 'INSTAGRAM',
                 expiresAt: {

@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
             );
         }
 
-        const userId = parseInt(session.user.id);
+        const userId = typeof session.user.id === 'string' ? parseInt(session.user.id) : session.user.id;
         
         // Check token status
         const hasToken = await InstagramTokenService.hasValidToken(userId);

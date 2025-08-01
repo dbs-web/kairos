@@ -3,11 +3,12 @@ import { InstagramService } from '@/services/InstagramService';
 
 export async function POST(
     request: NextRequest,
-    { params }: { params: { mediaId: string } }
+    { params }: { params: Promise<{ mediaId: string }> }
 ) {
     try {
         const { userId } = await request.json();
-        const { mediaId } = params;
+        const resolvedParams = await params;
+        const { mediaId } = resolvedParams;
 
         if (!userId) {
             return NextResponse.json(
