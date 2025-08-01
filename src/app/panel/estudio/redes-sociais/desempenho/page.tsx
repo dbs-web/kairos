@@ -182,7 +182,8 @@ export default function DesempenhoPage() {
             await Promise.all([
                 loadAccountInsights(),
                 loadDemographics(),
-                loadTimeSeriesData()
+                loadTimeSeriesData(),
+                collectDailySnapshot() // Ensure we have recent data
             ]);
 
         } catch (err) {
@@ -414,8 +415,17 @@ export default function DesempenhoPage() {
                 const data = await response.json();
                 console.log('🔍 ACCOUNT INSIGHTS DEBUG - Full API response:', JSON.stringify(data, null, 2));
                 
-                // FIX 1: Handle double-nested structure
-                const insights = data.insights?.insights?.data || data.insights?.data || [];
+                // FIX 1: Handle double-nested structure - check both levels
+                let insights = [];
+                if (data.insights?.insights?.data) {
+                    insights = data.insights.insights.data;
+                    console.log('🔍 ACCOUNT INSIGHTS DEBUG - Using double-nested path: insights.insights.data');
+                } else if (data.insights?.data) {
+                    insights = data.insights.data;
+                    console.log('🔍 ACCOUNT INSIGHTS DEBUG - Using single-nested path: insights.data');
+                } else {
+                    console.log('🔍 ACCOUNT INSIGHTS DEBUG - No insights data found in response');
+                }
                 console.log('🔍 ACCOUNT INSIGHTS DEBUG - Insights array:', insights);
                 
                 const processedInsights: AccountInsights = {
@@ -453,25 +463,27 @@ export default function DesempenhoPage() {
                     switch (metric.name) {
                         case 'impressions':
                             processedInsights.impressions = latestValue;
+                            console.log('🔍 ACCOUNT INSIGHTS DEBUG - Set impressions:', latestValue);
                             break;
                         case 'reach':
                             processedInsights.reach = latestValue;
-                            // Since Instagram only provides reach, use it as a proxy for impressions if impressions is 0
-                            if (processedInsights.impressions === 0) {
-                                processedInsights.impressions = latestValue;
-                            }
+                            console.log('🔍 ACCOUNT INSIGHTS DEBUG - Set reach:', latestValue);
                             break;
                         case 'profile_views':
                             processedInsights.profile_views = latestValue;
+                            console.log('🔍 ACCOUNT INSIGHTS DEBUG - Set profile_views:', latestValue);
                             break;
                         case 'accounts_engaged':
                             processedInsights.accounts_engaged = latestValue;
+                            console.log('🔍 ACCOUNT INSIGHTS DEBUG - Set accounts_engaged:', latestValue);
                             break;
                         case 'follower_count':
                             processedInsights.follower_count = latestValue;
+                            console.log('🔍 ACCOUNT INSIGHTS DEBUG - Set follower_count:', latestValue);
                             break;
                         case 'website_clicks':
                             processedInsights.website_clicks = latestValue;
+                            console.log('🔍 ACCOUNT INSIGHTS DEBUG - Set website_clicks:', latestValue);
                             break;
                         // Handle any other metrics Instagram might provide
                         default:
@@ -479,6 +491,12 @@ export default function DesempenhoPage() {
                             break;
                     }
                 });
+
+                // FIX 4: Only use reach as impressions fallback if impressions is truly 0 and we have reach data
+                if (processedInsights.impressions === 0 && processedInsights.reach > 0) {
+                    console.log('🔍 ACCOUNT INSIGHTS DEBUG - Using reach as impressions fallback:', processedInsights.reach);
+                    processedInsights.impressions = processedInsights.reach;
+                }
 
                 console.log('🔍 ACCOUNT INSIGHTS DEBUG - Final processed insights:', processedInsights);
                 setAccountInsights(processedInsights);
@@ -525,8 +543,17 @@ export default function DesempenhoPage() {
                 const data = await response.json();
                 console.log('🔍 DEMOGRAPHICS DEBUG - Full API response:', JSON.stringify(data, null, 2));
                 
-                // FIX: Handle double-nested structure
-                const insights = data.insights?.insights?.data || data.insights?.data || [];
+                // FIX: Handle double-nested structure - check both levels
+                let insights = [];
+                if (data.insights?.insights?.data) {
+                    insights = data.insights.insights.data;
+                    console.log('🔍 DEMOGRAPHICS DEBUG - Using double-nested path: insights.insights.data');
+                } else if (data.insights?.data) {
+                    insights = data.insights.data;
+                    console.log('🔍 DEMOGRAPHICS DEBUG - Using single-nested path: insights.data');
+                } else {
+                    console.log('🔍 DEMOGRAPHICS DEBUG - No insights data found in response');
+                }
                 console.log('🔍 DEMOGRAPHICS DEBUG - Insights array:', insights);
                 
                 const demographicsData = insights.find((metric: any) => metric.name === 'follower_demographics');
@@ -654,6 +681,32 @@ export default function DesempenhoPage() {
             setTimeSeriesData(fallbackTimeSeriesData);
         } finally {
             setTimeSeriesLoading(false);
+        }
+    };
+
+    const collectDailySnapshot = async () => {
+        try {
+            console.log('🔍 COLLECTING DAILY SNAPSHOT - Starting collection...');
+            const response = await fetch('/api/instagram/daily-snapshot', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId: session?.user?.id })
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                console.log('🔍 COLLECTING DAILY SNAPSHOT - Success:', data);
+                
+                // After collecting snapshot, reload time series data
+                if (data.snapshot?.timeSeriesData?.length > 0) {
+                    console.log('🔍 COLLECTING DAILY SNAPSHOT - Reloading time series data...');
+                    await loadTimeSeriesData();
+                }
+            } else {
+                console.log('🔍 COLLECTING DAILY SNAPSHOT - Failed:', await response.text());
+            }
+        } catch (err) {
+            console.error('🔍 COLLECTING DAILY SNAPSHOT - Error:', err);
         }
     };
 
@@ -1043,8 +1096,9 @@ export default function DesempenhoPage() {
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                {topPosts.map((post) => (
+                            {topPosts.length > 0 ? (
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                    {topPosts.map((post) => (
                                     <div key={post.id} className="bg-gray-800/50 rounded-lg p-4 space-y-3">
                                         {/* Media Preview */}
                                         <div className="aspect-square bg-gray-700 rounded-lg overflow-hidden relative">
@@ -1103,8 +1157,20 @@ export default function DesempenhoPage() {
                                             </div>
                                         </div>
                                     </div>
-                                ))}
-                            </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="text-center text-gray-400 py-8">
+                                    <FaTrophy className="mx-auto mb-4 text-4xl text-gray-600" />
+                                    <h3 className="text-lg font-medium mb-2">Nenhum conteúdo de destaque</h3>
+                                    <p className="text-sm">
+                                        {media.length === 0
+                                            ? "Nenhum post encontrado. Publique conteúdo no Instagram para ver as análises."
+                                            : "Dados de insights não disponíveis. Isso é normal para contas novas ou posts recentes."
+                                        }
+                                    </p>
+                                </div>
+                            )}
                         </CardContent>
                     </Card>
 
@@ -1114,8 +1180,9 @@ export default function DesempenhoPage() {
                             <CardTitle className="text-white">Posts Recentes</CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                                {media.slice(0, 12).map((post) => {
+                            {media.length > 0 ? (
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                                    {media.slice(0, 12).map((post) => {
                                     const postInsights = insights[post.id];
                                     return (
                                         <div key={post.id} className="bg-gray-800/50 rounded-lg overflow-hidden hover:bg-gray-800/70 transition-colors">
@@ -1168,8 +1235,17 @@ export default function DesempenhoPage() {
                                             )}
                                         </div>
                                     );
-                                })}
-                            </div>
+                                    })}
+                                </div>
+                            ) : (
+                                <div className="text-center text-gray-400 py-8">
+                                    <FaInstagram className="mx-auto mb-4 text-4xl text-gray-600" />
+                                    <h3 className="text-lg font-medium mb-2">Nenhum post encontrado</h3>
+                                    <p className="text-sm">
+                                        Publique conteúdo no Instagram para ver seus posts aqui.
+                                    </p>
+                                </div>
+                            )}
                         </CardContent>
                     </Card>
                 </TabsContent>
@@ -1210,7 +1286,12 @@ export default function DesempenhoPage() {
                                     </div>
                                 ) : (
                                     <div className="text-center text-gray-400 py-8">
-                                        Dados demográficos não disponíveis
+                                        <FaUsers className="mx-auto mb-4 text-4xl text-gray-600" />
+                                        <h3 className="text-lg font-medium mb-2">Dados demográficos não disponíveis</h3>
+                                        <p className="text-sm">
+                                            Instagram fornece dados demográficos apenas para contas com atividade suficiente.<br/>
+                                            Continue publicando e engajando para acessar essas informações.
+                                        </p>
                                     </div>
                                 )}
                             </CardContent>
@@ -1258,7 +1339,12 @@ export default function DesempenhoPage() {
                                     </div>
                                 ) : (
                                     <div className="text-center text-gray-400 py-8">
-                                        Dados geográficos não disponíveis
+                                        <FaGlobeAmericas className="mx-auto mb-4 text-4xl text-gray-600" />
+                                        <h3 className="text-lg font-medium mb-2">Dados geográficos não disponíveis</h3>
+                                        <p className="text-sm">
+                                            Instagram fornece dados geográficos apenas para contas com audiência estabelecida.<br/>
+                                            Continue crescendo sua base de seguidores para acessar essas informações.
+                                        </p>
                                     </div>
                                 )}
                             </CardContent>
@@ -1314,7 +1400,12 @@ export default function DesempenhoPage() {
                                 </div>
                             ) : (
                                 <div className="text-center text-gray-400 py-8">
-                                    Dados de tendência não disponíveis para o período selecionado
+                                    <FaCalendarAlt className="mx-auto mb-4 text-4xl text-gray-600" />
+                                    <h3 className="text-lg font-medium mb-2">Dados de tendência não disponíveis</h3>
+                                    <p className="text-sm">
+                                        Dados históricos estão sendo coletados. Volte em alguns dias para ver as tendências.<br/>
+                                        <span className="text-blue-400">Período selecionado: {selectedPeriod} dias</span>
+                                    </p>
                                 </div>
                             )}
                         </CardContent>

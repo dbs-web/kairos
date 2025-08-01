@@ -4,6 +4,7 @@ import { InstagramService } from '@/services/InstagramService';
 export async function POST(request: NextRequest) {
     try {
         const { userId } = await request.json();
+        console.log('🔍 DAILY SNAPSHOT DEBUG - Request params:', { userId });
 
         if (!userId) {
             return NextResponse.json(
@@ -12,20 +13,34 @@ export async function POST(request: NextRequest) {
             );
         }
 
+        console.log('🔍 DAILY SNAPSHOT DEBUG - Calling InstagramService.collectDailySnapshot...');
         const snapshot = await InstagramService.collectDailySnapshot(userId);
+        console.log('🔍 DAILY SNAPSHOT DEBUG - Snapshot collected:', JSON.stringify(snapshot, null, 2));
 
         return NextResponse.json({
             snapshot,
-            message: 'Daily snapshot collected successfully'
+            message: 'Daily snapshot collected successfully',
+            debug: {
+                timeSeriesPoints: snapshot.timeSeriesData?.length || 0,
+                hasData: !!snapshot.timeSeriesData && snapshot.timeSeriesData.length > 0,
+                timestamp: new Date().toISOString()
+            }
         });
 
     } catch (error) {
-        console.error('Error collecting Instagram daily snapshot:', error);
+        console.error('🔍 DAILY SNAPSHOT DEBUG - Error details:', {
+            message: error instanceof Error ? error.message : 'Unknown error',
+            stack: error instanceof Error ? error.stack : undefined,
+            error
+        });
         
         return NextResponse.json(
-            { 
+            {
                 error: 'Failed to collect Instagram daily snapshot',
-                details: error instanceof Error ? error.message : 'Unknown error'
+                details: error instanceof Error ? error.message : 'Unknown error',
+                debug: {
+                    timestamp: new Date().toISOString()
+                }
             },
             { status: 500 }
         );
