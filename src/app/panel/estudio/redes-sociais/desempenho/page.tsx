@@ -48,7 +48,9 @@ export default function DesempenhoPage() {
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
     useEffect(() => {
+        console.log('🔄 useEffect [session] triggered, session:', session?.user?.id);
         if (session?.user?.id) {
+            console.log('📱 Loading Instagram data from session useEffect');
             loadInstagramData();
         }
     }, [session]);
@@ -61,11 +63,14 @@ export default function DesempenhoPage() {
         const username = searchParams.get('username');
 
         if (success === 'true' && username) {
+            console.log('🎉 OAuth success detected, username:', username);
             setSuccessMessage(`Instagram conectado com sucesso! Conta: @${username}`);
             setError(null);
             // Reload data after successful connection
             if (session?.user?.id) {
+                console.log('⏰ Scheduling data reload in 1 second...');
                 setTimeout(() => {
+                    console.log('🔄 Reloading Instagram data after OAuth success');
                     loadInstagramData();
                 }, 1000);
             }
@@ -119,16 +124,22 @@ export default function DesempenhoPage() {
                 const profileData = await profileResponse.json();
                 console.log('Profile data received:', profileData);
 
-                // Handle profile data format
-                let profileInfo = profileData.profile;
-                console.log('Received profile data:', JSON.stringify(profileInfo, null, 2));
+                // Handle profile data format - FIX: Access double-nested profile object
+                console.log('Received profile data:', JSON.stringify(profileData, null, 2));
+                
+                // The API returns { profile: { profile: {...}, message: "..." }, message: "..." }
+                // We need to access the double-nested profile object
+                let profileInfo = profileData.profile?.profile || profileData.profile;
 
                 if (profileInfo) {
+                    console.log('✅ FIXED - Accessing double-nested profile object:', profileInfo);
+                    
                     // Check if this is fallback data (indicates no real connection)
+                    // Only consider it fallback if we have specific fallback indicators
                     const isFallbackData = profileInfo.username === 'instagram_user' ||
                                          profileInfo.id === 'unknown' ||
                                          profileInfo.error ||
-                                         profileInfo.note;
+                                         (profileInfo.note && profileInfo.note.includes('fallback'));
 
                     console.log('Fallback data check:', {
                         username: profileInfo.username,
@@ -143,15 +154,17 @@ export default function DesempenhoPage() {
                         throw new Error('Instagram não conectado - dados de fallback detectados');
                     }
 
-                    // Ensure we have the required fields
+                    // Now we can safely access the real profile data
                     const processedProfile = {
                         id: profileInfo.id || 'unknown',
                         username: profileInfo.username || 'instagram_user',
                         account_type: profileInfo.account_type || 'BUSINESS',
                         media_count: profileInfo.media_count || 0
                     };
-                    console.log('Setting profile:', processedProfile);
+                    
+                    console.log('✅ FIXED - Profile with real data:', processedProfile);
                     setProfile(processedProfile);
+                    console.log('✅ Profile state set successfully');
                 } else {
                     console.warn('No profile data in response');
                     throw new Error('Instagram não conectado - sem dados de perfil');
@@ -356,6 +369,11 @@ export default function DesempenhoPage() {
 
     // Debug logging
     console.log('Current state:', { loading, error, profile: !!profile, connecting });
+    
+    // UI rendering debug
+    if (profile) {
+        console.log('🎨 Rendering profile in UI:', profile);
+    }
 
     if (loading) {
         return (

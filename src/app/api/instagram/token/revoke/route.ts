@@ -1,14 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { InstagramTokenService } from '@/services/InstagramTokenService';
 
 export async function POST(request: NextRequest) {
     try {
         console.log('Instagram token revoke request received');
-        
+
         // Get session
         const session = await getServerSession(authOptions);
         if (!session?.user?.id) {
@@ -19,16 +17,14 @@ export async function POST(request: NextRequest) {
         const userId = parseInt(session.user.id);
         console.log('Revoking Instagram token for user:', userId);
 
-        // Delete Instagram token from database
-        await prisma.instagramToken.deleteMany({
-            where: { userId: userId }
-        });
+        // Use the InstagramTokenService to properly revoke the token
+        await InstagramTokenService.revokeToken(userId);
 
         console.log('Instagram token revoked successfully');
 
-        return NextResponse.json({ 
+        return NextResponse.json({
             success: true,
-            message: 'Instagram token revoked successfully' 
+            message: 'Instagram token revoked successfully'
         });
 
     } catch (error) {
@@ -37,7 +33,5 @@ export async function POST(request: NextRequest) {
             { error: 'Internal server error' },
             { status: 500 }
         );
-    } finally {
-        await prisma.$disconnect();
     }
 }

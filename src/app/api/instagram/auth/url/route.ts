@@ -21,9 +21,9 @@ export async function GET(request: NextRequest) {
         // Create state with user ID
         const state = `user_${session.user.id}_${Date.now()}${customState ? `_${customState}` : ''}`;
 
-        // Call the FastAPI backend to get the auth URL
-        const backendUrl = process.env.BACKEND_URL || 'http://localhost:8000';
-        const url = new URL(`${backendUrl}/instagram/auth/url`);
+        // Call the Instagram API backend to get the auth URL
+        const instagramApiBase = process.env.INSTAGRAM_API_BASE || 'https://api.dbsweb.com.br/instagram';
+        const url = new URL(`${instagramApiBase}/auth/url`);
 
         url.searchParams.set('state', state);
 
