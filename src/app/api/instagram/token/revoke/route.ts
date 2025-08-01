@@ -17,18 +17,8 @@ export async function POST(request: NextRequest) {
         const userId = typeof session.user.id === 'string' ? parseInt(session.user.id) : session.user.id;
         console.log('Revoking Instagram token for user:', userId);
 
-<<<<<<< HEAD
-        // Delete Instagram token from database
-        await prisma.userSocialToken.deleteMany({
-            where: {
-                userId: userId,
-                platform: 'INSTAGRAM'
-            }
-        });
-=======
         // Use the InstagramTokenService to properly revoke the token
         await InstagramTokenService.revokeToken(userId);
->>>>>>> 86474bf890b7ba79774d85c1fdfd639cae134b0c
 
         console.log('Instagram token revoked successfully');
 

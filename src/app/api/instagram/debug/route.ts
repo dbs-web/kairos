@@ -14,19 +14,8 @@ export async function POST(request: NextRequest) {
             );
         }
 
-<<<<<<< HEAD
-        const userId = typeof session.user.id === 'string' ? parseInt(session.user.id) : session.user.id;
-        
-        // Check token status
-        const hasToken = await InstagramTokenService.hasValidToken(userId);
-        const token = await InstagramTokenService.getToken(userId);
-        const accountId = await InstagramTokenService.getAccountId(userId);
-        
-        return NextResponse.json({
-=======
         const diagnostics: any = {
             timestamp: new Date().toISOString(),
->>>>>>> 86474bf890b7ba79774d85c1fdfd639cae134b0c
             userId,
             tests: {}
         };
