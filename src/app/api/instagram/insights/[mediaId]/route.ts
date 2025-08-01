@@ -7,13 +7,8 @@ export async function POST(
 ) {
     try {
         const { userId } = await request.json();
-<<<<<<< HEAD
-        const resolvedParams = await params;
-        const { mediaId } = resolvedParams;
-=======
         const { mediaId } = await params;
         console.log('🔍 MEDIA INSIGHTS DEBUG - Request params:', { userId, mediaId });
->>>>>>> 86474bf890b7ba79774d85c1fdfd639cae134b0c
 
         if (!userId) {
             return NextResponse.json(
