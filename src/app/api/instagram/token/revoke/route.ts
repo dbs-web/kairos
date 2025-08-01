@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
-        const userId = parseInt(session.user.id);
+        const userId = typeof session.user.id === 'string' ? parseInt(session.user.id) : session.user.id;
         console.log('Revoking Instagram token for user:', userId);
 
         // Use the InstagramTokenService to properly revoke the token
