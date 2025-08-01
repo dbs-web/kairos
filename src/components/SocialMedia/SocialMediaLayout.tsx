@@ -39,17 +39,10 @@ export default function SocialMediaLayout({ children }: SocialMediaLayoutProps) 
             <div className="border-b border-border/20 bg-card/30 backdrop-blur-sm">
                 <div className="px-4 sm:px-6 md:px-12">
                     {/* Visual separator line to show this is a sub-level */}
-                    <div className="h-px bg-gradient-to-r from-transparent via-border/40 to-transparent mb-3"></div>
+                    <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent"></div>
 
                     <ScrollArea className="w-full">
                         <ul className="flex items-center gap-x-3 py-3">
-                            {/* Sub-tabs indicator */}
-                            <div className="flex items-center gap-1 mr-3 opacity-50">
-                                <div className="w-1 h-1 bg-primary/60 rounded-full"></div>
-                                <div className="w-1 h-1 bg-primary/40 rounded-full"></div>
-                                <div className="w-1 h-1 bg-primary/20 rounded-full"></div>
-                            </div>
-
                             {socialMediaTabs.map((tab, index) => (
                                 <SocialMediaSubTab
                                     key={`social-tab-${index}`}
@@ -66,7 +59,7 @@ export default function SocialMediaLayout({ children }: SocialMediaLayoutProps) 
             </div>
 
             {/* Content Area */}
-            <div className="flex-1 overflow-hidden">
+            <div className="flex-1 overflow-hidden bg-card/30 backdrop-blur-sm">
                 <ScrollArea className="h-full px-4 sm:px-6 md:px-12 py-6">
                     {children}
                 </ScrollArea>

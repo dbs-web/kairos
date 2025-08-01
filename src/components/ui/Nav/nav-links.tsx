@@ -21,6 +21,7 @@ export default function NavLinks({ links, type }: NavLinksProps) {
                         text={link.text}
                         href={link.href}
                         active={type === 'main' ? path.startsWith(link.href) : path === link.href}
+                        type={type === 'main' ? 'primary' : 'secondary'}
                         key={`nav-link-${index}`}
                     />
                 ))}
