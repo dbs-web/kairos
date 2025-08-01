@@ -92,7 +92,7 @@ export class InstagramTokenService {
                 userId,
                 platform: 'INSTAGRAM'
             }
-        });
+        }) as any;
 
         if (!tokenRecord) {
             return null;
@@ -117,7 +117,7 @@ export class InstagramTokenService {
                 userId,
                 platform: 'INSTAGRAM'
             }
-        });
+        }) as any;
 
         return tokenRecord?.instagramAccountId || null;
     }
@@ -139,7 +139,7 @@ export class InstagramTokenService {
                 userId,
                 platform: 'INSTAGRAM'
             }
-        });
+        }) as any;
 
         return tokenRecord?.expiresAt || null;
     }
@@ -179,9 +179,9 @@ export class InstagramTokenService {
                     }
                 }
             }
-        });
+        }) as any[];
 
-        return tokens.map(token => ({
+        return tokens.map((token: any) => ({
             userId: token.userId,
             userName: token.user.name,
             userEmail: token.user.email,
@@ -213,9 +213,9 @@ export class InstagramTokenService {
                 userId: true,
                 expiresAt: true
             }
-        });
+        }) as any[];
 
-        return tokens.map(token => ({
+        return tokens.map((token: any) => ({
             userId: token.userId,
             expiresAt: token.expiresAt!
         }));

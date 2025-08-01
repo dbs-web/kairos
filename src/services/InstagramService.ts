@@ -119,16 +119,29 @@ export class InstagramService {
      * Get insights for a specific media post
      */
     static async getMediaInsights(userId: number, mediaId: string): Promise<any> {
+        console.log('🔍 INSTAGRAM SERVICE DEBUG - getMediaInsights called:', { userId, mediaId });
+        
         const accessToken = await InstagramTokenService.getToken(userId);
         const accountId = await InstagramTokenService.getAccountId(userId);
+        console.log('🔍 INSTAGRAM SERVICE DEBUG - Token/Account info:', {
+            hasToken: !!accessToken,
+            accountId,
+            tokenLength: accessToken?.length || 0
+        });
 
         if (!accessToken) {
             throw new Error('No Instagram token found for user');
         }
 
-        return this.makeInstagramAPIRequest(`/media/${mediaId}/insights`, accessToken, 'POST', {
+        const endpoint = `/media/${mediaId}/insights`;
+        console.log('🔍 INSTAGRAM SERVICE DEBUG - Making API request to:', endpoint);
+        
+        const result = await this.makeInstagramAPIRequest(endpoint, accessToken, 'POST', {
             user_id: accountId
         });
+        
+        console.log('🔍 INSTAGRAM SERVICE DEBUG - API response received:', JSON.stringify(result, null, 2));
+        return result;
     }
 
     /**
@@ -160,16 +173,29 @@ export class InstagramService {
      * Get audience demographics
      */
     static async getAudienceInsights(userId: number, period: string = 'lifetime'): Promise<any> {
+        console.log('🔍 INSTAGRAM SERVICE DEBUG - getAudienceInsights called:', { userId, period });
+        
         const accessToken = await InstagramTokenService.getToken(userId);
         const accountId = await InstagramTokenService.getAccountId(userId);
+        console.log('🔍 INSTAGRAM SERVICE DEBUG - Token/Account info:', {
+            hasToken: !!accessToken,
+            accountId,
+            tokenLength: accessToken?.length || 0
+        });
 
         if (!accessToken) {
             throw new Error('No Instagram token found for user');
         }
 
-        return this.makeInstagramAPIRequest(`/audience/insights?period=${period}`, accessToken, 'POST', {
+        const endpoint = `/audience/insights?period=${period}`;
+        console.log('🔍 INSTAGRAM SERVICE DEBUG - Making API request to:', endpoint);
+        
+        const result = await this.makeInstagramAPIRequest(endpoint, accessToken, 'POST', {
             user_id: accountId
         });
+        
+        console.log('🔍 INSTAGRAM SERVICE DEBUG - API response received:', JSON.stringify(result, null, 2));
+        return result;
     }
 
     /**
@@ -314,8 +340,11 @@ export class InstagramService {
      * Get time series data from database
      */
     static async getTimeSeriesData(userId: number, days: number = 30): Promise<TimeSeriesData[]> {
+        console.log('🔍 INSTAGRAM SERVICE DEBUG - getTimeSeriesData called:', { userId, days });
+        
         const startDate = new Date();
         startDate.setDate(startDate.getDate() - days);
+        console.log('🔍 INSTAGRAM SERVICE DEBUG - Querying database from:', startDate.toISOString());
 
         const snapshots = await prisma.instagramDailySnapshot.findMany({
             where: {
@@ -327,13 +356,21 @@ export class InstagramService {
             orderBy: {
                 snapshotDate: 'asc'
             }
-        });
+        }) as any[];
 
-        return snapshots.map(snapshot => ({
+        console.log('🔍 INSTAGRAM SERVICE DEBUG - Database snapshots found:', snapshots.length);
+        if (snapshots.length > 0) {
+            console.log('🔍 INSTAGRAM SERVICE DEBUG - Sample snapshot:', snapshots[0]);
+        }
+
+        const result = snapshots.map((snapshot: any) => ({
             date: snapshot.snapshotDate.toISOString().split('T')[0],
-            reach: snapshot.reach,
-            followerChange: snapshot.followerChange
+            reach: snapshot.reach || 0,
+            followerChange: snapshot.followerChange || 0
         }));
+        
+        console.log('🔍 INSTAGRAM SERVICE DEBUG - Returning time series data:', result.length, 'points');
+        return result;
     }
 
     /**
@@ -343,14 +380,14 @@ export class InstagramService {
         const latestSnapshot = await prisma.instagramDailySnapshot.findFirst({
             where: { userId },
             orderBy: { snapshotDate: 'desc' }
-        });
+        }) as any;
 
         if (!latestSnapshot) return null;
 
         return {
             date: latestSnapshot.snapshotDate.toISOString().split('T')[0],
-            profileViews: latestSnapshot.profileViews,
-            accountsEngaged: latestSnapshot.accountsEngaged
+            profileViews: latestSnapshot.profileViews || 0,
+            accountsEngaged: latestSnapshot.accountsEngaged || 0
         };
     }
 
@@ -361,13 +398,13 @@ export class InstagramService {
         const demographics = await prisma.instagramDemographics.findFirst({
             where: { userId },
             orderBy: { lastUpdated: 'desc' }
-        });
+        }) as any;
 
         if (!demographics) return null;
 
         return {
-            genderAge: demographics.genderAgeData as Record<string, number>,
-            cities: demographics.citiesData as Record<string, number>
+            genderAge: (demographics.genderAgeData as Record<string, number>) || {},
+            cities: (demographics.citiesData as Record<string, number>) || {}
         };
     }
 }
