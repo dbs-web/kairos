@@ -1,0 +1,161 @@
+# Technical Implementation Plan: Interactive Brazilian State Map
+
+This document outlines the step-by-step plan for developing the interactive Brazilian state map feature for the Kairos Project. The plan is based on the detailed technical report and leverages the project's existing technology stack.
+
+## Phase 1: Foundation - Data Acquisition & Preparation
+
+This is the most critical prerequisite. The map cannot be built without properly formatted and optimized geographic data.
+
+**Objective:** Convert the existing static SVG map files into optimized, georeferenced TopoJSON.
+
+**Tools:**
+*   **Primary:** [**Mapshaper**](https://mapshaper.org/) (Web UI & CLI) - Essential for conversion, simplification, and optimization.
+*   **Secondary:** `svg2geojson` (if manual georeferencing is needed).
+
+**Action Steps:**
+
+1.  **Georeference the SVG:** The existing SVG paths lack real-world coordinates. This step aligns the visual shapes with latitude/longitude.
+    *   **Method A (Recommended):** Find an official IBGE Shapefile or GeoJSON for the 417 municipalities of the state in question. Use this as the authoritative source.
+    *   **Method B (If Method A fails):** Use a tool like `svg2geojson` or a GIS application (like QGIS) to manually align reference points in your SVG (e.g., known city centroids) to their real-world lat/lon coordinates. This is a complex and potentially error-prone process.
+
+2.  **Convert to GeoJSON:** Once georeferenced (or if you started with an official GeoJSON file), ensure you have a valid GeoJSON file representing the 417 cities.
+
+3.  **Simplify Geometry:** Use **Mapshaper** to reduce the complexity of the city polygons. This is crucial for performance.
+    *   Load the GeoJSON into Mapshaper.
+    *   Use the `simplify` command (e.g., `simplify 10%`). Experiment with the percentage to find a balance between detail and file size.
+
+4.  **Convert to TopoJSON:** In Mapshaper, export the simplified data as **TopoJSON**. This format is significantly smaller and more efficient for web rendering as it encodes shared borders only once.
+
+**Deliverable:** A single, optimized `map.topojson` file located in your project's `public` or `assets` directory.
+
+## Phase 2: Next.js Architecture & Component Setup
+
+**Objective:** Structure the Next.js page and React components for maintainability and performance.
+
+**Action Steps:**
+
+1.  **Create the Page Route:**
+    *   Create a new page at `/app/dashboard/lia-bastos-map/page.tsx`.
+
+2.  **Establish Component Structure:**
+    *   The core map feature will be composed of several dedicated components. The map itself **must be a Client Component**.
+
+    ```
+    /app/dashboard/lia-bastos-map/
+    ├── page.tsx            // Main page (can be a Server Component to fetch initial data)
+    └── components/
+        ├── MapContainer.tsx    // (Client Component) Manages state: active tab, period filter.
+        ├── ChoroplethMap.tsx   // (Client Component) Handles the D3.js rendering logic.
+        ├── MapTooltip.tsx      // (Client Component) Renders tooltip content via a React Portal.
+        ├── PeriodFilter.tsx    // (Client Component) The dropdown/slider for year selection.
+        └── ColorLegend.tsx     // (Client Component) Displays the map's color scale legend.
+    ```
+
+3.  **Implement Tab Navigation:**
+    *   In `MapContainer.tsx`, use Radix UI's Tabs component to create the three scenario tabs: "Histórico de votos," "Diagnóstico eleitoral," and "Análise de aceitação."
+    *   This ensures tab switching is handled client-side without full page reloads, preserving map state and providing a smooth user experience.
+
+## Phase 3: Core Map Implementation (D3.js + React)
+
+**Objective:** Render the base map using the TopoJSON data within a React component.
+
+**Action Steps:**
+
+1.  **Integrate D3.js with React:**
+    *   In `ChoroplethMap.tsx`, use a `useRef` to get a reference to an `<svg>` element.
+    *   Use a `useEffect` hook to contain all D3.js DOM manipulation logic. This ensures D3 runs only after the component has mounted and can react to prop changes.
+
+2.  **Set Up Map Projection:**
+    *   Use an **equal-area projection** to prevent data misrepresentation. `d3.geoEqualEarth` is a modern, excellent choice.
+    *   Configure the projection to fit the SVG container dimensions (`.fitSize()`).
+
+3.  **Render Map Paths:**
+    *   Inside the `useEffect`, use D3 to:
+        *   Fetch the `map.topojson` file.
+        *   Use `topojson.feature` to convert the TopoJSON arcs back into GeoJSON features.
+        *   Use the D3 `data-join` pattern (`.selectAll('path').data(features).join('path')`) to efficiently draw a `<path>` for each city.
+        *   Set the `d` attribute of each path using a `d3.geoPath()` generator configured with your projection.
+
+**Example `ChoroplethMap.tsx` Skeleton:**
+```typescript
+'use client';
+
+import React, { useRef, useEffect } from 'react';
+import * as d3 from 'd3';
+import * as topojson from 'topojson-client';
+// ... other imports
+
+interface ChoroplethMapProps {
+  mapData: any; // Your loaded TopoJSON data
+  politicalData: any[]; // Data for the current scenario/period
+}
+
+export default function ChoroplethMap({ mapData, politicalData }: ChoroplethMapProps) {
+  const svgRef = useRef<SVGSVGElement | null>(null);
+
+  useEffect(() => {
+    if (mapData && svgRef.current) {
+      const svg = d3.select(svgRef.current);
+      const { width, height } = svg.node().getBoundingClientRect();
+
+      // 1. Convert TopoJSON to GeoJSON
+      const features = topojson.feature(mapData, mapData.objects.your_layer_name).features;
+
+      // 2. Create projection
+      const projection = d3.geoEqualEarth()
+        .fitSize([width, height], topojson.feature(mapData, mapData.objects.your_layer_name));
+
+      // 3. Create path generator
+      const pathGenerator = d3.geoPath().projection(projection);
+
+      // 4. Data join to draw paths
+      svg.selectAll('.city')
+        .data(features)
+        .join('path')
+        .attr('class', 'city')
+        .attr('d', pathGenerator)
+        .attr('fill', '#ccc') // Default fill
+        .attr('stroke', '#fff'); // Border color
+        
+      // ... Color scaling and interactivity logic will go here ...
+    }
+  }, [mapData, politicalData, /* other dependencies */]);
+
+  return <svg ref={svgRef} width="100%" height="100%"></svg>;
+}
+```
+
+## Phase 4: Data Integration & Dynamic Filtering
+
+**Objective:** Fetch political data using TanStack React Query and dynamically update the map based on filters.
+
+**Action Steps:**
+
+1.  **Define Data Structures:** Use TypeScript interfaces for your mock political data to ensure type safety. (See report section 9 for a detailed example).
+
+2.  **Implement Data Fetching with `useQuery`:**
+    *   In `MapContainer.tsx`, manage the state for the `selectedPeriod` and `activeScenario`.
+    *   Use TanStack Query's `useQuery` hook to fetch the political data.
+    *   Crucially, use a **dynamic query key** that includes the filter state:
+        `const query = useQuery({ queryKey: ['politicalData', selectedPeriod, activeScenario], queryFn: ... });`
+    *   The `queryFn` will fetch/filter your data based on the provided `selectedPeriod` and `activeScenario`.
+
+3.  **Merge Geographic and Political Data:**
+    *   Once the `query.data` is available, create a mapping (e.g., a `Map` object) from city ID to its political data.
+    *   Pass the full map data and this filtered political data down to the `ChoroplethMap` component.
+
+4.  **Implement Dynamic Coloring:**
+    *   Inside the `ChoroplethMap`'s `useEffect`, create a D3 color scale based on the `activeScenario`.
+        *   **Vote History/Acceptance (Quantitative):** `d3.scaleQuantize()` or `d3.scaleLinear()` with a sequential color scheme (e.g., `d3.interpolateBlues`).
+        *   **Electoral Diagnosis (Qualitative):** `d3.scaleOrdinal()` with a custom array of colors (`['#4CAF50', '#FFC107', '#F44336']`).
+    *   Update the `.attr('fill', ...)` logic to use the color scale, looking up the data for each city from the merged dataset.
+
+## Phase 5: Interactivity & User Experience (UX)
+
+**Objective:** Add informative tooltips on hover and a clear color legend.
+
+**Action Steps:**
+
+1.  **Implement Tooltips with React Portals:**
+    *   In `ChoroplethMap.tsx`, add D3 event listeners to the paths: `.on('mouseover', ...)` and `.on('mouseout', ...)`.
+    *   On `mouseover`, update
